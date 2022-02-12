@@ -1363,8 +1363,8 @@
   #define INVERT_Y_DIR false
   #define INVERT_Z_DIR false
 #else
-#define INVERT_X_DIR false
-#define INVERT_Y_DIR true
+  #define INVERT_X_DIR false
+  #define INVERT_Y_DIR true
   #define INVERT_Z_DIR true
 #endif
 //#define INVERT_I_DIR false
@@ -1374,16 +1374,7 @@
 // @section extruder
 
 // For direct drive extruder v9 set to true, for geared extruder set to false.
-#if ENABLED(MOTHERBOARD_SV1_3)
-
-//  #define SWAP_Z_E_PINS
-
-  #ifdef SWAP_Z_E_PINS
-    #define INVERT_E0_DIR true
-  #else
-#define INVERT_E0_DIR false
-  #endif
-#else
+#ifndef INVERT_E0_DIR
   #define INVERT_E0_DIR true
 #endif
 #define INVERT_E1_DIR false
