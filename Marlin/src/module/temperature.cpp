@@ -210,6 +210,7 @@ PGMSTR(str_t_heating_failed, STR_T_HEATING_FAILED);
         {1,       "Epcos 100k (1)",               temptable_1,    sizeof(temptable_1)/sizeof(*temptable_1),       50,         300,        0},
         {5,       "ATC 104GT/104NT 100k (5)",     temptable_5,    sizeof(temptable_5)/sizeof(*temptable_5),       50,         310,        0},
         {13,      "Hisens 3950 100k (13)",        temptable_13,   sizeof(temptable_13)/sizeof(*temptable_13),     50,         330,        0},
+        {61,      "Formbot b3950 100k (61)",      temptable_61,   sizeof(temptable_61)/sizeof(*temptable_61),     50,         350,        0},
         {66,      "Dyze D500 4.7M (66)",          temptable_66,   sizeof(temptable_66)/sizeof(*temptable_66),     80,         530,        1},
         {1047,    "Pt1000 4.7kΩ pullup (1047)",   temptable_1047, sizeof(temptable_1047)/sizeof(*temptable_1047), 70,         480,        1},
       };

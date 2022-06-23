@@ -71,7 +71,7 @@
   } thermistors_data_t;
   extern thermistors_data_t thermistors_data;
   
-  #define THERMISTORS_TYPES_COUNT 5
+  #define THERMISTORS_TYPES_COUNT 6
   
 #endif  // RS_ADDSETTINGS
 
