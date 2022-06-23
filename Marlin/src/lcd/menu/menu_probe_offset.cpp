@@ -170,6 +170,8 @@ void goto_probe_offset_wizard() {
 
   // Home all axes
   queue.inject_P(G28_STR);
+  // Lift nozzle to 10 mm height
+  queue.enqueue_now_P("G01 Z10");
 
   ui.goto_screen([]{
     _lcd_draw_homing();

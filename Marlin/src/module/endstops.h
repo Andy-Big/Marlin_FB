@@ -128,6 +128,9 @@ enum EndstopEnum : char {
     #if HAS_Z2_MAX
       bool  Z2_MAX_INVERTING;
     #endif
+    #if HAS_Z_MIN_PROBE_PIN
+      bool Z_MIN_PROBE_INVERTING;
+    #endif
   } endstop_settings_t;
   extern endstop_settings_t endstop_settings;
 

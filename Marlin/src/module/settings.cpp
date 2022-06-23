@@ -548,12 +548,14 @@ typedef struct SettingsDataStruct {
     celsius_t               hotend_maxtemp[HOTENDS];
     psu_settings_t          psu_settings;
     endstop_settings_t      endstop_settings;
+    bedlevel_settings_t     bedlevel_settings;
 #endif  // RS_ADDSETTINGS
 } SettingsData;
 
 #if ENABLED(RS_ADDSETTINGS)
   autooff_settings_t    autooff_settings;
   psu_settings_t        psu_settings;
+  bedlevel_settings_t   bedlevel_settings;
 #endif  // RS_ADDSETTINGS
 
 //static_assert(sizeof(SettingsData) <= MARLIN_EEPROM_SIZE, "EEPROM too small to contain SettingsData!");
@@ -1551,6 +1553,9 @@ void MarlinSettings::postprocess() {
 
       // Endstops settings
       EEPROM_WRITE(endstop_settings);
+
+      // Bed leveling settings
+      EEPROM_WRITE(bedlevel_settings);
     #endif  // RS_ADDSETTINGS
 
     //
@@ -2517,6 +2522,9 @@ void MarlinSettings::postprocess() {
 
         // Endstops settings
         EEPROM_READ((uint8_t *)&endstop_settings, sizeof(endstop_settings));
+
+        // Bed leveling settings
+        EEPROM_READ((uint8_t *)&bedlevel_settings, sizeof(bedlevel_settings));
       #endif  // RS_ADDSETTINGS
 
 
@@ -2832,6 +2840,13 @@ void MarlinSettings::reset() {
       #if HAS_Z2_MAX
         endstop_settings.Z2_MAX_INVERTING = Z2_MAX_ENDSTOP_INVERTING;
       #endif
+      #if HAS_Z_MIN_PROBE_PIN
+        endstop_settings.Z_MIN_PROBE_INVERTING = Z_MIN_PROBE_ENDSTOP_INVERTING;
+      #endif
+
+      // Bed leveling settings
+      bedlevel_settings.bltouch_enabled = false;
+      bedlevel_settings.bedlevel_points = 4;
 
     #endif  // RS_ADDSETTINGS
   }

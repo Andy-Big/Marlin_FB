@@ -147,6 +147,7 @@
   #endif
 #endif
 
+
 //
 // Misc. Functions
 //
@@ -247,4 +248,4 @@
  #define MKS_WIFI_IO_RST                    PA5
 #endif
 
-
+#define Z_MIN_PROBE_PIN                     PE6

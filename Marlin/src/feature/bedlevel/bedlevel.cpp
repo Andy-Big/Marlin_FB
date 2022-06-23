@@ -27,13 +27,9 @@
 #include "bedlevel.h"
 #include "../../module/planner.h"
 
-#if EITHER(MESH_BED_LEVELING, PROBE_MANUALLY)
-  #include "../../module/motion.h"
-#endif
+#include "../../module/motion.h"
 
-#if ENABLED(PROBE_MANUALLY)
-  bool g29_in_progress = false;
-#endif
+bool g29_in_progress = false;
 
 #if ENABLED(LCD_BED_LEVELING)
   #include "../../lcd/marlinui.h"
@@ -209,8 +205,6 @@ void reset_bed_level() {
 
 #endif // AUTO_BED_LEVELING_BILINEAR || MESH_BED_LEVELING
 
-#if EITHER(MESH_BED_LEVELING, PROBE_MANUALLY)
-
   void _manual_goto_xy(const xy_pos_t &pos) {
 
     // Get the resting Z position for after the XY move
@@ -234,6 +228,5 @@ void reset_bed_level() {
     TERN_(LCD_BED_LEVELING, ui.wait_for_move = false);
   }
 
-#endif // MESH_BED_LEVELING || PROBE_MANUALLY
 
 #endif // HAS_LEVELING

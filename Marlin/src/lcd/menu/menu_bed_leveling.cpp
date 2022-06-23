@@ -43,10 +43,17 @@
   #endif
 #endif
 
-#if EITHER(PROBE_MANUALLY, MESH_BED_LEVELING)
+//#if EITHER(PROBE_MANUALLY, MESH_BED_LEVELING)
 
   #include "../../module/motion.h"
   #include "../../gcode/queue.h"
+  #include "../../module/settings.h"
+
+
+#if ENABLED(ASSISTED_TRAMMING_WIZARD)
+  void goto_tramming_wizard();
+#endif
+
 
   //
   // Motion > Level Bed handlers
@@ -102,8 +109,9 @@
         ui.goto_screen(_lcd_level_bed_done);
         #if ENABLED(MESH_BED_LEVELING)
           queue.inject(F("G29S2"));
-        #elif ENABLED(PROBE_MANUALLY)
-          queue.inject(F("G29V1"));
+        #else
+          if (!bedlevel_settings.bltouch_enabled)
+            queue.inject(F("G29V1"));
         #endif
       }
       else
@@ -154,8 +162,9 @@
     ui.wait_for_move = true;
     #if ENABLED(MESH_BED_LEVELING)
       queue.inject(manual_probe_index ? F("G29S2") : F("G29S1"));
-    #elif ENABLED(PROBE_MANUALLY)
-      queue.inject(F("G29V1"));
+    #else
+      if (!bedlevel_settings.bltouch_enabled)
+        queue.inject(F("G29V1"));
     #endif
   }
 
@@ -185,9 +194,7 @@
     if (all_axes_homed()) ui.goto_screen(_lcd_level_bed_homing_done);
   }
 
-  #if ENABLED(PROBE_MANUALLY)
-    extern bool g29_in_progress;
-  #endif
+  extern bool g29_in_progress;
 
   //
   // Step 2: Continue Bed Leveling...
@@ -199,7 +206,7 @@
     queue.inject_P(G28_STR);
   }
 
-#endif // PROBE_MANUALLY || MESH_BED_LEVELING
+//#endif // PROBE_MANUALLY || MESH_BED_LEVELING
 
 #if ENABLED(MESH_EDIT_MENU)
 
@@ -212,8 +219,8 @@
     static uint8_t xind, yind; // =0
     START_MENU();
     // BACK_ITEM(MSG_BED_LEVELING);
-    EDIT_ITEM(uint8, MSG_MESH_X, &xind, 0, (GRID_MAX_POINTS_X) - 1);
-    EDIT_ITEM(uint8, MSG_MESH_Y, &yind, 0, (GRID_MAX_POINTS_Y) - 1);
+    EDIT_ITEM(uint8, MSG_MESH_X, &xind, 0, (bedlevel_settings.bedlevel_points) - 1);
+    EDIT_ITEM(uint8, MSG_MESH_Y, &yind, 0, (bedlevel_settings.bedlevel_points) - 1);
     EDIT_ITEM_FAST(float43, MSG_MESH_EDIT_Z, &Z_VALUES(xind, yind), -(LCD_PROBE_Z_RANGE) * 0.5, (LCD_PROBE_Z_RANGE) * 0.5, refresh_planner);
     END_MENU();
   }
@@ -242,19 +249,21 @@ void menu_bed_leveling() {
   // BACK_ITEM(MSG_MOTION);
 
   // Auto Home if not using manual probing
-  #if NONE(PROBE_MANUALLY, MESH_BED_LEVELING)
+  if (bedlevel_settings.bltouch_enabled)
     if (!is_homed) GCODES_ITEM(MSG_AUTO_HOME, G28_STR);
-  #endif
 
   // Level Bed
-  #if EITHER(PROBE_MANUALLY, MESH_BED_LEVELING)
+  if (!bedlevel_settings.bltouch_enabled)
+  {
     // Manual leveling uses a guided procedure
-    SUBMENU(MSG_LEVEL_BED, _lcd_level_bed_continue);
-  #else
+    SUBMENU(MSG_LEVEL_BED_MANUAL, _lcd_level_bed_continue);
+  }
+  else
+  {
     // Automatic leveling can just run the G-code
-    GCODES_ITEM(MSG_LEVEL_BED, is_homed ? PSTR("G29") : PSTR("G29N"));
-  #endif
-
+    GCODES_ITEM(MSG_LEVEL_BED_AUTO, is_homed ? PSTR("G29") : PSTR("G29N"));
+  }
+  
   #if ENABLED(MESH_EDIT_MENU)
     if (is_valid) SUBMENU(MSG_EDIT_MESH, menu_edit_mesh);
   #endif
@@ -286,13 +295,23 @@ void menu_bed_leveling() {
 
   #if ENABLED(BABYSTEP_ZPROBE_OFFSET)
     SUBMENU(MSG_ZPROBE_ZOFFSET, lcd_babystep_zoffset);
-  #elif HAS_BED_PROBE
-    EDIT_ITEM(LCD_Z_OFFSET_TYPE, MSG_ZPROBE_ZOFFSET, &probe.offset.z, Z_PROBE_OFFSET_RANGE_MIN, Z_PROBE_OFFSET_RANGE_MAX);
+  #else
+    if (bedlevel_settings.bltouch_enabled)
+      EDIT_ITEM(LCD_Z_OFFSET_TYPE, MSG_ZPROBE_ZOFFSET, &probe.offset.z, Z_PROBE_OFFSET_RANGE_MIN, Z_PROBE_OFFSET_RANGE_MAX);
   #endif
 
   #if ENABLED(LEVEL_BED_CORNERS)
     SUBMENU(MSG_BED_TRAMMING, _lcd_level_bed_corners);
-  #endif
+  
+    //
+    // Assisted Bed Tramming
+    //
+    #if ENABLED(ASSISTED_TRAMMING_WIZARD)
+      if (bedlevel_settings.bltouch_enabled)
+        SUBMENU(MSG_TRAMMING_WIZARD, goto_tramming_wizard);
+    #endif
+
+#endif
 
   #if ENABLED(EEPROM_SETTINGS)
     ACTION_ITEM(MSG_LOAD_EEPROM, ui.load_settings);

@@ -63,7 +63,7 @@ void GcodeSuite::M421() {
     SERIAL_ERROR_MSG(STR_ERR_M421_PARAMETERS);
 
   // Test for I J out of range
-  else if (!WITHIN(ij.x, 0, GRID_MAX_POINTS_X - 1) || !WITHIN(ij.y, 0, GRID_MAX_POINTS_Y - 1))
+  else if (!WITHIN(ij.x, 0, bedlevel_settings.bedlevel_points - 1) || !WITHIN(ij.y, 0, bedlevel_settings.bedlevel_points - 1))
     SERIAL_ERROR_MSG(STR_ERR_MESH_XY);
   else {
     float &zval = ubl.z_values[ij.x][ij.y];                               // Altering this Mesh Point

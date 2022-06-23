@@ -924,7 +924,8 @@ namespace Language_ru {
       LSTR MSG_POWEROFF_AT_END              = _UxGT("Выключить после печати");
       LSTR MSG_MENU_THERMISTORS             = _UxGT("Типы термисторов");
       LSTR MSG_HOTEND_AUTO_FAN              = _UxGT("Автовкл. вент. хотэнда");
-      LSTR MSG_PSU_MODULE_ON                = _UxGT("Модуль PSU подключен");
+      LSTR MSG_BLTOUCH_SETTINGS             = _UxGT("Настройка BL-touch");
+      LSTR MSG_BLTOUCH_ON                   = _UxGT("BL-touch подключен");
 
       LSTR MSG_ENDSTOP_INVERTING            = _UxGT("Инверсия концевиков");
       LSTR MSG_X_MIN_INVERTING              = _UxGT("X-Min инверсия");
@@ -935,7 +936,14 @@ namespace Language_ru {
       LSTR MSG_Z_MAX_INVERTING              = _UxGT("Z-Max инверсия");
       LSTR MSG_Z2_MIN_INVERTING             = _UxGT("Z2-Min инверсия");
       LSTR MSG_Z2_MAX_INVERTING             = _UxGT("Z2-Max инверсия");
+      LSTR MSG_Z_MIN_PROBE_INVERTING        = _UxGT("BL-touch инверсия");
 
+      LSTR MSG_LEVEL_BED_AUTO               = _UxGT("Сетка кривизны стола (авто)");
+      LSTR MSG_LEVEL_BED_MANUAL             = _UxGT("Сетка кривизны стола (ручн.)");
+      LSTR MSG_TRAMMING_WIZARD              = _UxGT("Мастер уровня стола");
+      LSTR MSG_LEVEL_BED_POINTS             = _UxGT("Сетка кривизны, точек");
+      LSTR MSG_PROBING_POINT                = _UxGT("Замер точки");
+      LSTR MSG_BLTOUCH_TOOLS                = _UxGT("Инструменты BL-touch");
     #endif
 
     LSTR MSG_WAIT_NOZZLE_COOL               = _UxGT("Ожидание остывания сопла.");

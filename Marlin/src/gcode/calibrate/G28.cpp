@@ -250,7 +250,7 @@ void GcodeSuite::G28() {
   #endif
 
   // Cancel any prior G29 session
-  TERN_(PROBE_MANUALLY, g29_in_progress = false);
+  g29_in_progress = false;
 
   // Disable leveling before homing
   TERN_(HAS_LEVELING, set_bed_leveling_enabled(false));

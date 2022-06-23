@@ -804,6 +804,8 @@ namespace Language_en {
       LSTR MSG_MENU_THERMISTORS             = _UxGT("Thermistors types");
       LSTR MSG_HOTEND_AUTO_FAN              = _UxGT("Hotend fan autoenable");
       LSTR MSG_PSU_MODULE_ON                = _UxGT("PSU module connected");
+      LSTR MSG_BLTOUCH_SETTINGS             = _UxGT("BL-touch settings");
+      LSTR MSG_BLTOUCH_ON                   = _UxGT("BL-touch connected");
 
       LSTR MSG_ENDSTOP_INVERTING            = _UxGT("Endstops inverting");
       LSTR MSG_X_MIN_INVERTING              = _UxGT("X-Min inverting");
@@ -814,7 +816,12 @@ namespace Language_en {
       LSTR MSG_Z_MAX_INVERTING              = _UxGT("Z-Max inverting");
       LSTR MSG_Z2_MIN_INVERTING             = _UxGT("Z2-Min inverting");
       LSTR MSG_Z2_MAX_INVERTING             = _UxGT("Z2-Max inverting");
+      LSTR MSG_Z_MIN_PROBE_INVERTING        = _UxGT("BL-touch inverting");
 
+      LSTR MSG_LEVEL_BED_AUTO               = _UxGT("Level Bed auto");
+      LSTR MSG_LEVEL_BED_MANUAL             = _UxGT("Level Bed manual");
+      LSTR MSG_LEVEL_BED_POINTS             = _UxGT("Bed leveling points");
+      LSTR MSG_BLTOUCH_TOOLS                = _UxGT("BL-touch tools");
     #endif
 
     LSTR MSG_WAIT_NOZZLE_COOL               = _UxGT("Waiting for the nozzle to cool down.");

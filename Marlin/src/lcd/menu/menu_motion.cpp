@@ -47,6 +47,7 @@
 #if HAS_LEVELING
   #include "../../module/planner.h"
   #include "../../feature/bedlevel/bedlevel.h"
+  #include "../../module/settings.h"
 #endif
 
 #if ENABLED(MANUAL_E_MOVES_RELATIVE)
@@ -365,10 +366,6 @@ void menu_move() {
   void menu_bed_leveling();
 #endif
 
-#if ENABLED(ASSISTED_TRAMMING_WIZARD)
-  void goto_tramming_wizard();
-#endif
-
 void menu_motion() {
   START_MENU();
 
@@ -422,13 +419,6 @@ void menu_motion() {
   //
   #if EITHER(Z_STEPPER_AUTO_ALIGN, MECHANICAL_GANTRY_CALIBRATION)
     GCODES_ITEM(MSG_AUTO_Z_ALIGN, PSTR("G34"));
-  #endif
-
-  //
-  // Assisted Bed Tramming
-  //
-  #if ENABLED(ASSISTED_TRAMMING_WIZARD)
-    SUBMENU(MSG_TRAMMING_WIZARD, goto_tramming_wizard);
   #endif
 
   //

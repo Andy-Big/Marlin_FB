@@ -44,6 +44,7 @@
 
 #if HAS_BED_PROBE
   #include "../../module/probe.h"
+  #include "../../module/settings.h"
   #if ENABLED(BLTOUCH)
     #include "../../feature/bltouch.h"
   #endif
@@ -210,47 +211,6 @@ void menu_advanced_settings();
 
     EDIT_ITEM(float42_52, MSG_IDEX_DUPE_GAP, &duplicate_extruder_x_offset, (X2_MIN_POS) - (X1_MIN_POS), (X_BED_SIZE) - 20);
 
-    END_MENU();
-  }
-
-#endif
-
-#if ENABLED(BLTOUCH)
-
-  #if ENABLED(BLTOUCH_LCD_VOLTAGE_MENU)
-    void bltouch_report() {
-      PGMSTR(mode0, "OD");
-      PGMSTR(mode1, "5V");
-      DEBUG_ECHOPGM("BLTouch Mode: ");
-      DEBUG_ECHOPGM_P(bltouch.od_5v_mode ? mode1 : mode0);
-      DEBUG_ECHOLNPGM(" (Default " TERN(BLTOUCH_SET_5V_MODE, "5V", "OD") ")");
-      char mess[21];
-      strcpy_P(mess, PSTR("BLTouch Mode: "));
-      strcpy_P(&mess[15], bltouch.od_5v_mode ? mode1 : mode0);
-      ui.set_status(mess);
-      ui.return_to_status();
-    }
-  #endif
-
-  void menu_bltouch() {
-    START_MENU();
-    // BACK_ITEM(MSG_CONFIGURATION);
-    ACTION_ITEM(MSG_BLTOUCH_RESET, bltouch._reset);
-    ACTION_ITEM(MSG_BLTOUCH_SELFTEST, bltouch._selftest);
-    ACTION_ITEM(MSG_BLTOUCH_DEPLOY, bltouch._deploy);
-    ACTION_ITEM(MSG_BLTOUCH_STOW, bltouch._stow);
-    ACTION_ITEM(MSG_BLTOUCH_SW_MODE, bltouch._set_SW_mode);
-    #ifdef BLTOUCH_HS_MODE
-      EDIT_ITEM(bool, MSG_BLTOUCH_SPEED_MODE, &bltouch.high_speed_mode);
-    #endif
-    #if ENABLED(BLTOUCH_LCD_VOLTAGE_MENU)
-      CONFIRM_ITEM(MSG_BLTOUCH_5V_MODE, MSG_BLTOUCH_5V_MODE, MSG_BUTTON_CANCEL, bltouch._set_5V_mode, nullptr, GET_TEXT(MSG_BLTOUCH_MODE_CHANGE));
-      CONFIRM_ITEM(MSG_BLTOUCH_OD_MODE, MSG_BLTOUCH_OD_MODE, MSG_BUTTON_CANCEL, bltouch._set_OD_mode, nullptr, GET_TEXT(MSG_BLTOUCH_MODE_CHANGE));
-      ACTION_ITEM(MSG_BLTOUCH_MODE_STORE, bltouch._mode_store);
-      CONFIRM_ITEM(MSG_BLTOUCH_MODE_STORE_5V, MSG_BLTOUCH_MODE_STORE_5V, MSG_BUTTON_CANCEL, bltouch.mode_conv_5V, nullptr, GET_TEXT(MSG_BLTOUCH_MODE_CHANGE));
-      CONFIRM_ITEM(MSG_BLTOUCH_MODE_STORE_OD, MSG_BLTOUCH_MODE_STORE_OD, MSG_BUTTON_CANCEL, bltouch.mode_conv_OD, nullptr, GET_TEXT(MSG_BLTOUCH_MODE_CHANGE));
-      ACTION_ITEM(MSG_BLTOUCH_MODE_ECHO, bltouch_report);
-    #endif
     END_MENU();
   }
 
@@ -492,8 +452,9 @@ void menu_configuration() {
 
   #if ENABLED(BABYSTEP_ZPROBE_OFFSET)
     SUBMENU(MSG_ZPROBE_ZOFFSET, lcd_babystep_zoffset);
-  #elif HAS_BED_PROBE
-    EDIT_ITEM(LCD_Z_OFFSET_TYPE, MSG_ZPROBE_ZOFFSET, &probe.offset.z, Z_PROBE_OFFSET_RANGE_MIN, Z_PROBE_OFFSET_RANGE_MAX);
+  #else
+    if (bedlevel_settings.bltouch_enabled)
+      EDIT_ITEM(LCD_Z_OFFSET_TYPE, MSG_ZPROBE_ZOFFSET, &probe.offset.z, Z_PROBE_OFFSET_RANGE_MIN, Z_PROBE_OFFSET_RANGE_MAX);
   #endif
 
   //
@@ -514,10 +475,6 @@ void menu_configuration() {
 
     #if ENABLED(DUAL_X_CARRIAGE)
       SUBMENU(MSG_IDEX_MENU, menu_idex);
-    #endif
-
-    #if ENABLED(BLTOUCH)
-      SUBMENU(MSG_BLTOUCH, menu_bltouch);
     #endif
 
     #if ENABLED(TOUCH_MI_PROBE)

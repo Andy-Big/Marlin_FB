@@ -226,7 +226,7 @@ void menu_tune();
 void lcd_move_z();
 void _lcd_draw_homing();
 
-#define HAS_LINE_TO_Z ANY(DELTA, PROBE_MANUALLY, MESH_BED_LEVELING, LEVEL_BED_CORNERS)
+#define HAS_LINE_TO_Z 1
 
 #if HAS_LINE_TO_Z
   void line_to_z(const_float_t z);
@@ -281,6 +281,4 @@ inline void clear_menu_history() { screen_history_depth = 0; }
   extern bool leveling_was_active;
 #endif
 
-#if ANY(PROBE_MANUALLY, MESH_BED_LEVELING, X_AXIS_TWIST_COMPENSATION)
-  extern uint8_t manual_probe_index;
-#endif
+extern uint8_t manual_probe_index;
