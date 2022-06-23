@@ -47,6 +47,7 @@ static float z_measured[G35_PROBE_COUNT];
 static bool z_isvalid[G35_PROBE_COUNT];
 static uint8_t tram_index = 0;
 static int8_t reference_index; // = 0
+static char turn_screw_msg[64];
 
 #if HAS_LEVELING
   #include "../../feature/bedlevel/bedlevel.h"
@@ -61,6 +62,66 @@ static bool probe_single_point() {
   move_to_tramming_wait_pos();
 
   DEBUG_ECHOLNPGM("probe_single_point(", tram_index, ") = ", z_probed_height, "mm");
+
+  float z_val = z_measured[reference_index] - z_measured[tram_index];
+  float turns = 0;
+  turn_screw_msg[0] = 0;
+  if (z_val > 0.02)
+  {
+    switch (TRAMMING_SCREW_THREAD)
+    {
+      case 30:
+        turns = z_val / 0.5;
+        break;
+      case 31:
+        turns = z_val / -0.5;
+        break;
+      case 40:
+        turns = z_val / 0.7;
+        break;
+      case 41:
+        turns = z_val / -0.7;
+        break;
+      case 50:
+        turns = z_val / 0.8;
+        break;
+      case 51:
+        turns = z_val / -0.8;
+        break;
+    }
+    if (turns >= 0.02)
+      sprintf_P(turn_screw_msg, GET_TEXT(MSG_TURN_SCREW), ftostr12ns(turns), GET_TEXT(MSG_CLOCKWISE));
+    else if (turns <= -0.02)
+      sprintf_P(turn_screw_msg, GET_TEXT(MSG_TURN_SCREW), ftostr12ns(-turns), GET_TEXT(MSG_COUNTERCLOCKWISE));
+  }
+  else if (z_val < -0.02)
+  {
+    switch (TRAMMING_SCREW_THREAD)
+    {
+      case 30:
+        turns = z_val / 0.5;
+        break;
+      case 31:
+        turns = z_val / -0.5;
+        break;
+      case 40:
+        turns = z_val / 0.7;
+        break;
+      case 41:
+        turns = z_val / -0.7;
+        break;
+      case 50:
+        turns = z_val / 0.8;
+        break;
+      case 51:
+        turns = z_val / -0.8;
+        break;
+    }
+    if (turns >= 0.02)
+      sprintf_P(turn_screw_msg, GET_TEXT(MSG_TURN_SCREW), ftostr12ns(turns), GET_TEXT(MSG_CLOCKWISE));
+    else if (turns <= -0.02)
+      sprintf_P(turn_screw_msg, GET_TEXT(MSG_TURN_SCREW), ftostr12ns(-turns), GET_TEXT(MSG_COUNTERCLOCKWISE));
+  }
   return (z_isvalid[tram_index] = !isnan(z_probed_height));
 }
 
@@ -69,6 +130,10 @@ static void _menu_single_probe() {
   START_MENU();
   STATIC_ITEM(MSG_BED_TRAMMING, SS_LEFT);
   STATIC_ITEM(MSG_LAST_VALUE_SP, SS_LEFT, z_isvalid[tram_index] ? ftostr42_52(z_measured[reference_index] - z_measured[tram_index]) : "---");
+  if (turn_screw_msg[0] != 0)
+    STATIC_ITEM_P((const char*)turn_screw_msg, SS_LEFT);
+  else
+    STATIC_ITEM_P("--", SS_LEFT);
   ACTION_ITEM(MSG_UBL_BC_INSERT2, []{ if (probe_single_point()) ui.refresh(); });
   ACTION_ITEM(MSG_BUTTON_DONE, ui.goto_previous_screen);
   END_MENU();

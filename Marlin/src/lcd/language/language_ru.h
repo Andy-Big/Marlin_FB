@@ -944,6 +944,10 @@ namespace Language_ru {
       LSTR MSG_LEVEL_BED_POINTS             = _UxGT("Сетка кривизны, точек");
       LSTR MSG_PROBING_POINT                = _UxGT("Замер точки");
       LSTR MSG_BLTOUCH_TOOLS                = _UxGT("Инструменты BL-touch");
+
+      LSTR MSG_TURN_SCREW                   = _UxGT("Винт на %s об. %s часовой");
+      LSTR MSG_CLOCKWISE                    = _UxGT("по");
+      LSTR MSG_COUNTERCLOCKWISE             = _UxGT("против");
     #endif
 
     LSTR MSG_WAIT_NOZZLE_COOL               = _UxGT("Ожидание остывания сопла.");

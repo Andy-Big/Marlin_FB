@@ -28,7 +28,7 @@
 #include "../../module/motion.h"
 #include "../../module/probe.h"
 #include "../../feature/bedlevel/bedlevel.h"
-#include "../../module/settings.h""
+#include "../../module/settings.h"
 
 /**
  * G30: Do a single Z probe at the current XY

@@ -822,6 +822,10 @@ namespace Language_en {
       LSTR MSG_LEVEL_BED_MANUAL             = _UxGT("Level Bed manual");
       LSTR MSG_LEVEL_BED_POINTS             = _UxGT("Bed leveling points");
       LSTR MSG_BLTOUCH_TOOLS                = _UxGT("BL-touch tools");
+
+      LSTR MSG_TURN_SCREW                   = _UxGT("The screw %s turn %s");
+      LSTR MSG_CLOCKWISE                    = _UxGT("clockwise");
+      LSTR MSG_COUNTERCLOCKWISE             = _UxGT("counterclockwise");
     #endif
 
     LSTR MSG_WAIT_NOZZLE_COOL               = _UxGT("Waiting for the nozzle to cool down.");

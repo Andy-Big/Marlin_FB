@@ -21,7 +21,7 @@
  */
 
 #include "../../inc/MarlinConfig.h"
-#include "../../module/settings.h""
+#include "../../module/settings.h"
 
 
 #if HAS_MESH
