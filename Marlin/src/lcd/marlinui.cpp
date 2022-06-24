@@ -78,6 +78,7 @@ constexpr uint8_t epps = ENCODER_PULSES_PER_STEP;
 #endif
 
 #if ENABLED(LCD_SET_PROGRESS_MANUALLY)
+#else
   MarlinUI::progress_t MarlinUI::progress_override; // = 0
   #if ENABLED(USE_M73_REMAINING_TIME)
     uint32_t MarlinUI::remaining_time;
@@ -1552,10 +1553,17 @@ constexpr uint8_t epps = ENCODER_PULSES_PER_STEP;
     #ifdef ACTION_ON_CANCEL
       hostui.cancel();
     #endif
+
     IF_DISABLED(SDSUPPORT, print_job_timer.stop());
     TERN_(HOST_PROMPT_SUPPORT, hostui.prompt_open(PROMPT_INFO, F("UI Aborted"), FPSTR(DISMISS_STR)));
     LCD_MESSAGE(MSG_PRINT_ABORTED);
     TERN_(HAS_LCD_MENU, return_to_status());
+
+    queue.clear();
+    quickstop_stepper();
+    do_blocking_move_to_z(current_position.z+10, 20);
+//    queue.inject("G01 Z20");
+
   }
 
   #if BOTH(PSU_CONTROL, PS_OFF_CONFIRM)

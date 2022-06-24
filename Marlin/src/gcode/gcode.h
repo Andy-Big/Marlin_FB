@@ -668,6 +668,7 @@ private:
   #endif
 
   #if ENABLED(LCD_SET_PROGRESS_MANUALLY)
+  #else
     static void M73();
   #endif
 

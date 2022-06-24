@@ -386,6 +386,9 @@ void MarlinUI::draw_status_screen() {
   elapsed.toDigital(buffer);
 
   tft_string.set(buffer);
+
+  uint16_t Color = COLOR_TOP_FRAME_TEXT;
+  // remain time
   if (printJobOngoing() || printingIsPaused())
   {
 
@@ -396,31 +399,45 @@ void MarlinUI::draw_status_screen() {
       tft_string.add(buffer);
     #endif
 
-    // remain time
+    // remain
     tft_string.add(" / ");
-    if (elapsed.value > heating.value && (elapsed.value - heating.value) > 60)   // remain time only after 1 minute of printing (except heating time)
+    // Try get remain from M73
+    if (print_job_timer.is_M73_valid() && print_job_timer.get_M73_remain() != 0xFFFFFFFF)
     {
-      uint32_t  fsize = card.getFileSize();
-      uint32_t  freaded = card.getIndex();
-      float     bytes_per_sec = (float)freaded / (elapsed.value - heating.value);
-      remain.value = (fsize - freaded) / bytes_per_sec;
+      remain.value = print_job_timer.get_M73_remain();
       remain.toDigital(buffer);
       tft_string.add(buffer);
+      Color = COLOR_TOP_FRAME_TEXT2;
     }
     else
     {
-      tft_string.add("--:--");
+      if (elapsed.value > heating.value && (elapsed.value - heating.value) > 60)   // remain time only after 1 minute of printing (except heating time)
+      {
+        uint32_t  fsize = card.getFileSize();
+        uint32_t  freaded = card.getIndex();
+        float     bytes_per_sec = (float)freaded / (elapsed.value - heating.value);
+        remain.value = (fsize - freaded) / bytes_per_sec;
+        remain.toDigital(buffer);
+        tft_string.add(buffer);
+      }
+      else
+      {
+        tft_string.add("--:--");
+      }
+      Color = COLOR_TOP_FRAME_TEXT;
+
     }
   }
-  uint16_t Color = COLOR_TOP_FRAME_TEXT;
   if (wait_for_heatup)
     Color = COLOR_RED;
   tft.add_text(470 - tft_string.width(), y, Color, tft_string);
 
   // Hotend, bed, fan
   y = 32;
-  for (i = 0 ; i < ITEMS_COUNT1+ITEMS_COUNT2; i++) {
-    switch (i) {
+  for (i = 0 ; i < ITEMS_COUNT1+ITEMS_COUNT2; i++)
+  {
+    switch (i)
+    {
       #ifdef ITEM_E0
         case ITEM_E0:
           draw_heater_status(x, y, H_E0);
@@ -468,7 +485,12 @@ void MarlinUI::draw_status_screen() {
 
   // progress bar
   y = 130;
-  const uint8_t progress = ui.get_progress_percent();
+  uint8_t progress = ui.get_progress_percent();
+  // Try get progress from M73
+  if (print_job_timer.is_M73_valid() && print_job_timer.get_M73_progress() != 0xFFFFFFFF)
+  {
+    progress = (uint8_t)(print_job_timer.get_M73_progress());
+  }
   tft.canvas(0, y, TFT_WIDTH - 1, 82);
   tft.set_background(COLOR_PROGRESS_BG);
   tft.add_bar(0, 0, TFT_WIDTH - 1, 82, COLOR_PROGRESS_BG);

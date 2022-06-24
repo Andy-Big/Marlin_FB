@@ -31,13 +31,16 @@
 extern bool wait_for_heatup;
 
 Stopwatch::State Stopwatch::state;
-millis_t Stopwatch::accumulator;
-millis_t Stopwatch::accumulatorHeat;
-millis_t Stopwatch::startTimestamp;
-millis_t Stopwatch::stopTimestamp;
-millis_t Stopwatch::startHeatTimestamp;
-millis_t Stopwatch::stopHeatTimestamp;
-bool Stopwatch::heatRunning;
+millis_t    Stopwatch::accumulator;
+millis_t    Stopwatch::accumulatorHeat;
+millis_t    Stopwatch::startTimestamp;
+millis_t    Stopwatch::stopTimestamp;
+millis_t    Stopwatch::startHeatTimestamp;
+millis_t    Stopwatch::stopHeatTimestamp;
+bool        Stopwatch::heatRunning;
+millis_t    Stopwatch::last_M73_timestamp;
+millis_t    Stopwatch::M73_remain;
+millis_t    Stopwatch::M73_progress;
 
 bool Stopwatch::stop() {
   debug(F("stop"));
@@ -130,6 +133,13 @@ millis_t Stopwatch::duration() {
 
 millis_t Stopwatch::durationHeat() {
   return accumulatorHeat + MS_TO_SEC((heatRunning ? millis() : stopHeatTimestamp) - startHeatTimestamp);
+}
+
+void Stopwatch::set_M73(uint32_t percents, uint32_t  remain_minutes)
+{
+  last_M73_timestamp = millis();
+  M73_progress = percents;
+  M73_remain = remain_minutes;
 }
 
 #if ENABLED(DEBUG_STOPWATCH)

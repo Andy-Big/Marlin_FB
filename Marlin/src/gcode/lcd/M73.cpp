@@ -24,6 +24,7 @@
 
 #if ENABLED(LCD_SET_PROGRESS_MANUALLY)
 
+
 #include "../gcode.h"
 #include "../../lcd/marlinui.h"
 #include "../../sd/cardreader.h"
@@ -57,6 +58,35 @@ void GcodeSuite::M73() {
     #endif
 
   #endif
+}
+
+#else
+
+#include "../gcode.h"
+#include "../../lcd/marlinui.h"
+#include "../../sd/cardreader.h"
+
+/**
+ * M73: Set percentage complete and remaining time (for display on LCD)
+ *
+ * Example:
+ *   M73 P25 R48; Set progress to 25% and remaining time to 48 minutes
+ */
+void GcodeSuite::M73()
+{
+
+  uint32_t  progress = 0xFFFFFFFF;
+  uint32_t  remain = 0xFFFFFFFF;
+  if (parser.seenval('P'))
+  {
+      progress = parser.value_byte();
+  }
+  if (parser.seenval('R'))
+  {
+      remain = parser.value_ulong() * 60;   // minutes to seconds
+  }
+  print_job_timer.set_M73(progress, remain);
+
 }
 
 #endif // LCD_SET_PROGRESS_MANUALLY

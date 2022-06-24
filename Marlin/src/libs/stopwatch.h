@@ -50,6 +50,10 @@ class Stopwatch {
     static millis_t stopHeatTimestamp;
     static bool     heatRunning;
 
+    static millis_t last_M73_timestamp;
+    static millis_t M73_remain;
+    static millis_t M73_progress;
+
   public:
     /**
      * @brief Initialize the stopwatch
@@ -97,6 +101,8 @@ class Stopwatch {
 
     static void heating_stop();
 
+    static void set_M73(uint32_t percents, uint32_t  remain_minutes);
+
     /**
      * @brief Check if the timer is running
      * @details Return true if the timer is currently running, false otherwise.
@@ -119,6 +125,12 @@ class Stopwatch {
     static millis_t duration();
 
     static millis_t durationHeat();
+
+    FORCE_INLINE static bool is_M73_valid() { return ((millis() - last_M73_timestamp) < 180*1000); }; // M73 timeout - 3 minutes
+
+    FORCE_INLINE static uint32_t get_M73_remain() { return M73_remain; };
+
+    FORCE_INLINE static uint32_t get_M73_progress() { return M73_progress; };
 
     #ifdef DEBUG_STOPWATCH
 

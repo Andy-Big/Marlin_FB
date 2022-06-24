@@ -121,6 +121,9 @@
   #ifndef COLOR_TOP_FRAME_TEXT
     #define COLOR_TOP_FRAME_TEXT    RGB(255, 255, 132)
   #endif
+  #ifndef COLOR_TOP_FRAME_TEXT2
+    #define COLOR_TOP_FRAME_TEXT2    RGB(132, 255, 132)
+  #endif
 
   #ifndef COLOR_AXIS_HOMED
     #define COLOR_AXIS_HOMED        COLOR_WHITE

@@ -574,6 +574,7 @@ void GcodeSuite::process_parsed_command(const bool no_ok/*=false*/) {
       #endif
 
       #if ENABLED(LCD_SET_PROGRESS_MANUALLY)
+      #else
         case 73: M73(); break;                                    // M73: Set progress percentage (for display on LCD)
       #endif
 
