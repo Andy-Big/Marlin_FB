@@ -289,8 +289,13 @@ typedef struct {
     p2.x = p1.x + dx;
     p2.y = p1.y + dy;
 
-    if (p2.x < 0 || p2.x >= (bedlevel_settings.bedlevel_points)) return;
-    if (p2.y < 0 || p2.y >= (bedlevel_settings.bedlevel_points)) return;
+    #if MOTHERBOARD != BOARD_MKS_ROBIN_NANO
+      if (p2.x < 0 || p2.x >= (bedlevel_settings.bedlevel_points)) return;
+      if (p2.y < 0 || p2.y >= (bedlevel_settings.bedlevel_points)) return;
+    #else
+      if (p2.x < 0 || p2.x >= (GRID_MAX_POINTS_X)) return;
+      if (p2.y < 0 || p2.y >= (GRID_MAX_POINTS_Y)) return;
+    #endif
 
     if (circle_flags.marked(p1.x, p1.y) && circle_flags.marked(p2.x, p2.y)) {
       xyz_pos_t s, e;

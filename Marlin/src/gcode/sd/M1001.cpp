@@ -32,6 +32,7 @@
 #include "../../module/settings.h"
 #include "../../lcd/marlinui.h"
 #include "../../lcd/menu/menu.h"
+#include "../../module/stepper.h"
 extern MarlinUI ui;
 
 
@@ -124,6 +125,8 @@ void GcodeSuite::M1001() {
     {
       autooff_settings.sscreen_need_draw = true;
       autooff_settings.poweroff_at_printed = false;
+      thermalManager.disable_all_heaters();
+      stepper.disable_all_steppers();
       ui.goto_screen(ui.poweroff_wait_screen);
 //      gcode.process_subcommands_now_P(PSTR("M81"));   // Power Off command
     }

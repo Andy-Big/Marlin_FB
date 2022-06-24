@@ -98,22 +98,39 @@ static void extrapolate_one_point(const uint8_t x, const uint8_t y, const int8_t
  * using linear extrapolation, away from the center.
  */
 void extrapolate_unprobed_bed_level() {
-  #ifdef HALF_IN_X
-    uint8_t ctrx2 = 0, xend = bedlevel_settings.bedlevel_points - 1;
-  #else
-    uint8_t ctrx1 = (bedlevel_settings.bedlevel_points - 1) / 2, // left-of-center
-                      ctrx2 = (bedlevel_settings.bedlevel_points) / 2,  // right-of-center
-                      xend = ctrx1;
-  #endif
+  #if MOTHERBOARD == BOARD_MKS_ROBIN_NANO
+    #ifdef HALF_IN_X
+      constexpr uint8_t ctrx2 = 0, xend = GRID_MAX_POINTS_X - 1;
+    #else
+      constexpr uint8_t ctrx1 = (GRID_MAX_CELLS_X) / 2, // left-of-center
+                        ctrx2 = (GRID_MAX_POINTS_X) / 2,  // right-of-center
+                        xend = ctrx1;
+    #endif
 
-  #ifdef HALF_IN_Y
-    uint8_t ctry2 = 0, yend = bedlevel_settings.bedlevel_points - 1;
+    #ifdef HALF_IN_Y
+      constexpr uint8_t ctry2 = 0, yend = GRID_MAX_POINTS_Y - 1;
+    #else
+      constexpr uint8_t ctry1 = (GRID_MAX_CELLS_Y) / 2, // top-of-center
+                        ctry2 = (GRID_MAX_POINTS_Y) / 2,  // bottom-of-center
+                        yend = ctry1;
+    #endif
   #else
-    uint8_t ctry1 = (bedlevel_settings.bedlevel_points - 1) / 2, // top-of-center
-                      ctry2 = (bedlevel_settings.bedlevel_points) / 2,  // bottom-of-center
-                      yend = ctry1;
-  #endif
+    #ifdef HALF_IN_X
+      uint8_t ctrx2 = 0, xend = bedlevel_settings.bedlevel_points - 1;
+    #else
+      uint8_t ctrx1 = (bedlevel_settings.bedlevel_points - 1) / 2, // left-of-center
+                        ctrx2 = (bedlevel_settings.bedlevel_points) / 2,  // right-of-center
+                        xend = ctrx1;
+    #endif
 
+    #ifdef HALF_IN_Y
+      uint8_t ctry2 = 0, yend = bedlevel_settings.bedlevel_points - 1;
+    #else
+      uint8_t ctry1 = (bedlevel_settings.bedlevel_points - 1) / 2, // top-of-center
+                        ctry2 = (bedlevel_settings.bedlevel_points) / 2,  // bottom-of-center
+                        yend = ctry1;
+    #endif
+  #endif
   LOOP_LE_N(xo, xend)
     LOOP_LE_N(yo, yend) {
       uint8_t x2 = ctrx2 + xo, y2 = ctry2 + yo;
@@ -137,8 +154,13 @@ void extrapolate_unprobed_bed_level() {
 
 void print_bilinear_leveling_grid() {
   SERIAL_ECHOLNPGM("Bilinear Leveling Grid:");
-  print_2d_array(bedlevel_settings.bedlevel_points, bedlevel_settings.bedlevel_points, 3,
-    [](const uint8_t ix, const uint8_t iy) { return z_values[ix][iy]; }
+  #if MOTHERBOARD != BOARD_MKS_ROBIN_NANO
+    print_2d_array(bedlevel_settings.bedlevel_points, bedlevel_settings.bedlevel_points, 3,
+      [](const uint8_t ix, const uint8_t iy) { return z_values[ix][iy]; }
+  #else
+    print_2d_array(GRID_MAX_POINTS_X, GRID_MAX_POINTS_Y, 3,
+      [](const uint8_t ix, const uint8_t iy) { return z_values[ix][iy]; }
+  #endif
   );
 }
 
@@ -251,18 +273,34 @@ void refresh_bed_level() {
   TERN_(ABL_BILINEAR_SUBDIVISION, bed_level_virt_interpolate());
 }
 
-#if ENABLED(ABL_BILINEAR_SUBDIVISION)
-  #define ABL_BG_SPACING(A) bilinear_grid_spacing_virt.A
-  #define ABL_BG_FACTOR(A)  bilinear_grid_factor_virt.A
-  #define ABL_BG_POINTS_X   ABL_GRID_POINTS_VIRT_X
-  #define ABL_BG_POINTS_Y   ABL_GRID_POINTS_VIRT_Y
-  #define ABL_BG_GRID(X,Y)  z_values_virt[X][Y]
+#if MOTHERBOARD != BOARD_MKS_ROBIN_NANO
+  #if ENABLED(ABL_BILINEAR_SUBDIVISION)
+    #define ABL_BG_SPACING(A) bilinear_grid_spacing_virt.A
+    #define ABL_BG_FACTOR(A)  bilinear_grid_factor_virt.A
+    #define ABL_BG_POINTS_X   ABL_GRID_POINTS_VIRT_X
+    #define ABL_BG_POINTS_Y   ABL_GRID_POINTS_VIRT_Y
+    #define ABL_BG_GRID(X,Y)  z_values_virt[X][Y]
+  #else
+    #define ABL_BG_SPACING(A) bilinear_grid_spacing.A
+    #define ABL_BG_FACTOR(A)  bilinear_grid_factor.A
+    #define ABL_BG_POINTS_X   bedlevel_settings.bedlevel_points
+    #define ABL_BG_POINTS_Y   bedlevel_settings.bedlevel_points
+    #define ABL_BG_GRID(X,Y)  z_values[X][Y]
+  #endif
 #else
-  #define ABL_BG_SPACING(A) bilinear_grid_spacing.A
-  #define ABL_BG_FACTOR(A)  bilinear_grid_factor.A
-  #define ABL_BG_POINTS_X   bedlevel_settings.bedlevel_points
-  #define ABL_BG_POINTS_Y   bedlevel_settings.bedlevel_points
-  #define ABL_BG_GRID(X,Y)  z_values[X][Y]
+  #if ENABLED(ABL_BILINEAR_SUBDIVISION)
+    #define ABL_BG_SPACING(A) bilinear_grid_spacing_virt.A
+    #define ABL_BG_FACTOR(A)  bilinear_grid_factor_virt.A
+    #define ABL_BG_POINTS_X   ABL_GRID_POINTS_VIRT_X
+    #define ABL_BG_POINTS_Y   ABL_GRID_POINTS_VIRT_Y
+    #define ABL_BG_GRID(X,Y)  z_values_virt[X][Y]
+  #else
+    #define ABL_BG_SPACING(A) bilinear_grid_spacing.A
+    #define ABL_BG_FACTOR(A)  bilinear_grid_factor.A
+    #define ABL_BG_POINTS_X   GRID_MAX_POINTS_X
+    #define ABL_BG_POINTS_Y   GRID_MAX_POINTS_Y
+    #define ABL_BG_GRID(X,Y)  z_values[X][Y]
+  #endif
 #endif
 
 // Get the Z adjustment for non-linear bed leveling

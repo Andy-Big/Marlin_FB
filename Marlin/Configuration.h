@@ -1082,7 +1082,9 @@
  * Use G29 repeatedly, adjusting the Z height at each point with movement commands
  * or (with LCD_BED_LEVELING) the LCD controller.
  */
-//#define PROBE_MANUALLY
+#if MOTHERBOARD == BOARD_MKS_ROBIN_NANO
+  #define PROBE_MANUALLY
+#endif
 
 /**
  * A Fix-Mounted Probe either doesn't deploy or needs manual deployment.
@@ -1105,7 +1107,9 @@
 /**
  * The BLTouch probe uses a Hall effect sensor and emulates a servo.
  */
-#define BLTOUCH
+#if MOTHERBOARD != BOARD_MKS_ROBIN_NANO
+  #define BLTOUCH
+#endif
 
 /**
  * Touch-MI Probe by hotends.fr
@@ -1572,8 +1576,8 @@
 //#define AUTO_BED_LEVELING_3POINT
 //#define AUTO_BED_LEVELING_LINEAR
 #define AUTO_BED_LEVELING_BILINEAR
-//#define AUTO_BED_LEVELING_UBL
 //#define MESH_BED_LEVELING
+//#define AUTO_BED_LEVELING_UBL
 
 /**
  * Normally G28 leaves leveling disabled on completion. Enable one of

@@ -227,3 +227,9 @@
  #define MKS_WIFI_IO4                       PC7
  #define MKS_WIFI_IO_RST                    PA5
 #endif
+
+//
+// Servos
+//
+#define SERVO0_PIN                          PA8   // Enable BLTOUCH
+

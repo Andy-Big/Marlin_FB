@@ -50,11 +50,6 @@
 #define SPI_DEVICE                             2
 
 //
-// Servos
-//
-#define SERVO0_PIN                          PA8   // Enable BLTOUCH
-
-//
 // Limit Switches
 //
 #define X_STOP_PIN                          PA15

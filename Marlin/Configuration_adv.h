@@ -989,7 +989,9 @@
 //
 // Add the G35 command to read bed corners to help adjust screws. Requires a bed probe.
 //
-#define ASSISTED_TRAMMING
+#if MOTHERBOARD != BOARD_MKS_ROBIN_NANO
+  #define ASSISTED_TRAMMING
+#endif
 #if ENABLED(ASSISTED_TRAMMING)
 
   // Define positions for probe points.

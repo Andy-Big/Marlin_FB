@@ -472,7 +472,16 @@ inline void manage_inactivity(const bool no_stepper_sleep=false) {
     // ----------------------------------------------------------------
     if (killCount >= KILL_DELAY) {
       SERIAL_ERROR_MSG(STR_KILL_BUTTON);
+
+    #if ENABLED(RS_ADDSETTINGS)
+      autooff_settings.sscreen_need_draw = true;
+      autooff_settings.poweroff_at_printed = false;
+      thermalManager.disable_all_heaters();
+      stepper.disable_all_steppers();
+      ui.goto_screen(ui.poweroff_wait_screen);
+    #else
       kill();
+    #endif
     }
   #endif
 

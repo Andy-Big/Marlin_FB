@@ -46,12 +46,14 @@
   } psu_settings_t;
   extern psu_settings_t psu_settings;
 
-  typedef struct
-  {
-      bool      bltouch_enabled;
-      uint8_t   bedlevel_points;
-  } bedlevel_settings_t;
-  extern bedlevel_settings_t bedlevel_settings;
+  #if MOTHERBOARD != BOARD_MKS_ROBIN_NANO
+    typedef struct
+    {
+        bool      bltouch_enabled;
+        uint8_t   bedlevel_points;
+    } bedlevel_settings_t;
+    extern bedlevel_settings_t bedlevel_settings;
+  #endif
 
 #endif  // RS_ADDSETTINGS
 

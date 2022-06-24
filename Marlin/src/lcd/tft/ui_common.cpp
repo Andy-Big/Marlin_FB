@@ -31,6 +31,7 @@
 #include "../../module/temperature.h"
 #include "../../gcode/gcode.h"
 #include "../../module/settings.h"
+#include "../../module/stepper.h"
 
 void menu_pause_option();
 

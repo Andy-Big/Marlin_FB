@@ -122,7 +122,11 @@ void GcodeSuite::M115() {
     cap_line(F("RUNOUT"), ENABLED(FILAMENT_RUNOUT_SENSOR));
 
     // Z_PROBE (G30)
-    cap_line(F("Z_PROBE"), bedlevel_settings.bltouch_enabled);
+    #if MOTHERBOARD != BOARD_MKS_ROBIN_NANO
+      cap_line(F("Z_PROBE"), bedlevel_settings.bltouch_enabled);
+    #else
+      cap_line(F("Z_PROBE"), ENABLED(HAS_BED_PROBE));
+    #endif
 
     // MESH_REPORT (M420 V)
     cap_line(F("LEVELING_DATA"), ENABLED(HAS_LEVELING));

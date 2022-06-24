@@ -110,8 +110,14 @@
         #if ENABLED(MESH_BED_LEVELING)
           queue.inject(F("G29S2"));
         #else
-          if (!bedlevel_settings.bltouch_enabled)
-            queue.inject(F("G29V1"));
+          #if MOTHERBOARD != BOARD_MKS_ROBIN_NANO
+            if (!bedlevel_settings.bltouch_enabled)
+              queue.inject(F("G29V1"));
+          #else
+            #if ENABLED(PROBE_MANUALLY)
+              queue.inject(F("G29V1"));
+            #endif
+          #endif
         #endif
       }
       else
@@ -163,8 +169,14 @@
     #if ENABLED(MESH_BED_LEVELING)
       queue.inject(manual_probe_index ? F("G29S2") : F("G29S1"));
     #else
-      if (!bedlevel_settings.bltouch_enabled)
-        queue.inject(F("G29V1"));
+      #if MOTHERBOARD != BOARD_MKS_ROBIN_NANO
+        if (!bedlevel_settings.bltouch_enabled)
+          queue.inject(F("G29V1"));
+      #else
+        #if ENABLED(PROBE_MANUALLY)
+          queue.inject(F("G29V1"));
+        #endif
+      #endif
     #endif
   }
 
@@ -219,9 +231,15 @@
     static uint8_t xind, yind; // =0
     START_MENU();
     // BACK_ITEM(MSG_BED_LEVELING);
-    EDIT_ITEM(uint8, MSG_MESH_X, &xind, 0, (bedlevel_settings.bedlevel_points) - 1);
-    EDIT_ITEM(uint8, MSG_MESH_Y, &yind, 0, (bedlevel_settings.bedlevel_points) - 1);
-    EDIT_ITEM_FAST(float43, MSG_MESH_EDIT_Z, &Z_VALUES(xind, yind), -(LCD_PROBE_Z_RANGE) * 0.5, (LCD_PROBE_Z_RANGE) * 0.5, refresh_planner);
+    #if MOTHERBOARD != BOARD_MKS_ROBIN_NANO
+      EDIT_ITEM(uint8, MSG_MESH_X, &xind, 0, (bedlevel_settings.bedlevel_points) - 1);
+      EDIT_ITEM(uint8, MSG_MESH_Y, &yind, 0, (bedlevel_settings.bedlevel_points) - 1);
+      EDIT_ITEM_FAST(float43, MSG_MESH_EDIT_Z, &Z_VALUES(xind, yind), -(LCD_PROBE_Z_RANGE) * 0.5, (LCD_PROBE_Z_RANGE) * 0.5, refresh_planner);
+    #else
+      EDIT_ITEM(uint8, MSG_MESH_X, &xind, 0, (GRID_MAX_POINTS_X) - 1);
+      EDIT_ITEM(uint8, MSG_MESH_Y, &yind, 0, (GRID_MAX_POINTS_Y) - 1);
+      EDIT_ITEM_FAST(float43, MSG_MESH_EDIT_Z, &Z_VALUES(xind, yind), -(LCD_PROBE_Z_RANGE) * 0.5, (LCD_PROBE_Z_RANGE) * 0.5, refresh_planner);
+    #endif
     END_MENU();
   }
 
@@ -249,20 +267,36 @@ void menu_bed_leveling() {
   // BACK_ITEM(MSG_MOTION);
 
   // Auto Home if not using manual probing
-  if (bedlevel_settings.bltouch_enabled)
-    if (!is_homed) GCODES_ITEM(MSG_AUTO_HOME, G28_STR);
+  #if MOTHERBOARD != BOARD_MKS_ROBIN_NANO
+    if (bedlevel_settings.bltouch_enabled)
+      if (!is_homed) GCODES_ITEM(MSG_AUTO_HOME, G28_STR);
+  #else
+    #if NONE(PROBE_MANUALLY, MESH_BED_LEVELING)
+      if (!is_homed) GCODES_ITEM(MSG_AUTO_HOME, G28_STR);
+    #endif
+  #endif
 
   // Level Bed
-  if (!bedlevel_settings.bltouch_enabled)
-  {
-    // Manual leveling uses a guided procedure
-    SUBMENU(MSG_LEVEL_BED_MANUAL, _lcd_level_bed_continue);
-  }
-  else
-  {
-    // Automatic leveling can just run the G-code
-    GCODES_ITEM(MSG_LEVEL_BED_AUTO, is_homed ? PSTR("G29") : PSTR("G29N"));
-  }
+  #if MOTHERBOARD != BOARD_MKS_ROBIN_NANO
+    if (!bedlevel_settings.bltouch_enabled)
+    {
+      // Manual leveling uses a guided procedure
+      SUBMENU(MSG_LEVEL_BED_MANUAL, _lcd_level_bed_continue);
+    }
+    else
+    {
+      // Automatic leveling can just run the G-code
+      GCODES_ITEM(MSG_LEVEL_BED_AUTO, is_homed ? PSTR("G29") : PSTR("G29N"));
+    }
+  #else
+    #if EITHER(PROBE_MANUALLY, MESH_BED_LEVELING)
+      // Manual leveling uses a guided procedure
+      SUBMENU(MSG_LEVEL_BED, _lcd_level_bed_continue);
+    #else
+      // Automatic leveling can just run the G-code
+      GCODES_ITEM(MSG_LEVEL_BED, is_homed ? PSTR("G29") : PSTR("G29N"));
+    #endif
+  #endif
   
   #if ENABLED(MESH_EDIT_MENU)
     if (is_valid) SUBMENU(MSG_EDIT_MESH, menu_edit_mesh);
@@ -296,8 +330,14 @@ void menu_bed_leveling() {
   #if ENABLED(BABYSTEP_ZPROBE_OFFSET)
     SUBMENU(MSG_ZPROBE_ZOFFSET, lcd_babystep_zoffset);
   #else
-    if (bedlevel_settings.bltouch_enabled)
-      EDIT_ITEM(LCD_Z_OFFSET_TYPE, MSG_ZPROBE_ZOFFSET, &probe.offset.z, Z_PROBE_OFFSET_RANGE_MIN, Z_PROBE_OFFSET_RANGE_MAX);
+    #if MOTHERBOARD != BOARD_MKS_ROBIN_NANO
+      if (bedlevel_settings.bltouch_enabled)
+        EDIT_ITEM(LCD_Z_OFFSET_TYPE, MSG_ZPROBE_ZOFFSET, &probe.offset.z, Z_PROBE_OFFSET_RANGE_MIN, Z_PROBE_OFFSET_RANGE_MAX);
+    #else
+      #if HAS_BED_PROBE
+        EDIT_ITEM(LCD_Z_OFFSET_TYPE, MSG_ZPROBE_ZOFFSET, &probe.offset.z, Z_PROBE_OFFSET_RANGE_MIN, Z_PROBE_OFFSET_RANGE_MAX);
+      #endif
+    #endif
   #endif
 
   #if ENABLED(LEVEL_BED_CORNERS)

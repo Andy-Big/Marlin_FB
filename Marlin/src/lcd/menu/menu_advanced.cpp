@@ -58,7 +58,9 @@
   #include "../../feature/password/password.h"
 #endif
 
-#include "../../feature/bltouch.h"
+#if ENABLED(BLTOUCH)
+  #include "../../feature/bltouch.h"
+#endif
 
 void menu_tmc();
 void menu_backlash();
@@ -66,7 +68,9 @@ void menu_backlash();
 #if ENABLED(RS_ADDSETTINGS)
   void menu_advanced_axesdir();
   void menu_advanced_endstop_inverting();
-  void menu_advanced_bltouch();
+  #if ENABLED(BLTOUCH)
+    void menu_advanced_bltouch();
+  #endif
 #endif
 void bltouch_report();
 void menu_bltouch();
@@ -767,7 +771,9 @@ void menu_advanced_settings() {
   #endif
 
   #if ENABLED(RS_ADDSETTINGS)
-      SUBMENU(MSG_BLTOUCH_SETTINGS, menu_advanced_bltouch);
+      #if ENABLED(BLTOUCH)
+        SUBMENU(MSG_BLTOUCH_SETTINGS, menu_advanced_bltouch);
+      #endif
       EDIT_ITEM(bool, MSG_PSU_MODULE_ON, &psu_settings.psu_enabled);
   #endif
 
@@ -836,18 +842,20 @@ void menu_advanced_settings() {
     END_MENU();
   }
 
-  void menu_advanced_bltouch() {
-    START_MENU();
-    // BACK_ITEM(MSG_ADVANCED_SETTINGS);
+  #if ENABLED(BLTOUCH)
+    void menu_advanced_bltouch() {
+      START_MENU();
+      // BACK_ITEM(MSG_ADVANCED_SETTINGS);
 
-    EDIT_ITEM(bool, MSG_BLTOUCH, &bedlevel_settings.bltouch_enabled);
-    EDIT_ITEM(uint8, MSG_LEVEL_BED_POINTS, &bedlevel_settings.bedlevel_points, 3, GRID_MAX_POINTS_X);
-    if (bedlevel_settings.bltouch_enabled)
-      SUBMENU(MSG_BLTOUCH_TOOLS, menu_bltouch);
+      EDIT_ITEM(bool, MSG_BLTOUCH, &bedlevel_settings.bltouch_enabled);
+      EDIT_ITEM(uint8, MSG_LEVEL_BED_POINTS, &bedlevel_settings.bedlevel_points, 3, GRID_MAX_POINTS_X);
+      if (bedlevel_settings.bltouch_enabled)
+        SUBMENU(MSG_BLTOUCH_TOOLS, menu_bltouch);
 
 
-    END_MENU();
-  }
+      END_MENU();
+    }
+  #endif
   
   
   #if ENABLED(BLTOUCH_LCD_VOLTAGE_MENU)
@@ -865,27 +873,29 @@ void menu_advanced_settings() {
     }
   #endif
 
-  void menu_bltouch() {
-    START_MENU();
-    // BACK_ITEM(MSG_CONFIGURATION);
-    ACTION_ITEM(MSG_BLTOUCH_RESET, bltouch._reset);
-    ACTION_ITEM(MSG_BLTOUCH_SELFTEST, bltouch._selftest);
-    ACTION_ITEM(MSG_BLTOUCH_DEPLOY, bltouch._deploy);
-    ACTION_ITEM(MSG_BLTOUCH_STOW, bltouch._stow);
-    ACTION_ITEM(MSG_BLTOUCH_SW_MODE, bltouch._set_SW_mode);
-    #ifdef BLTOUCH_HS_MODE
-      EDIT_ITEM(bool, MSG_BLTOUCH_SPEED_MODE, &bltouch.high_speed_mode);
-    #endif
-    #if ENABLED(BLTOUCH_LCD_VOLTAGE_MENU)
-      CONFIRM_ITEM(MSG_BLTOUCH_5V_MODE, MSG_BLTOUCH_5V_MODE, MSG_BUTTON_CANCEL, bltouch._set_5V_mode, nullptr, GET_TEXT(MSG_BLTOUCH_MODE_CHANGE));
-      CONFIRM_ITEM(MSG_BLTOUCH_OD_MODE, MSG_BLTOUCH_OD_MODE, MSG_BUTTON_CANCEL, bltouch._set_OD_mode, nullptr, GET_TEXT(MSG_BLTOUCH_MODE_CHANGE));
-      ACTION_ITEM(MSG_BLTOUCH_MODE_STORE, bltouch._mode_store);
-      CONFIRM_ITEM(MSG_BLTOUCH_MODE_STORE_5V, MSG_BLTOUCH_MODE_STORE_5V, MSG_BUTTON_CANCEL, bltouch.mode_conv_5V, nullptr, GET_TEXT(MSG_BLTOUCH_MODE_CHANGE));
-      CONFIRM_ITEM(MSG_BLTOUCH_MODE_STORE_OD, MSG_BLTOUCH_MODE_STORE_OD, MSG_BUTTON_CANCEL, bltouch.mode_conv_OD, nullptr, GET_TEXT(MSG_BLTOUCH_MODE_CHANGE));
-      ACTION_ITEM(MSG_BLTOUCH_MODE_ECHO, bltouch_report);
-    #endif
-    END_MENU();
-  }
+  #if ENABLED(BLTOUCH)
+    void menu_bltouch() {
+      START_MENU();
+      // BACK_ITEM(MSG_CONFIGURATION);
+      ACTION_ITEM(MSG_BLTOUCH_RESET, bltouch._reset);
+      ACTION_ITEM(MSG_BLTOUCH_SELFTEST, bltouch._selftest);
+      ACTION_ITEM(MSG_BLTOUCH_DEPLOY, bltouch._deploy);
+      ACTION_ITEM(MSG_BLTOUCH_STOW, bltouch._stow);
+      ACTION_ITEM(MSG_BLTOUCH_SW_MODE, bltouch._set_SW_mode);
+      #ifdef BLTOUCH_HS_MODE
+        EDIT_ITEM(bool, MSG_BLTOUCH_SPEED_MODE, &bltouch.high_speed_mode);
+      #endif
+      #if ENABLED(BLTOUCH_LCD_VOLTAGE_MENU)
+        CONFIRM_ITEM(MSG_BLTOUCH_5V_MODE, MSG_BLTOUCH_5V_MODE, MSG_BUTTON_CANCEL, bltouch._set_5V_mode, nullptr, GET_TEXT(MSG_BLTOUCH_MODE_CHANGE));
+        CONFIRM_ITEM(MSG_BLTOUCH_OD_MODE, MSG_BLTOUCH_OD_MODE, MSG_BUTTON_CANCEL, bltouch._set_OD_mode, nullptr, GET_TEXT(MSG_BLTOUCH_MODE_CHANGE));
+        ACTION_ITEM(MSG_BLTOUCH_MODE_STORE, bltouch._mode_store);
+        CONFIRM_ITEM(MSG_BLTOUCH_MODE_STORE_5V, MSG_BLTOUCH_MODE_STORE_5V, MSG_BUTTON_CANCEL, bltouch.mode_conv_5V, nullptr, GET_TEXT(MSG_BLTOUCH_MODE_CHANGE));
+        CONFIRM_ITEM(MSG_BLTOUCH_MODE_STORE_OD, MSG_BLTOUCH_MODE_STORE_OD, MSG_BUTTON_CANCEL, bltouch.mode_conv_OD, nullptr, GET_TEXT(MSG_BLTOUCH_MODE_CHANGE));
+        ACTION_ITEM(MSG_BLTOUCH_MODE_ECHO, bltouch_report);
+      #endif
+      END_MENU();
+    }
+  #endif
 
   #endif  //   RS_ADDSETTINGS
 

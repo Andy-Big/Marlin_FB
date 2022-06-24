@@ -70,17 +70,33 @@
   #include "../../../module/tool_change.h"
 #endif
 
-#if ABL_USES_GRID
-  #if ENABLED(PROBE_Y_FIRST)
-    #define PR_OUTER_VAR  abl.meshCount.x
-    #define PR_OUTER_SIZE bedlevel_settings.bedlevel_points
-    #define PR_INNER_VAR  abl.meshCount.y
-    #define PR_INNER_SIZE bedlevel_settings.bedlevel_points
-  #else
-    #define PR_OUTER_VAR  abl.meshCount.y
-    #define PR_OUTER_SIZE bedlevel_settings.bedlevel_points
-    #define PR_INNER_VAR  abl.meshCount.x
-    #define PR_INNER_SIZE bedlevel_settings.bedlevel_points
+#if MOTHERBOARD != BOARD_MKS_ROBIN_NANO
+  #if ABL_USES_GRID
+    #if ENABLED(PROBE_Y_FIRST)
+      #define PR_OUTER_VAR  abl.meshCount.x
+      #define PR_OUTER_SIZE bedlevel_settings.bedlevel_points
+      #define PR_INNER_VAR  abl.meshCount.y
+      #define PR_INNER_SIZE bedlevel_settings.bedlevel_points
+    #else
+      #define PR_OUTER_VAR  abl.meshCount.y
+      #define PR_OUTER_SIZE bedlevel_settings.bedlevel_points
+      #define PR_INNER_VAR  abl.meshCount.x
+      #define PR_INNER_SIZE bedlevel_settings.bedlevel_points
+    #endif
+  #endif
+#else
+  #if ABL_USES_GRID
+    #if ENABLED(PROBE_Y_FIRST)
+      #define PR_OUTER_VAR  abl.meshCount.x
+      #define PR_OUTER_SIZE abl.grid_points.x
+      #define PR_INNER_VAR  abl.meshCount.y
+      #define PR_INNER_SIZE abl.grid_points.y
+    #else
+      #define PR_OUTER_VAR  abl.meshCount.y
+      #define PR_OUTER_SIZE abl.grid_points.y
+      #define PR_INNER_VAR  abl.meshCount.x
+      #define PR_INNER_SIZE abl.grid_points.x
+    #endif
   #endif
 #endif
 
@@ -233,9 +249,16 @@ G29_TYPE GcodeSuite::G29() {
     if (bedlevel_settings.bltouch_enabled && seenQ) G29_RETURN(false);
   #endif
 
-  const bool seenA = bedlevel_settings.bltouch_enabled ? parser.seen_test('A') : 0,
-         no_action = seenA || seenQ,
-              faux = ENABLED(DEBUG_LEVELING_FEATURE) && bedlevel_settings.bltouch_enabled ? parser.boolval('C') : no_action;
+  #if MOTHERBOARD != BOARD_MKS_ROBIN_NANO
+    const bool seenA = bedlevel_settings.bltouch_enabled ? parser.seen_test('A') : 0,
+          no_action = seenA || seenQ,
+                faux = ENABLED(DEBUG_LEVELING_FEATURE) && bedlevel_settings.bltouch_enabled ? parser.boolval('C') : no_action;
+  #else
+    const bool seenA = TERN0(PROBE_MANUALLY, parser.seen_test('A')),
+           no_action = seenA || seenQ,
+                faux = ENABLED(DEBUG_LEVELING_FEATURE) && DISABLED(PROBE_MANUALLY) ? parser.boolval('C') : no_action;
+  #endif
+
 
   if (!no_action && planner.leveling_active && parser.boolval('O')) { // Auto-level only if needed
     if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("> Auto-level not needed, skip");
@@ -265,8 +288,14 @@ G29_TYPE GcodeSuite::G29() {
 
     TERN_(HAS_MULTI_HOTEND, if (active_extruder) tool_change(0));
 
-    if (!bedlevel_settings.bltouch_enabled)
-      abl.abl_probe_index = -1;
+    #if MOTHERBOARD != BOARD_MKS_ROBIN_NANO
+      if (!bedlevel_settings.bltouch_enabled)
+        abl.abl_probe_index = -1;
+    #else
+      #if EITHER(PROBE_MANUALLY, AUTO_BED_LEVELING_LINEAR)
+        abl.abl_probe_index = -1;
+      #endif
+    #endif
 
     abl.reenable = planner.leveling_active;
 
@@ -289,21 +318,39 @@ G29_TYPE GcodeSuite::G29() {
                     ry = RAW_Y_POSITION(parser.linearval('Y', NAN));
         int8_t i = parser.byteval('I', -1), j = parser.byteval('J', -1);
 
-        if (!isnan(rx) && !isnan(ry)) {
-          // Get nearest i / j from rx / ry
-          i = (rx - bilinear_start.x + 0.5 * abl.gridSpacing.x) / abl.gridSpacing.x;
-          j = (ry - bilinear_start.y + 0.5 * abl.gridSpacing.y) / abl.gridSpacing.y;
-          LIMIT(i, 0, (bedlevel_settings.bedlevel_points) - 1);
-          LIMIT(j, 0, (bedlevel_settings.bedlevel_points) - 1);
-        }
-        if (WITHIN(i, 0, (bedlevel_settings.bedlevel_points) - 1) && WITHIN(j, 0, (bedlevel_settings.bedlevel_points) - 1)) {
-          set_bed_leveling_enabled(false);
-          z_values[i][j] = rz;
-          TERN_(ABL_BILINEAR_SUBDIVISION, bed_level_virt_interpolate());
-          TERN_(EXTENSIBLE_UI, ExtUI::onMeshUpdate(i, j, rz));
-          set_bed_leveling_enabled(abl.reenable);
-          if (abl.reenable) report_current_position();
-        }
+        #if MOTHERBOARD != BOARD_MKS_ROBIN_NANO
+          if (!isnan(rx) && !isnan(ry)) {
+            // Get nearest i / j from rx / ry
+            i = (rx - bilinear_start.x + 0.5 * abl.gridSpacing.x) / abl.gridSpacing.x;
+            j = (ry - bilinear_start.y + 0.5 * abl.gridSpacing.y) / abl.gridSpacing.y;
+            LIMIT(i, 0, (bedlevel_settings.bedlevel_points) - 1);
+            LIMIT(j, 0, (bedlevel_settings.bedlevel_points) - 1);
+          }
+          if (WITHIN(i, 0, (bedlevel_settings.bedlevel_points) - 1) && WITHIN(j, 0, (bedlevel_settings.bedlevel_points) - 1)) {
+            set_bed_leveling_enabled(false);
+            z_values[i][j] = rz;
+            TERN_(ABL_BILINEAR_SUBDIVISION, bed_level_virt_interpolate());
+            TERN_(EXTENSIBLE_UI, ExtUI::onMeshUpdate(i, j, rz));
+            set_bed_leveling_enabled(abl.reenable);
+            if (abl.reenable) report_current_position();
+          }
+        #else
+          if (!isnan(rx) && !isnan(ry)) {
+            // Get nearest i / j from rx / ry
+            i = (rx - bilinear_start.x + 0.5 * abl.gridSpacing.x) / abl.gridSpacing.x;
+            j = (ry - bilinear_start.y + 0.5 * abl.gridSpacing.y) / abl.gridSpacing.y;
+            LIMIT(i, 0, (GRID_MAX_POINTS_X) - 1);
+            LIMIT(j, 0, (GRID_MAX_POINTS_Y) - 1);
+          }
+          if (WITHIN(i, 0, (GRID_MAX_POINTS_X) - 1) && WITHIN(j, 0, (GRID_MAX_POINTS_Y) - 1)) {
+            set_bed_leveling_enabled(false);
+            z_values[i][j] = rz;
+            TERN_(ABL_BILINEAR_SUBDIVISION, bed_level_virt_interpolate());
+            TERN_(EXTENSIBLE_UI, ExtUI::onMeshUpdate(i, j, rz));
+            set_bed_leveling_enabled(abl.reenable);
+            if (abl.reenable) report_current_position();
+          }
+        #endif
         G29_RETURN(false);
       } // parser.seen_test('W')
 
@@ -325,7 +372,11 @@ G29_TYPE GcodeSuite::G29() {
       G29_RETURN(false);
     }
 
-    abl.dryrun = parser.boolval('D') || bedlevel_settings.bltouch_enabled ? no_action : 0;
+    #if MOTHERBOARD != BOARD_MKS_ROBIN_NANO
+      abl.dryrun = parser.boolval('D') || bedlevel_settings.bltouch_enabled ? no_action : 0;
+    #else
+      abl.dryrun = parser.boolval('D') || TERN0(PROBE_MANUALLY, no_action);
+    #endif
 
     #if ENABLED(AUTO_BED_LEVELING_LINEAR)
 
@@ -386,8 +437,13 @@ G29_TYPE GcodeSuite::G29() {
       }
 
       // Probe at the points of a lattice grid
-      abl.gridSpacing.set((abl.probe_position_rb.x - abl.probe_position_lf.x) / (bedlevel_settings.bedlevel_points - 1),
-                            (abl.probe_position_rb.y - abl.probe_position_lf.y) / (bedlevel_settings.bedlevel_points - 1));
+      #if MOTHERBOARD != BOARD_MKS_ROBIN_NANO
+        abl.gridSpacing.set((abl.probe_position_rb.x - abl.probe_position_lf.x) / (bedlevel_settings.bedlevel_points - 1),
+                              (abl.probe_position_rb.y - abl.probe_position_lf.y) / (bedlevel_settings.bedlevel_points - 1));
+      #else
+        abl.gridSpacing.set((abl.probe_position_rb.x - abl.probe_position_lf.x) / (abl.grid_points.x - 1),
+                              (abl.probe_position_rb.y - abl.probe_position_lf.y) / (abl.grid_points.y - 1));
+      #endif
 
     #endif // ABL_USES_GRID
 
@@ -430,8 +486,13 @@ G29_TYPE GcodeSuite::G29() {
     #endif
 
     #if ENABLED(AUTO_BED_LEVELING_BILINEAR)
-      if ((bedlevel_settings.bltouch_enabled ? !no_action : 1)
-        && (abl.gridSpacing != bilinear_grid_spacing || abl.probe_position_lf != bilinear_start)
+      #if MOTHERBOARD != BOARD_MKS_ROBIN_NANO
+        if ((bedlevel_settings.bltouch_enabled ? !no_action : 1)
+          && (abl.gridSpacing != bilinear_grid_spacing || abl.probe_position_lf != bilinear_start)
+      #else
+        if (TERN1(PROBE_MANUALLY, !no_action)
+          && (abl.gridSpacing != bilinear_grid_spacing || abl.probe_position_lf != bilinear_start)
+      #endif
       ) {
         // Reset grid to 0.0 or "not probed". (Also disables ABL)
         reset_bed_level();
@@ -447,151 +508,157 @@ G29_TYPE GcodeSuite::G29() {
 
   } // !g29_in_progress
 
-  if (!bedlevel_settings.bltouch_enabled)
-  {
-    // For manual probing, get the next index to probe now.
-    // On the first probe this will be incremented to 0.
-    if (!no_action) {
-      ++abl.abl_probe_index;
-      g29_in_progress = true;
-    }
+  #if (MOTHERBOARD != BOARD_MKS_ROBIN_NANO || ENABLED(PROBE_MANUALLY))
+    #if MOTHERBOARD != BOARD_MKS_ROBIN_NANO
+      if (!bedlevel_settings.bltouch_enabled)
+    #endif
+    {
+      // For manual probing, get the next index to probe now.
+      // On the first probe this will be incremented to 0.
+      if (!no_action) {
+        ++abl.abl_probe_index;
+        g29_in_progress = true;
+      }
 
-    // Abort current G29 procedure, go back to idle state
-    if (seenA && g29_in_progress) {
-      SERIAL_ECHOLNPGM("Manual G29 aborted");
-      SET_SOFT_ENDSTOP_LOOSE(false);
-      set_bed_leveling_enabled(abl.reenable);
-      g29_in_progress = false;
-      TERN_(LCD_BED_LEVELING, ui.wait_for_move = false);
-    }
+      // Abort current G29 procedure, go back to idle state
+      if (seenA && g29_in_progress) {
+        SERIAL_ECHOLNPGM("Manual G29 aborted");
+        SET_SOFT_ENDSTOP_LOOSE(false);
+        set_bed_leveling_enabled(abl.reenable);
+        g29_in_progress = false;
+        TERN_(LCD_BED_LEVELING, ui.wait_for_move = false);
+      }
 
-    // Query G29 status
-    if (abl.verbose_level || seenQ) {
-      SERIAL_ECHOPGM("Manual G29 ");
-      if (g29_in_progress)
-        SERIAL_ECHOLNPGM("point ", _MIN(abl.abl_probe_index + 1, abl.abl_points), " of ", abl.abl_points);
-      else
-        SERIAL_ECHOLNPGM("idle");
-    }
+      // Query G29 status
+      if (abl.verbose_level || seenQ) {
+        SERIAL_ECHOPGM("Manual G29 ");
+        if (g29_in_progress)
+          SERIAL_ECHOLNPGM("point ", _MIN(abl.abl_probe_index + 1, abl.abl_points), " of ", abl.abl_points);
+        else
+          SERIAL_ECHOLNPGM("idle");
+      }
 
-    if (no_action) G29_RETURN(false);
+      if (no_action) G29_RETURN(false);
 
-    if (abl.abl_probe_index == 0) {
-      // For the initial G29 S2 save software endstop state
-      SET_SOFT_ENDSTOP_LOOSE(true);
-      // Move close to the bed before the first point
-      do_blocking_move_to_z(0);
-    }
-    else {
+      if (abl.abl_probe_index == 0) {
+        // For the initial G29 S2 save software endstop state
+        SET_SOFT_ENDSTOP_LOOSE(true);
+        // Move close to the bed before the first point
+        do_blocking_move_to_z(0);
+      }
+      else {
 
-      #if EITHER(AUTO_BED_LEVELING_LINEAR, AUTO_BED_LEVELING_3POINT)
-        const uint16_t index = abl.abl_probe_index - 1;
-      #endif
+        #if EITHER(AUTO_BED_LEVELING_LINEAR, AUTO_BED_LEVELING_3POINT)
+          const uint16_t index = abl.abl_probe_index - 1;
+        #endif
 
-      // For G29 after adjusting Z.
-      // Save the previous Z before going to the next point
-      abl.measured_z = current_position.z;
+        // For G29 after adjusting Z.
+        // Save the previous Z before going to the next point
+        abl.measured_z = current_position.z;
 
-      #if ENABLED(AUTO_BED_LEVELING_LINEAR)
+        #if ENABLED(AUTO_BED_LEVELING_LINEAR)
 
-        abl.mean += abl.measured_z;
-        abl.eqnBVector[index] = abl.measured_z;
-        abl.eqnAMatrix[index + 0 * abl.abl_points] = abl.probePos.x;
-        abl.eqnAMatrix[index + 1 * abl.abl_points] = abl.probePos.y;
-        abl.eqnAMatrix[index + 2 * abl.abl_points] = 1;
+          abl.mean += abl.measured_z;
+          abl.eqnBVector[index] = abl.measured_z;
+          abl.eqnAMatrix[index + 0 * abl.abl_points] = abl.probePos.x;
+          abl.eqnAMatrix[index + 1 * abl.abl_points] = abl.probePos.y;
+          abl.eqnAMatrix[index + 2 * abl.abl_points] = 1;
 
-        incremental_LSF(&lsf_results, abl.probePos, abl.measured_z);
+          incremental_LSF(&lsf_results, abl.probePos, abl.measured_z);
+
+        #elif ENABLED(AUTO_BED_LEVELING_3POINT)
+
+          points[index].z = abl.measured_z;
+
+        #elif ENABLED(AUTO_BED_LEVELING_BILINEAR)
+
+          const float newz = abl.measured_z + abl.Z_offset;
+          z_values[abl.meshCount.x][abl.meshCount.y] = newz;
+          TERN_(EXTENSIBLE_UI, ExtUI::onMeshUpdate(abl.meshCount, newz));
+
+          if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM_P(PSTR("Save X"), abl.meshCount.x, SP_Y_STR, abl.meshCount.y, SP_Z_STR, abl.measured_z + abl.Z_offset);
+
+        #endif
+      }
+
+      //
+      // If there's another point to sample, move there with optional lift.
+      //
+
+      #if ABL_USES_GRID
+
+        // Skip any unreachable points
+        while (abl.abl_probe_index < abl.abl_points) {
+
+          // Set abl.meshCount.x, abl.meshCount.y based on abl.abl_probe_index, with zig-zag
+          PR_OUTER_VAR = abl.abl_probe_index / PR_INNER_SIZE;
+          PR_INNER_VAR = abl.abl_probe_index - (PR_OUTER_VAR * PR_INNER_SIZE);
+
+          // Probe in reverse order for every other row/column
+          const bool zig = (PR_OUTER_VAR & 1); // != ((PR_OUTER_SIZE) & 1);
+          if (zig) PR_INNER_VAR = (PR_INNER_SIZE - 1) - PR_INNER_VAR;
+
+          abl.probePos = abl.probe_position_lf + abl.gridSpacing * abl.meshCount.asFloat();
+
+          TERN_(AUTO_BED_LEVELING_LINEAR, abl.indexIntoAB[abl.meshCount.x][abl.meshCount.y] = abl.abl_probe_index);
+
+          // Keep looping till a reachable point is found
+          if (position_is_reachable(abl.probePos)) break;
+          ++abl.abl_probe_index;
+        }
+
+        // Is there a next point to move to?
+        if (abl.abl_probe_index < abl.abl_points) {
+          _manual_goto_xy(abl.probePos); // Can be used here too!
+          // Disable software endstops to allow manual adjustment
+          // If G29 is not completed, they will not be re-enabled
+          SET_SOFT_ENDSTOP_LOOSE(true);
+          G29_RETURN(false);
+        }
+        else {
+          // Leveling done! Fall through to G29 finishing code below
+          SERIAL_ECHOLNPGM("Grid probing done.");
+          // Re-enable software endstops, if needed
+          SET_SOFT_ENDSTOP_LOOSE(false);
+        }
 
       #elif ENABLED(AUTO_BED_LEVELING_3POINT)
 
-        points[index].z = abl.measured_z;
+        // Probe at 3 arbitrary points
+        if (abl.abl_probe_index < abl.abl_points) {
+          abl.probePos = xy_pos_t(points[abl.abl_probe_index]);
+          _manual_goto_xy(abl.probePos);
+          // Disable software endstops to allow manual adjustment
+          // If G29 is not completed, they will not be re-enabled
+          SET_SOFT_ENDSTOP_LOOSE(true);
+          G29_RETURN(false);
+        }
+        else {
 
-      #elif ENABLED(AUTO_BED_LEVELING_BILINEAR)
+          SERIAL_ECHOLNPGM("3-point probing done.");
 
-        const float newz = abl.measured_z + abl.Z_offset;
-        z_values[abl.meshCount.x][abl.meshCount.y] = newz;
-        TERN_(EXTENSIBLE_UI, ExtUI::onMeshUpdate(abl.meshCount, newz));
+          // Re-enable software endstops, if needed
+          SET_SOFT_ENDSTOP_LOOSE(false);
 
-        if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM_P(PSTR("Save X"), abl.meshCount.x, SP_Y_STR, abl.meshCount.y, SP_Z_STR, abl.measured_z + abl.Z_offset);
+          if (!abl.dryrun) {
+            vector_3 planeNormal = vector_3::cross(points[0] - points[1], points[2] - points[1]).get_normal();
+            if (planeNormal.z < 0) planeNormal *= -1;
+            planner.bed_level_matrix = matrix_3x3::create_look_at(planeNormal);
 
-      #endif
-    }
+            // Can't re-enable (on error) until the new grid is written
+            abl.reenable = false;
+          }
 
-    //
-    // If there's another point to sample, move there with optional lift.
-    //
-
-    #if ABL_USES_GRID
-
-      // Skip any unreachable points
-      while (abl.abl_probe_index < abl.abl_points) {
-
-        // Set abl.meshCount.x, abl.meshCount.y based on abl.abl_probe_index, with zig-zag
-        PR_OUTER_VAR = abl.abl_probe_index / PR_INNER_SIZE;
-        PR_INNER_VAR = abl.abl_probe_index - (PR_OUTER_VAR * PR_INNER_SIZE);
-
-        // Probe in reverse order for every other row/column
-        const bool zig = (PR_OUTER_VAR & 1); // != ((PR_OUTER_SIZE) & 1);
-        if (zig) PR_INNER_VAR = (PR_INNER_SIZE - 1) - PR_INNER_VAR;
-
-        abl.probePos = abl.probe_position_lf + abl.gridSpacing * abl.meshCount.asFloat();
-
-        TERN_(AUTO_BED_LEVELING_LINEAR, abl.indexIntoAB[abl.meshCount.x][abl.meshCount.y] = abl.abl_probe_index);
-
-        // Keep looping till a reachable point is found
-        if (position_is_reachable(abl.probePos)) break;
-        ++abl.abl_probe_index;
-      }
-
-      // Is there a next point to move to?
-      if (abl.abl_probe_index < abl.abl_points) {
-        _manual_goto_xy(abl.probePos); // Can be used here too!
-        // Disable software endstops to allow manual adjustment
-        // If G29 is not completed, they will not be re-enabled
-        SET_SOFT_ENDSTOP_LOOSE(true);
-        G29_RETURN(false);
-      }
-      else {
-        // Leveling done! Fall through to G29 finishing code below
-        SERIAL_ECHOLNPGM("Grid probing done.");
-        // Re-enable software endstops, if needed
-        SET_SOFT_ENDSTOP_LOOSE(false);
-      }
-
-    #elif ENABLED(AUTO_BED_LEVELING_3POINT)
-
-      // Probe at 3 arbitrary points
-      if (abl.abl_probe_index < abl.abl_points) {
-        abl.probePos = xy_pos_t(points[abl.abl_probe_index]);
-        _manual_goto_xy(abl.probePos);
-        // Disable software endstops to allow manual adjustment
-        // If G29 is not completed, they will not be re-enabled
-        SET_SOFT_ENDSTOP_LOOSE(true);
-        G29_RETURN(false);
-      }
-      else {
-
-        SERIAL_ECHOLNPGM("3-point probing done.");
-
-        // Re-enable software endstops, if needed
-        SET_SOFT_ENDSTOP_LOOSE(false);
-
-        if (!abl.dryrun) {
-          vector_3 planeNormal = vector_3::cross(points[0] - points[1], points[2] - points[1]).get_normal();
-          if (planeNormal.z < 0) planeNormal *= -1;
-          planner.bed_level_matrix = matrix_3x3::create_look_at(planeNormal);
-
-          // Can't re-enable (on error) until the new grid is written
-          abl.reenable = false;
         }
 
-      }
+      #endif // AUTO_BED_LEVELING_3POINT
 
-    #endif // AUTO_BED_LEVELING_3POINT
-
-  }
-  else // bedlevel_settings.bltouch_enabled
-  {
+    }
+  #else //ENABLED(PROBE_MANUALLY)
+    #if MOTHERBOARD != BOARD_MKS_ROBIN_NANO
+      else // bedlevel_settings.bltouch_enabled
+    #endif
+    {
     const ProbePtRaise raise_after = parser.boolval('E') ? PROBE_PT_STOW : PROBE_PT_RAISE;
 
     abl.measured_z = 0;
@@ -709,7 +776,8 @@ G29_TYPE GcodeSuite::G29() {
       set_bed_leveling_enabled(abl.reenable);
       abl.measured_z = NAN;
     }
-  } // !bedlevel_settings.bltouch_enabled
+  }
+  #endif // DISABLED(PROBE_MANUALLY)
   
 
   //
@@ -724,11 +792,18 @@ G29_TYPE GcodeSuite::G29() {
 
   if (DEBUGGING(LEVELING)) DEBUG_POS("> probing complete", current_position);
 
-  if (!bedlevel_settings.bltouch_enabled)
-  {
+  #if MOTHERBOARD != BOARD_MKS_ROBIN_NANO
+    if (!bedlevel_settings.bltouch_enabled)
+    {
+      g29_in_progress = false;
+      TERN_(LCD_BED_LEVELING, ui.wait_for_move = false);
+    }
+  #else
+    #if ENABLED(PROBE_MANUALLY)
     g29_in_progress = false;
     TERN_(LCD_BED_LEVELING, ui.wait_for_move = false);
-  }
+    #endif
+  #endif
 
   // Calculate leveling, print reports, correct the position
   if (!isnan(abl.measured_z)) {
