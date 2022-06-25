@@ -113,18 +113,17 @@
 ![BLtouch wiring](IMG/3dt_robin_12_connect.jpg)
 Выше на картинке показано как подключить 3D-touch. Цвета проводов здесь соответствуют 3D-touch от Triangle Labs. У других зондов цвета могут отличаться, необходимо будет сопоставить их назначение с указанными на картинке.
 Трехконтактный разъем:
-- коричневый: земля
-- красный: +5 В
-- желтый: SERVO
+- коричневый - земля
+- красный - +5 В
+- желтый - SERVO
+
 Двухконтактный разъем:
-- черный: земля
-- белый: SIGNAL OUT
-
-
+- черный - земля
+- белый - SIGNAL OUT
 
 ## Работа прошивки с командой **M73**
 Команда **M73** вставляется в g-код слайсером. В этой команде слайсер указывает текущий процент выполнения печати и оставшееся время в минутах. Как правило, слайсер оценивает эти параметры гораздо точнее принтера, поэтому предпочтительнее выводить процент печати и оставшееся время именно по данным из этой команды.
-Когда прошивка встречает эту команду в коде, она выводит данные из нее в прогресс печати и счетчик оставшегося времени. Если счетчик времени зеленого цвета - значит он получает данные их команды **M73**. Если слайсер не поддерживает эту команду или если по каким-то причинам прощивка не встречает эту команду в течении 3 минут, то она переходит на расчет прогресса и оставшегося времени по внутреннему методу - исходя из размера файла и количества уже считанных из него байт. В этом случае счетчик времени обычного серого цвета.
+Когда прошивка встречает эту команду в коде, она выводит данные из нее в прогресс печати и счетчик оставшегося времени. Если счетчик времени зеленого цвета - значит он получает данные из команды **M73**. Если слайсер не поддерживает эту команду или если по каким-то причинам прощивка не встречает эту команду в течении 3 минут, то она переходит на расчет прогресса и оставшегося времени по внутреннему методу - исходя из размера файла и количества уже считанных из него байт. В этом случае счетчик времени обычного серого цвета.
 
 ## История
 ### 19.02.2022
@@ -230,6 +229,8 @@ Based on [Marlin 3D Printer Firmware](https://github.com/MarlinFirmware/Marlin) 
 * [Display preview](#display-preview)
 * [Installation](#installation)
 * [WiFi setup](#wifi-setup)
+* [Connecting the Z probe BL-touch (3D-touch)](#connecting-the-Z-probe-BL-touch-3D-touch)
+* [Firmware operation with **M73** command](#firmware-operation-with-M73-command)
 * [Version history](#version-history)
 
 ## The main thing
@@ -315,6 +316,23 @@ Attention! Make sure your printer has a compatible control board!
 
 ## WiFi setup
 Unfortunately, the WiFi setting (hotspot name and password) has not been implemented yet. To set up WiFi, you need to do it in the native firmware (from MKS), after which you can update to this firmware. The settings will be saved.
+
+## Connecting the Z probe BL-touch (3D-touch)
+The 3D-touch or BL-touch probe can be connected to Robin Nano v1.3 and Robin Nano S v1.3 boards. On the red boards Robin Nano v1.1 (they are also Reborn 2.0), the BL-touch connection, unfortunately, is not provided.
+![BLtouch wiring](IMG/3dt_robin_12_connect.jpg)
+The picture above shows how to connect BL-touch. The wire colors here correspond to 3D-touch from Triangle Labs. For other probes, the colors may differ, it will be necessary to compare their purpose with those indicated in the picture.
+Three pin connector:
+- brown - earth
+- red - +5 V
+- yellow - SERVO
+
+Two-pin connector:
+- black - ground
+- white - SIGNAL OUT
+
+## Firmware operation with **M73** command
+The **M73** command is inserted into the g-code by the slicer. In this command, the slicer indicates the current percentage of printing completed and the remaining time in minutes. As a rule, the slicer estimates these parameters much more accurately than the printer, so it is preferable to display the print percentage and the remaining time based on the data from this command.
+When the firmware encounters this command in the code, it outputs data from it to the print progress and the remaining time counter. If the time counter is green, then it is receiving data from the **M73** command. If the slicer does not support this command or if for some reason the firmware does not meet this command within 3 minutes, then it switches to calculating the progress and the remaining time using the internal method - based on the file size and the number of bytes already read from it. In this case, the time counter is a normal gray color.
 
 ## Version history
 ### 02/19/2022
