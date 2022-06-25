@@ -128,21 +128,21 @@
 ## История
 ### 25.06.2022
 **v1.9**
-- \* добавлена поддержка 3D-touch (BL-touch), в доп. настройках его можно включить или выключить, по умолчанию выключен; по подключению 3D-touch смотрите выше в описании
-- \* парковка стола осталась прежней - по штатным концевикам
-- \* при выключенном 3D-touch все пункты, связанные с его работой, скрываются из меню (кроме возможности включить его)
-- \* добавлена настройка инверсии сигнала от 3D-touch
-- \* добавлена настройка количества точек сетки кривизны стола: 3х3, 4х4, 5х5 или 6х6
-- \* построение сетки кривизны стола происходит автоматически если 3D-touch включен в настройках, или вручную если 3D-touch выключен
-- \* активирован мастер определения смещения 3D-touch от сопла по Z
-- \* активирован мастер выравнивания углов стола с помощью 3D-touch (если он включен)
-- \* в мастере выравнивания углов добавлены подсказки в какую сторону и на сколько нужно подкрутить винт
+- **\*** добавлена поддержка 3D-touch (BL-touch), в доп. настройках его можно включить или выключить, по умолчанию выключен; по подключению 3D-touch смотрите выше в описании
+- **\*** парковка стола осталась прежней - по штатным концевикам
+- **\*** при выключенном 3D-touch все пункты, связанные с его работой, скрываются из меню (кроме возможности включить его)
+- **\*** добавлена настройка инверсии сигнала от 3D-touch
+- **\*** добавлена настройка количества точек сетки кривизны стола: 3х3, 4х4, 5х5 или 6х6
+- **\*** построение сетки кривизны стола происходит автоматически если 3D-touch включен в настройках, или вручную если 3D-touch выключен
+- **\*** активирован мастер определения смещения 3D-touch от сопла по Z
+- **\*** активирован мастер выравнивания углов стола с помощью 3D-touch (если он включен)
+- **\*** в мастере выравнивания углов добавлены подсказки в какую сторону и на сколько нужно подкрутить винт
 - [SkyAlexV](https://github.com/SkyAlexV)-ом в настройки термисторов добавлен термистор Formbot b3950 100k (61)
 - в настройках шагов на мм увеличено максимально возможное значение для оси Z с 1300 до 3200 шагов на мм
 - добавлена поддержка команды M73 с прогрессом печати и оставшимся временем; более подробное описание логики работы прошивки с этой командой смотрите выше в описании
 - убрана парковка по X/Y при прерывании печати пользователем, теперь принтер при прерывании печати просто поднимет сопло на 10 мм и остановится
 - при выключении принтера кнопокй PWC (при подключенном этом модуле) принтер выключается не сразу, а после остывания сопла
-\* - работает только с платами Robin Nano v1.3 и Robin Nano S v1.3. На красных платах Robin Nano v1.1 (они же - Reborn 2.0) подключение BL-touch, к сожалению, не предусмотрено.
+**\*** - работает только с платами Robin Nano v1.3 и Robin Nano S v1.3. На красных платах Robin Nano v1.1 (они же - Reborn 2.0) подключение BL-touch, к сожалению, не предусмотрено.
 
 
 ### 19.02.2022
@@ -354,6 +354,25 @@ The **M73** command is inserted into the g-code by the slicer. In this command, 
 When the firmware encounters this command in the code, it outputs data from it to the print progress and the remaining time counter. If the time counter is green, then it is receiving data from the **M73** command. If the slicer does not support this command or if for some reason the firmware does not meet this command within 3 minutes, then it switches to calculating the progress and the remaining time using the internal method - based on the file size and the number of bytes already read from it. In this case, the time counter is a normal gray color.
 
 ## Version history
+
+### 06/25/2022
+**v1.9**
+- **\*** Added support for BL-touch (3D-touch), you can turn it on or off in the advanced settings, it's off by default; for connecting BL-touch, see above in the description
+- **\*** table parking remains the same - by standard limit switches
+- **\*** when BL-touch is turned off, all items related to its operation are hidden from the menu (except for the ability to turn it on)
+- **\*** added BL-touch signal inversion setting
+- **\*** added setting for the number of bed level points: 3x3, 4x4, 5x5 or 6x6
+- **\*** bed level grid is built automatically if BL-touch is enabled in the settings, or manually if BL-touch is disabled
+- **\*** the wizard for determining the Z-offset BL-touch from the nozzle is activated
+- **\*** BL-touch table corner alignment wizard activated (if enabled)
+- **\*** in the corner alignment wizard added tips in which direction and how much to turn the screw
+- [SkyAlexV](https://github.com/SkyAlexV) added Formbot b3950 100k thermistor (61) to the thermistor settings
+- in the steps per mm settings, the maximum possible value for the Z axis has been increased from 1300 to 3200 steps per mm
+- added support for M73 command with print progress and remaining time; a more detailed description of the logic of the firmware with this command, see above in the description
+- removed parking along X/Y when printing is interrupted by the user, now the printer will simply raise the nozzle by 10 mm and stop when printing is interrupted
+- when the printer is turned off using the PWC button (with this module connected), the printer does not turn off immediately, but after the nozzle cools down
+**\*** - only works with Robin Nano v1.3 and Robin Nano S v1.3 boards. On the red Robin Nano v1.1 boards (they are also Reborn 2.0), the BL-touch connection, unfortunately, is not provided.
+
 ### 02/19/2022
 **v1.8**
 - fixed a bug in Marlin, due to which, if the calibration of the touch was unsuccessful, the display freeze on the screen with crosses in the upper left and lower right corners, not responding to pressing
