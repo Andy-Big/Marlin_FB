@@ -284,6 +284,9 @@ G29_TYPE GcodeSuite::G29() {
   /**
    * On the initial G29 fetch command parameters.
    */
+  if (DEBUGGING(LEVELING)) {
+    DEBUG_ECHOLNPGM("G29 init: g29_in_progress ", g29_in_progress);
+  }
   if (!g29_in_progress) {
 
     TERN_(HAS_MULTI_HOTEND, if (active_extruder) tool_change(0));
@@ -427,11 +430,11 @@ G29_TYPE GcodeSuite::G29() {
         abl.probe_position_rb.set(parser.linearval('R', x_max), parser.linearval('B', y_max));
       }
 
+      if (DEBUGGING(LEVELING)) {
+        DEBUG_ECHOLNPGM("G29 L: ", abl.probe_position_lf.x, ", R: ", abl.probe_position_rb.x,
+                            ", F: ", abl.probe_position_lf.y, ", B: ", abl.probe_position_rb.y);
+      }
       if (!probe.good_bounds(abl.probe_position_lf, abl.probe_position_rb)) {
-        if (DEBUGGING(LEVELING)) {
-          DEBUG_ECHOLNPGM("G29 L", abl.probe_position_lf.x, " R", abl.probe_position_rb.x,
-                              " F", abl.probe_position_lf.y, " B", abl.probe_position_rb.y);
-        }
         SERIAL_ECHOLNPGM("? (L,R,F,B) out of bounds.");
         G29_RETURN(false);
       }
@@ -440,6 +443,9 @@ G29_TYPE GcodeSuite::G29() {
       #if MOTHERBOARD != BOARD_MKS_ROBIN_NANO
         abl.gridSpacing.set((abl.probe_position_rb.x - abl.probe_position_lf.x) / (bedlevel_settings.bedlevel_points - 1),
                               (abl.probe_position_rb.y - abl.probe_position_lf.y) / (bedlevel_settings.bedlevel_points - 1));
+      if (DEBUGGING(LEVELING)) {
+          DEBUG_ECHOLNPGM("G29 gridSpacing.x: ", abl.gridSpacing.x, ", gridSpacing.y: ", abl.gridSpacing.y);
+      }
       #else
         abl.gridSpacing.set((abl.probe_position_rb.x - abl.probe_position_lf.x) / (abl.grid_points.x - 1),
                               (abl.probe_position_rb.y - abl.probe_position_lf.y) / (abl.grid_points.y - 1));
@@ -447,6 +453,9 @@ G29_TYPE GcodeSuite::G29() {
 
     #endif // ABL_USES_GRID
 
+    if (DEBUGGING(LEVELING)) {
+        DEBUG_ECHOLNPGM("G29 Auto Bed Leveling");
+    }
     if (abl.verbose_level > 0) {
       SERIAL_ECHOPGM("G29 Auto Bed Leveling");
       if (abl.dryrun) SERIAL_ECHOPGM(" (DRYRUN)");
@@ -518,6 +527,9 @@ G29_TYPE GcodeSuite::G29() {
       if (!no_action) {
         ++abl.abl_probe_index;
         g29_in_progress = true;
+      }
+      if (DEBUGGING(LEVELING)) {
+          DEBUG_ECHOLNPGM("G29 abl_probe_index: ", abl.abl_probe_index, "g29_in_progress: ", g29_in_progress);
       }
 
       // Abort current G29 procedure, go back to idle state
@@ -654,7 +666,8 @@ G29_TYPE GcodeSuite::G29() {
       #endif // AUTO_BED_LEVELING_3POINT
 
     }
-  #else //ENABLED(PROBE_MANUALLY)
+  #endif // MOTHERBOARD != BOARD_MKS_ROBIN_NANO || ENABLED(PROBE_MANUALLY)
+  #if (MOTHERBOARD != BOARD_MKS_ROBIN_NANO || DISABLED(PROBE_MANUALLY))
     #if MOTHERBOARD != BOARD_MKS_ROBIN_NANO
       else // bedlevel_settings.bltouch_enabled
     #endif

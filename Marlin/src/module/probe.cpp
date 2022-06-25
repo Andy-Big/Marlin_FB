@@ -672,7 +672,7 @@ float Probe::run_z_probe(const bool sanity_check/*=true*/) {
 
       // Probe downward slowly to find the bed
       if (try_to_probe(PSTR("SLOW"), z_probe_low_point, MMM_TO_MMS(Z_PROBE_FEEDRATE_SLOW),
-                       sanity_check, Z_CLEARANCE_MULTI_PROBE) ) return NAN;
+                       sanity_check, Z_CLEARANCE_MULTI_PROBE)) return NAN;
 
       TERN_(MEASURE_BACKLASH_WHEN_PROBING, backlash.measure_with_probe());
 

@@ -919,7 +919,7 @@
    *
    * Set the default state here, change with 'M401 S' or UI, use M500 to save, M502 to reset.
    */
-  //#define BLTOUCH_HS_MODE true
+  #define BLTOUCH_HS_MODE true
 
   // Safety: Enable voltage mode settings in the LCD menu.
   //#define BLTOUCH_LCD_VOLTAGE_MENU
@@ -2039,7 +2039,7 @@
  * the probe to be unable to reach any points.
  */
 #if PROBE_SELECTED && !IS_KINEMATIC
-  #define PROBING_MARGIN_LEFT PROBING_MARGIN + 10
+  #define PROBING_MARGIN_LEFT PROBING_MARGIN
   #define PROBING_MARGIN_RIGHT PROBING_MARGIN
   #define PROBING_MARGIN_FRONT PROBING_MARGIN
   #define PROBING_MARGIN_BACK PROBING_MARGIN + 10
