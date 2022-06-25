@@ -123,7 +123,7 @@
 
 ## Работа прошивки с командой **M73**
 Команда **M73** вставляется в g-код слайсером. В этой команде слайсер указывает текущий процент выполнения печати и оставшееся время в минутах. Как правило, слайсер оценивает эти параметры гораздо точнее принтера, поэтому предпочтительнее выводить процент печати и оставшееся время именно по данным из этой команды.
-Когда прошивка встречает эту команду в коде, она выводит данные из нее в прогресс печати и счетчик оставшегося времени. Если счетчик времени зеленого цвета - значит он получает данные их команды **M73**. Если слайсер не поддерживает эту команду или если по каким-то причинам прощивка не встречает эту команду в течении 3 минут, то она переходит на расчет прогресса и оставшегося времени по внутреннему методу - исходя из размера файла и количества уже считанных из него байт. В этом случае счетчик времени обычного серого цвета.
+Когда прошивка встречает эту команду в коде, она выводит данные из нее в прогресс печати и счетчик оставшегося времени. Если счетчик времени зеленого цвета - значит он получает данные из команды **M73**. Если слайсер не поддерживает эту команду или если по каким-то причинам прощивка не встречает эту команду в течении 3 минут, то она переходит на расчет прогресса и оставшегося времени по внутреннему методу - исходя из размера файла и количества уже считанных из него байт. В этом случае счетчик времени обычного серого цвета.
 
 ## История
 ### 19.02.2022
@@ -332,7 +332,7 @@ Two-pin connector:
 
 ## Firmware operation with **M73** command
 The **M73** command is inserted into the g-code by the slicer. In this command, the slicer indicates the current percentage of printing completed and the remaining time in minutes. As a rule, the slicer estimates these parameters much more accurately than the printer, so it is preferable to display the print percentage and the remaining time based on the data from this command.
-When the firmware encounters this command in the code, it outputs data from it to the print progress and the remaining time counter. If the time counter is green, then it is receiving data from their **M73** command. If the slicer does not support this command or if for some reason the firmware does not meet this command within 3 minutes, then it switches to calculating the progress and the remaining time using the internal method - based on the file size and the number of bytes already read from it. In this case, the time counter is a normal gray color.
+When the firmware encounters this command in the code, it outputs data from it to the print progress and the remaining time counter. If the time counter is green, then it is receiving data from the **M73** command. If the slicer does not support this command or if for some reason the firmware does not meet this command within 3 minutes, then it switches to calculating the progress and the remaining time using the internal method - based on the file size and the number of bytes already read from it. In this case, the time counter is a normal gray color.
 
 ## Version history
 ### 02/19/2022
