@@ -36,6 +36,7 @@ const tImage NoLogo                 = { nullptr, 0, 0, NOCOLORS };
   const tImage MarlinLogo195x59x16  = { (void *)marlin_logo_195x59x16,  195,  59, HIGHCOLOR };
   const tImage MarlinLogo320x240x16 = { (void *)marlin_logo_320x240x16, 320, 240, HIGHCOLOR };
   const tImage MarlinLogo480x320x16 = { (void *)marlin_logo_480x320x16, 480, 320, HIGHCOLOR };
+  const tImage MarlinRBLogo220x190x16  = { (void *)bootscreen_marlin_rb_220x190x16,  220,  190, HIGHCOLOR };
 #endif
 const tImage Background320x30x16    = { (void *)background_320x30x16, 320, 30, HIGHCOLOR };
 
@@ -80,7 +81,11 @@ const tImage Leveling_32x32x4       = { (void *)leveling_32x32x4, 32, 32, GREYSC
 const tImage Slider8x16x4           = { (void *)slider_8x16x4, 8, 16, GREYSCALE4 };
 
 const tImage Images[imgCount] = {
-  TERN(SHOW_BOOTSCREEN, TERN(BOOT_MARLIN_LOGO_SMALL, MarlinLogo195x59x16, MARLIN_LOGO_FULL_SIZE), NoLogo),
+  #if ENABLED(BOOT_MARLIN_RB_LOGO)
+    MarlinRBLogo220x190x16,
+  #else
+    TERN(SHOW_BOOTSCREEN, TERN(BOOT_MARLIN_LOGO_SMALL, MarlinLogo195x59x16, MARLIN_LOGO_FULL_SIZE), NoLogo),
+  #endif
   #if ENABLED(RS_STYLE_COLOR_UI)
     FeedRate_64x64x4,
     FlowRate_64x64x4,

@@ -3063,4 +3063,5 @@ EEPROM_W25Q
 // Additional settings in EEPROM
 #if ENABLED(RS_STYLE_COLOR_UI)
   #define RS_ADDSETTINGS
+  #define BOOT_MARLIN_RB_LOGO
 #endif

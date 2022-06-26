@@ -32,6 +32,7 @@ extern const uint16_t marlin_logo_195x59x16[];
 extern const uint16_t marlin_logo_320x240x16[];
 extern const uint16_t marlin_logo_480x320x16[];
 extern const uint16_t background_320x30x16[];
+extern const uint16_t bootscreen_marlin_rb_220x190x16[];
 
 extern const uint8_t flowrate_64x64x4[];
 extern const uint8_t feedrate_64x64x4[];

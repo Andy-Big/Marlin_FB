@@ -73,12 +73,17 @@ void MarlinUI::tft_idle() {
       #define BOOT_LOGO_H  59
       #define SITE_URL_Y (TFT_HEIGHT - 55)    // must be enough for 2 lines
       tft.set_background(COLOR_BACKGROUND);
+    #elif ENABLED(BOOT_MARLIN_RB_LOGO)
+      #define BOOT_LOGO_W 220   // MarlinLogo195x59x16
+      #define BOOT_LOGO_H 190
+      #define SITE_URL_Y (TFT_HEIGHT - 55)    // must be enough for 2 lines
+      tft.set_background(COLOR_BACKGROUND);
     #else
       #define BOOT_LOGO_W TFT_WIDTH   // MarlinLogo480x320x16
       #define BOOT_LOGO_H TFT_HEIGHT
       #define SITE_URL_Y (TFT_HEIGHT - 90)
     #endif
-    tft.add_image((TFT_WIDTH - BOOT_LOGO_W) / 2, (TFT_HEIGHT - BOOT_LOGO_H) / 2, imgBootScreen);
+    tft.add_image((TFT_WIDTH - BOOT_LOGO_W) / 2, (TFT_HEIGHT - BOOT_LOGO_H) / 2 - 20, imgBootScreen);
     
     tft_string.set(Language_en::MSG_MARLIN);
     tft_string.add(" v");
