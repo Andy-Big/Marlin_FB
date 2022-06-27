@@ -89,10 +89,17 @@ void MarlinUI::tft_idle() {
     tft_string.add(" v");
     tft_string.add(SHORT_REBORN_VERSION);
     tft.add_text(tft_string.center(TFT_WIDTH), SITE_URL_Y, COLOR_WEBSITE_URL, tft_string);
+/*
     #ifdef WEBSITE_URL
       tft_string.set(WEBSITE_URL);
       tft.add_text(tft_string.center(TFT_WIDTH), SITE_URL_Y+25, COLOR_WEBSITE_URL, tft_string);
     #endif
+*/
+    tft_string.set("by AndyBig");
+    tft.set_font(SMALL_FONT_NAME);
+    tft.add_text(tft_string.center(TFT_WIDTH), SITE_URL_Y+25, COLOR_WEBSITE_URL, tft_string);
+    tft.set_font(MENU_FONT_NAME);
+
     tft.queue.sync();
   }
 

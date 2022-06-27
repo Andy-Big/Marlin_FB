@@ -44,6 +44,7 @@
   #define PROGRESS_FONT_NAME  Tahoma36bold_num
   #define MENU_FONT_NAME      Tahoma18
   #define SYMBOLS_FONT_NAME   Helvetica18_symbols
+  #define SMALL_FONT_NAME     Tahoma14
   #define MENU_ITEM_HEIGHT    43
   #define FONT_LINE_HEIGHT    34
 #elif HAS_UI_480x272
