@@ -99,6 +99,9 @@ void MarlinUI::tft_idle() {
     tft.set_font(SMALL_FONT_NAME);
     tft.add_text(tft_string.center(TFT_WIDTH), SITE_URL_Y+25, COLOR_WEBSITE_URL, tft_string);
     tft.set_font(MENU_FONT_NAME);
+    #ifdef SYMBOLS_FONT_NAME
+      tft.add_glyphs(SYMBOLS_FONT_NAME);
+    #endif
 
     tft.queue.sync();
   }
@@ -109,6 +112,8 @@ void MarlinUI::tft_idle() {
   }
 
 #endif
+
+
 
 void MarlinUI::draw_kill_screen() {
   tft.queue.reset();
@@ -134,6 +139,8 @@ void MarlinUI::draw_kill_screen() {
 
   tft.queue.sync();
 }
+
+
 
 void draw_heater_status(uint16_t x, uint16_t y, const int8_t Heater) {
   MarlinImage image = imgHotEnd;
@@ -266,6 +273,8 @@ void draw_heater_status(uint16_t x, uint16_t y, const int8_t Heater) {
 #endif  // #if ENABLED(RS_STYLE_COLOR_UI)
 }
 
+
+
 void draw_fan_status(uint16_t x, uint16_t y, const bool blink) {
   uint8_t fanSpeed = thermalManager.fan_speed[0];
   MarlinImage image;
@@ -311,6 +320,8 @@ void draw_fan_status(uint16_t x, uint16_t y, const bool blink) {
 
 }
 
+
+
 #if ENABLED(RS_STYLE_COLOR_UI)
   void draw_feedrate_status(uint16_t x, uint16_t y) {
     MarlinImage image = imgFeedRate;
@@ -329,6 +340,8 @@ void draw_fan_status(uint16_t x, uint16_t y, const bool blink) {
 
   }
 
+
+
   void draw_flowrate_status(uint16_t x, uint16_t y) {
     MarlinImage image = imgFlowRate;
 
@@ -346,6 +359,7 @@ void draw_fan_status(uint16_t x, uint16_t y, const bool blink) {
 
   }
 #endif  // RS_STYLE_COLOR_UI
+
 
 
 void MarlinUI::draw_status_screen() {

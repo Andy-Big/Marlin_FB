@@ -60,6 +60,7 @@ if pioutil.is_pio_build():
 			if os.path.exists(firmware):
 			    os.remove(firmware)
 			os.rename(target[0].path, firmware)
+			target[0] = firmware
 
 #			import shutil
 #			shutil.copy(target[0].path, firmware)

@@ -32,30 +32,30 @@
 #endif
 
 
-#if ENABLED(RS_ADDSETTINGS)
-  typedef struct
-  {
-      bool  poweroff_at_printed;
-      bool  sscreen_need_draw;
-  } autooff_settings_t;
-  extern autooff_settings_t autooff_settings;
+typedef struct
+{
+    bool  poweroff_at_printed;
+    bool  sscreen_need_draw;
+} autooff_settings_t;
+extern autooff_settings_t autooff_settings;
 
-  typedef struct
-  {
-      bool  psu_enabled;
-  } psu_settings_t;
-  extern psu_settings_t psu_settings;
+typedef struct
+{
+    bool  psu_enabled;
+} psu_settings_t;
+extern psu_settings_t psu_settings;
 
-  #if MOTHERBOARD != BOARD_MKS_ROBIN_NANO
-    typedef struct
+typedef struct
+{
+    bool      bltouch_enabled;
+    struct
     {
-        bool      bltouch_enabled;
-        uint8_t   bedlevel_points;
-    } bedlevel_settings_t;
-    extern bedlevel_settings_t bedlevel_settings;
-  #endif
+      uint8_t   x;
+      uint8_t   y;
+    } bedlevel_points;
+} bedlevel_settings_t;
+extern bedlevel_settings_t bedlevel_settings;
 
-#endif  // RS_ADDSETTINGS
 
 class MarlinSettings {
   public:

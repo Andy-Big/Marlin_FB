@@ -53,33 +53,18 @@ void GcodeSuite::M421() {
              hasQ = !hasZ && parser.seenval('Q');
 
   if (hasZ || hasQ) {
-    #if MOTHERBOARD != BOARD_MKS_ROBIN_NANO
-      if (WITHIN(ix, -1, bedlevel_settings.bedlevel_points - 1) && WITHIN(iy, -1, bedlevel_settings.bedlevel_points - 1)) {
-        const float zval = parser.value_linear_units();
-        uint8_t sx = ix >= 0 ? ix : 0, ex = ix >= 0 ? ix : bedlevel_settings.bedlevel_points - 1,
-                sy = iy >= 0 ? iy : 0, ey = iy >= 0 ? iy : bedlevel_settings.bedlevel_points - 1;
-        LOOP_S_LE_N(x, sx, ex) {
-          LOOP_S_LE_N(y, sy, ey) {
-            z_values[x][y] = zval + (hasQ ? z_values[x][y] : 0);
-            TERN_(EXTENSIBLE_UI, ExtUI::onMeshUpdate(x, y, z_values[x][y]));
-          }
+    if (WITHIN(ix, -1, bedlevel_settings.bedlevel_points.x - 1) && WITHIN(iy, -1, bedlevel_settings.bedlevel_points.y - 1)) {
+      const float zval = parser.value_linear_units();
+      uint8_t sx = ix >= 0 ? ix : 0, ex = ix >= 0 ? ix : bedlevel_settings.bedlevel_points.x - 1,
+              sy = iy >= 0 ? iy : 0, ey = iy >= 0 ? iy : bedlevel_settings.bedlevel_points.y - 1;
+      LOOP_S_LE_N(x, sx, ex) {
+        LOOP_S_LE_N(y, sy, ey) {
+          z_values[x][y] = zval + (hasQ ? z_values[x][y] : 0);
+          TERN_(EXTENSIBLE_UI, ExtUI::onMeshUpdate(x, y, z_values[x][y]));
         }
-        TERN_(ABL_BILINEAR_SUBDIVISION, bed_level_virt_interpolate());
       }
-    #else
-      if (WITHIN(ix, -1, GRID_MAX_POINTS_X - 1) && WITHIN(iy, -1, GRID_MAX_POINTS_Y - 1)) {
-        const float zval = parser.value_linear_units();
-        uint8_t sx = ix >= 0 ? ix : 0, ex = ix >= 0 ? ix : GRID_MAX_POINTS_X - 1,
-                sy = iy >= 0 ? iy : 0, ey = iy >= 0 ? iy : GRID_MAX_POINTS_Y - 1;
-        LOOP_S_LE_N(x, sx, ex) {
-          LOOP_S_LE_N(y, sy, ey) {
-            z_values[x][y] = zval + (hasQ ? z_values[x][y] : 0);
-            TERN_(EXTENSIBLE_UI, ExtUI::onMeshUpdate(x, y, z_values[x][y]));
-          }
-        }
-        TERN_(ABL_BILINEAR_SUBDIVISION, bed_level_virt_interpolate());
-      }
-    #endif
+      TERN_(ABL_BILINEAR_SUBDIVISION, bed_level_virt_interpolate());
+    }
     else
       SERIAL_ERROR_MSG(STR_ERR_MESH_XY);
   }

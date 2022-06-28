@@ -457,31 +457,30 @@ inline void manage_inactivity(const bool no_stepper_sleep=false) {
 
   #if HAS_KILL
 
-    // Check if the kill button was pressed and wait just in case it was an accidental
-    // key kill key press
-    // -------------------------------------------------------------------------------
-    static int killCount = 0;   // make the inactivity button a bit less responsive
-    const int KILL_DELAY = 750;
-    if (kill_state())
-      killCount++;
-    else if (killCount > 0)
-      killCount--;
+    if (psu_settings.psu_enabled)
+    {
+      // Check if the kill button was pressed and wait just in case it was an accidental
+      // key kill key press
+      // -------------------------------------------------------------------------------
+      static int killCount = 0;   // make the inactivity button a bit less responsive
+      const int KILL_DELAY = 750;
+      if (kill_state())
+        killCount++;
+      else if (killCount > 0)
+        killCount--;
 
-    // Exceeded threshold and we can confirm that it was not accidental
-    // KILL the machine
-    // ----------------------------------------------------------------
-    if (killCount >= KILL_DELAY) {
-      SERIAL_ERROR_MSG(STR_KILL_BUTTON);
+      // Exceeded threshold and we can confirm that it was not accidental
+      // KILL the machine
+      // ----------------------------------------------------------------
+      if (killCount >= KILL_DELAY) {
+        SERIAL_ERROR_MSG(STR_KILL_BUTTON);
 
-    #if ENABLED(RS_ADDSETTINGS)
-      autooff_settings.sscreen_need_draw = true;
-      autooff_settings.poweroff_at_printed = false;
-      thermalManager.disable_all_heaters();
-      stepper.disable_all_steppers();
-      ui.goto_screen(ui.poweroff_wait_screen);
-    #else
-      kill();
-    #endif
+        autooff_settings.sscreen_need_draw = true;
+        autooff_settings.poweroff_at_printed = false;
+        thermalManager.disable_all_heaters();
+        stepper.disable_all_steppers();
+        ui.goto_screen(ui.poweroff_wait_screen);
+      }
     }
   #endif
 
@@ -925,10 +924,8 @@ void minkill(const bool steppers_off/*=false*/) {
   steppers_off ? stepper.disable_all_steppers() : stepper.disable_e_steppers();
 
   #if ENABLED(PSU_CONTROL)
-    #if ENABLED(RS_ADDSETTINGS)
-      if (psu_settings.psu_enabled == true)
-    #endif
-        powerManager.power_off();
+    if (psu_settings.psu_enabled == true)
+    powerManager.power_off();
   #endif
 
   TERN_(HAS_SUICIDE, suicide());

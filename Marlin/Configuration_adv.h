@@ -456,18 +456,14 @@
 
 // The number of consecutive low temperature errors that can occur
 // before a min_temp_error is triggered. (Shouldn't be more than 10.)
-#if ENABLED(RS_ADDSETTINGS)
-  #define MAX_CONSECUTIVE_LOW_TEMPERATURE_ERROR_ALLOWED 5
-#endif
+#define MAX_CONSECUTIVE_LOW_TEMPERATURE_ERROR_ALLOWED 5
 
 // The number of milliseconds a hotend will preheat before starting to check
 // the temperature. This value should NOT be set to the time it takes the
 // hot end to reach the target temperature, but the time it takes to reach
 // the minimum temperature your thermistor can read. The lower the better/safer.
 // This shouldn't need to be more than 30 seconds (30000)
-#if ENABLED(RS_ADDSETTINGS)
-  #define MILLISECONDS_PREHEAT_TIME 15000
-#endif
+#define MILLISECONDS_PREHEAT_TIME 15000
 
 // @section extruder
 
@@ -1362,7 +1358,7 @@
 
 #if EITHER(HAS_DISPLAY, DWIN_CREALITY_LCD_ENHANCED)
   // The timeout (in ms) to return to the status screen from sub-menus
-  //#define LCD_TIMEOUT_TO_STATUS 15000
+  #define LCD_TIMEOUT_TO_STATUS 30000
 
   #if ENABLED(SHOW_BOOTSCREEN)
     #define BOOTSCREEN_TIMEOUT 2000      // (ms) Total Duration to display the boot screen(s)

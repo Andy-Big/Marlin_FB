@@ -108,21 +108,13 @@ void menu_info_thermistors() {
   #if HAS_EXTRUDERS
     #define THERMISTOR_ID TEMP_SENSOR_0
     #include "../thermistornames.h"
-    #if ENABLED(RS_ADDSETTINGS)
-      char tname[64];
-      strcpy(tname, STR_E0);
-      strcat(tname, ": ");
-      strcat(tname, thermistor_types[thermistors_data.heater_type[0]].name);
-      STATIC_ITEM_P(PSTR(tname), SS_INVERT);
-    #else
-      STATIC_ITEM_P(PSTR(STR_E0 ": " THERMISTOR_NAME), SS_INVERT);
-    #endif  // RS_ADDSETTINGS
+    char tname[64];
+    strcpy(tname, STR_E0);
+    strcat(tname, ": ");
+    strcat(tname, thermistor_types[thermistors_data.heater_type[0]].name);
+    STATIC_ITEM_P(PSTR(tname), SS_INVERT);
     PSTRING_ITEM(MSG_INFO_MIN_TEMP, STRINGIFY(HEATER_0_MINTEMP), SS_LEFT);
-    #if ENABLED(RS_ADDSETTINGS)
-      PSTRING_ITEM(MSG_INFO_MAX_TEMP, STRINGIFY(thermistors_data.max_temp[0]), SS_LEFT);
-    #else
-      PSTRING_ITEM(MSG_INFO_MAX_TEMP, STRINGIFY(HEATER_0_MAXTEMP), SS_LEFT);
-    #endif
+    PSTRING_ITEM(MSG_INFO_MAX_TEMP, i16tostr4signrj(thermistor_types[thermistors_data.heater_type[0]].max_temp), SS_LEFT);
     STATIC_ITEM(TERN(WATCH_HOTENDS, MSG_INFO_RUNAWAY_ON, MSG_INFO_RUNAWAY_OFF), SS_LEFT);
   #endif
 
@@ -130,21 +122,13 @@ void menu_info_thermistors() {
     #undef THERMISTOR_ID
     #define THERMISTOR_ID TEMP_SENSOR_1
     #include "../thermistornames.h"
-    #if ENABLED(RS_ADDSETTINGS)
-      char tname[64];
-      strcpy(tname, LCD_STR_E1);
-      strcat(tname, ": ");
-      strcat(tname, thermistor_types[thermistors_data.heater_type[1]].name);
-      STATIC_ITEM_P(PSTR(tname), SS_INVERT);
-    #else
-      STATIC_ITEM_P(PSTR(STR_E1 ": " THERMISTOR_NAME), SS_INVERT);
-    #endif  // RS_ADDSETTINGS
+    char tname[64];
+    strcpy(tname, LCD_STR_E1);
+    strcat(tname, ": ");
+    strcat(tname, thermistor_types[thermistors_data.heater_type[1]].name);
+    STATIC_ITEM_P(PSTR(tname), SS_INVERT);
     PSTRING_ITEM(MSG_INFO_MIN_TEMP, STRINGIFY(HEATER_1_MINTEMP), SS_LEFT);
-    #if ENABLED(RS_ADDSETTINGS)
-      PSTRING_ITEM(MSG_INFO_MAX_TEMP, STRINGIFY(thermistors_data.max_temp[1]), SS_LEFT);
-    #else
-      PSTRING_ITEM(MSG_INFO_MAX_TEMP, STRINGIFY(HEATER_1_MAXTEMP), SS_LEFT);
-    #endif
+    PSTRING_ITEM(MSG_INFO_MAX_TEMP, i16tostr4signrj(thermistor_types[thermistors_data.heater_type[1]].max_temp), SS_LEFT);
     STATIC_ITEM(TERN(WATCH_HOTENDS, MSG_INFO_RUNAWAY_ON, MSG_INFO_RUNAWAY_OFF), SS_LEFT);
   #endif
 
@@ -212,15 +196,11 @@ void menu_info_thermistors() {
     #undef THERMISTOR_ID
     #define THERMISTOR_ID TEMP_SENSOR_BED
     #include "../thermistornames.h"
-    #if ENABLED(RS_ADDSETTINGS)
-      strcpy(tname, "BED: ");
-      strcat(tname, thermistor_types[thermistors_data.bed_type].name);
-      STATIC_ITEM_P(PSTR(tname), SS_INVERT);
-    #else
-      STATIC_ITEM_P(PSTR("BED: " THERMISTOR_NAME), SS_INVERT);
-    #endif
+    strcpy(tname, "BED: ");
+    strcat(tname, thermistor_types[thermistors_data.bed_type].name);
+    STATIC_ITEM_P(PSTR(tname), SS_INVERT);
     PSTRING_ITEM(MSG_INFO_MIN_TEMP, STRINGIFY(BED_MINTEMP), SS_LEFT);
-    PSTRING_ITEM(MSG_INFO_MAX_TEMP, STRINGIFY(BED_MAXTEMP), SS_LEFT);
+    PSTRING_ITEM(MSG_INFO_MAX_TEMP, i16tostr4signrj(thermistor_types[thermistors_data.bed_type].max_temp), SS_LEFT);
     STATIC_ITEM(TERN(WATCH_BED, MSG_INFO_RUNAWAY_ON, MSG_INFO_RUNAWAY_OFF), SS_LEFT);
   #endif
 

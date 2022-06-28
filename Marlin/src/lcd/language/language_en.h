@@ -792,46 +792,49 @@ namespace Language_en {
   LSTR MSG_WIFI_ADDRESS                   = _UxGT("IP Address");
   
   #if ENABLED(RS_STYLE_COLOR_UI)
-    #if ENABLED(RS_ADDSETTINGS)
-      LSTR MSG_AXIS_DIRECTION               = _UxGT("Steppers inversion");
-      LSTR MSG_X_INVERT                     = STR_X _UxGT(" Invert");
-      LSTR MSG_Y_INVERT                     = STR_Y _UxGT(" Invert");
-      LSTR MSG_Z1_INVERT                    = STR_Z _UxGT(" Invert");
-      LSTR MSG_Z2_INVERT                    = STR_Z2 _UxGT(" Invert");
-      LSTR MSG_E_INVERT                     = STR_E _UxGT(" Invert");
+    LSTR MSG_AXIS_DIRECTION               = _UxGT("Steppers inversion");
+    LSTR MSG_X_INVERT                     = STR_X _UxGT(" Invert");
+    LSTR MSG_Y_INVERT                     = STR_Y _UxGT(" Invert");
+    LSTR MSG_Z1_INVERT                    = STR_Z _UxGT(" Invert");
+    LSTR MSG_Z2_INVERT                    = STR_Z2 _UxGT(" Invert");
+    LSTR MSG_E_INVERT                     = STR_E _UxGT(" Invert");
 
-      LSTR MSG_POWEROFF_AT_END              = _UxGT("Power off at print done");
-      LSTR MSG_MENU_THERMISTORS             = _UxGT("Thermistors types");
-      LSTR MSG_HOTEND_AUTO_FAN              = _UxGT("Hotend fan autoenable");
-      LSTR MSG_PSU_MODULE_ON                = _UxGT("PSU module connected");
-      LSTR MSG_BLTOUCH_SETTINGS             = _UxGT("BL-touch settings");
-      LSTR MSG_BLTOUCH_ON                   = _UxGT("BL-touch connected");
+    LSTR MSG_POWEROFF_AT_END              = _UxGT("Power off at print done");
+    LSTR MSG_MENU_THERMISTORS             = _UxGT("Thermistors types");
+    LSTR MSG_HOTEND_AUTO_FAN              = _UxGT("Hotend fan autoenable");
+    LSTR MSG_PSU_MODULE_ON                = _UxGT("PSU module connected");
+    LSTR MSG_BEDLEVEL_SETTINGS             = _UxGT("Bed leveling settings");
+    LSTR MSG_BLTOUCH_ON                   = _UxGT("BL-touch connected");
 
-      LSTR MSG_ENDSTOP_INVERTING            = _UxGT("Endstops inverting");
-      LSTR MSG_X_MIN_INVERTING              = _UxGT("X-Min inverting");
-      LSTR MSG_X_MAX_INVERTING              = _UxGT("X-Max inverting");
-      LSTR MSG_Y_MIN_INVERTING              = _UxGT("Y-Min inverting");
-      LSTR MSG_Y_MAX_INVERTING              = _UxGT("Y-Max inverting");
-      LSTR MSG_Z_MIN_INVERTING              = _UxGT("Z-Min inverting");
-      LSTR MSG_Z_MAX_INVERTING              = _UxGT("Z-Max inverting");
-      LSTR MSG_Z2_MIN_INVERTING             = _UxGT("Z2-Min inverting");
-      LSTR MSG_Z2_MAX_INVERTING             = _UxGT("Z2-Max inverting");
-      LSTR MSG_Z_MIN_PROBE_INVERTING        = _UxGT("BL-touch inverting");
+    LSTR MSG_ENDSTOP_INVERTING            = _UxGT("Endstops inverting");
+    LSTR MSG_X_MIN_INVERTING              = _UxGT("X-Min inverting");
+    LSTR MSG_X_MAX_INVERTING              = _UxGT("X-Max inverting");
+    LSTR MSG_Y_MIN_INVERTING              = _UxGT("Y-Min inverting");
+    LSTR MSG_Y_MAX_INVERTING              = _UxGT("Y-Max inverting");
+    LSTR MSG_Z_MIN_INVERTING              = _UxGT("Z-Min inverting");
+    LSTR MSG_Z_MAX_INVERTING              = _UxGT("Z-Max inverting");
+    LSTR MSG_Z2_MIN_INVERTING             = _UxGT("Z2-Min inverting");
+    LSTR MSG_Z2_MAX_INVERTING             = _UxGT("Z2-Max inverting");
+    LSTR MSG_Z_MIN_PROBE_INVERTING        = _UxGT("BL-touch inverting");
 
-      LSTR MSG_LEVEL_BED_AUTO               = _UxGT("Level Bed auto");
-      LSTR MSG_LEVEL_BED_MANUAL             = _UxGT("Level Bed manual");
-      LSTR MSG_LEVEL_BED_POINTS             = _UxGT("Bed leveling points");
-      LSTR MSG_BLTOUCH_TOOLS                = _UxGT("BL-touch tools");
+    LSTR MSG_LEVEL_BED_AUTO               = _UxGT("Level Bed auto");
+    LSTR MSG_LEVEL_BED_MANUAL             = _UxGT("Level Bed manual");
+    LSTR MSG_LEVEL_BED_POINTS             = _UxGT("Bed leveling points");
+    LSTR MSG_LEVEL_BED_POINTS_X           = _UxGT("Number of points in X");
+    LSTR MSG_LEVEL_BED_POINTS_Y           = _UxGT("Number of points in Y");
+    LSTR MSG_BLTOUCH_TOOLS                = _UxGT("BL-touch tools");
 
-      LSTR MSG_TURN_SCREW                   = _UxGT("The screw %s turn %s");
-      LSTR MSG_CLOCKWISE                    = _UxGT("clockwise");
-      LSTR MSG_COUNTERCLOCKWISE             = _UxGT("counterclockwise");
-    #endif
+    LSTR MSG_TURN_SCREW                   = _UxGT("The screw %s turn %s");
+    LSTR MSG_CLOCKWISE                    = _UxGT("clockwise");
+    LSTR MSG_COUNTERCLOCKWISE             = _UxGT("counterclockwise");
 
     LSTR MSG_WAIT_NOZZLE_COOL               = _UxGT("Waiting for the nozzle to cool down.");
     LSTR MSG_THEN_PRINTER_WILL_OFF          = _UxGT("The printer will then turn off.");
     LSTR MSG_PRESS_SCREEN_TO_CANCEL         = _UxGT("Tap the screen to cancel");
     LSTR MSG_INFO_WIFI_MENU                 = _UxGT("WiFi");
+
+    LSTR MSG_NOZZLE1                        = _UxGT("Hotend");
+    LSTR MSG_BED1                           = _UxGT("Bed");
 
   #endif  // RS_STYLE_COLOR_UI
 

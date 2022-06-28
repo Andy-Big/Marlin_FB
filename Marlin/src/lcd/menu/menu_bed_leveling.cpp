@@ -354,7 +354,6 @@ void change_Z_edit_mesh();
     tft_string.set((uint8_t *)GET_TEXT(MSG_BUTTON_DONE));
     tft.add_text(tft_string.center(TFT_WIDTH - xc), 4, COLOR_MENU_TEXT, tft_string);
     touch.add_control(BACK, xc-5, yc-5, TFT_WIDTH - xc, 54);
-    tft.
 
 
 /*

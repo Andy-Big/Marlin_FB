@@ -54,9 +54,7 @@
       return;
     }
 
-    #if ENABLED(RS_ADDSETTINGS)
       if (psu_settings.psu_enabled)
-    #endif
         powerManager.power_on();
 
     /**
@@ -96,10 +94,8 @@ void GcodeSuite::M81() {
   #if HAS_SUICIDE
     suicide();
   #elif ENABLED(PSU_CONTROL)
-    #if ENABLED(RS_ADDSETTINGS)
-      if (psu_settings.psu_enabled)
-    #endif
-        powerManager.power_off_soon();
+    if (psu_settings.psu_enabled)
+      powerManager.power_off_soon();
   #endif
 
   LCD_MESSAGE_F(MACHINE_NAME " " STR_OFF ".");

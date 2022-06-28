@@ -86,11 +86,13 @@ void CANVAS::AddText(uint16_t x, uint16_t y, uint16_t color, uint8_t *string, ui
     while (*string)
     {
       string = get_utf8_value_cb(string, canvas_read_byte, &wchar);
-      if (wchar > 255) wchar |= 0x0080;
+      if (wchar > 255)
+        wchar |= 0x0080;
       uint8_t ch = uint8_t(wchar & 0x00FF);
       // uint8_t ch = 33;
-      glyph_t *glyph = Glyph(&ch);
-      if (stringWidth + glyph->BBXWidth > maxWidth) break;
+      glyph_t *glyph = FontGlyph(font, &ch);
+      if (stringWidth + glyph->BBXWidth > maxWidth)
+        break;
       AddImage(x + stringWidth + glyph->BBXOffsetX, y + Font()->FontAscent - glyph->BBXHeight - glyph->BBXOffsetY, glyph->BBXWidth, glyph->BBXHeight, GREYSCALE1, ((uint8_t *)glyph) + sizeof(glyph_t), &color);
       stringWidth += glyph->DWidth;
     }

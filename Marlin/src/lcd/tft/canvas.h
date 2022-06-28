@@ -36,6 +36,7 @@ class CANVAS {
 
     inline static font_t *Font() { return TFT_String::font(); }
     inline static glyph_t *Glyph(uint8_t *character) { return TFT_String::glyph(character); }
+    inline static glyph_t *FontGlyph(font_t *font, uint8_t *character) { return TFT_String::get_font_glyph(font, *character); }
     static glyph_t *Glyph(uint8_t *character, font_t *font);
     inline static uint16_t GetFontHeight() { return TFT_String::font_height(); }
 

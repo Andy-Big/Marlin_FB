@@ -87,7 +87,7 @@
  */
 
 // Show the Marlin bootscreen on startup. ** ENABLE FOR PRODUCTION **
-#define SHOW_BOOTSCREEN
+//#define SHOW_BOOTSCREEN
 
 // Show the bitmap in Marlin/_Bootscreen.h on startup.
 //#define SHOW_CUSTOM_BOOTSCREEN
@@ -1082,9 +1082,7 @@
  * Use G29 repeatedly, adjusting the Z height at each point with movement commands
  * or (with LCD_BED_LEVELING) the LCD controller.
  */
-#if MOTHERBOARD == BOARD_MKS_ROBIN_NANO
-  #define PROBE_MANUALLY
-#endif
+//#define PROBE_MANUALLY
 
 /**
  * A Fix-Mounted Probe either doesn't deploy or needs manual deployment.
@@ -1107,9 +1105,7 @@
 /**
  * The BLTouch probe uses a Hall effect sensor and emulates a servo.
  */
-#if MOTHERBOARD != BOARD_MKS_ROBIN_NANO
-  #define BLTOUCH
-#endif
+#define BLTOUCH
 
 /**
  * Touch-MI Probe by hotends.fr
@@ -1601,7 +1597,7 @@
  * Turn on with the command 'M111 S32'.
  * NOTE: Requires a lot of PROGMEM!
  */
-//#define DEBUG_LEVELING_FEATURE
+#define DEBUG_LEVELING_FEATURE
 
 #if ANY(MESH_BED_LEVELING, AUTO_BED_LEVELING_UBL, PROBE_MANUALLY)
   // Set a height for the start of manual adjustment
@@ -3060,8 +3056,4 @@ EEPROM_W25Q
   #endif
 #endif
 
-// Additional settings in EEPROM
-#if ENABLED(RS_STYLE_COLOR_UI)
-  #define RS_ADDSETTINGS
-  #define BOOT_MARLIN_RB_LOGO
-#endif
+//  #define BOOT_MARLIN_RB_LOGO

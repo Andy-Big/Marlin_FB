@@ -83,7 +83,7 @@ class TFT_String {
     static uint16_t font_height() { return font_header->FontAscent - font_header->FontDescent; }
     static glyph_t *glyph(uint8_t character) { return glyphs[character] ?: glyphs[0x3F]; }  /* Use '?' for unknown glyphs */
     static glyph_t *glyph(uint8_t *character) { return glyph(*character); }
-
+    static glyph_t *get_font_glyph(font_t *font, uint8_t character);
     static void set();
     static void add(uint8_t character) { add_character(character); eol(); }
     static void add(uint8_t *string, uint8_t max_len=MAX_STRING_LENGTH);

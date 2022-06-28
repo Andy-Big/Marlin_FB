@@ -78,6 +78,27 @@ void TFT_String::add_glyphs(const uint8_t *font) {
   }
 }
 
+glyph_t *TFT_String::get_font_glyph(font_t *gfont, uint8_t character)
+{
+  if (gfont == 0)
+    return glyphs[0x3F];
+
+  uint32_t glyph;
+  uint8_t *pointer = (uint8_t *)gfont + sizeof(font_t);
+
+  for (glyph = ((font_t *)gfont)->FontStartEncoding; glyph <= ((font_t *)gfont)->FontEndEncoding; glyph++) {
+    if (*pointer != NO_GLYPH)
+    {
+      if (glyph == character)
+        return (glyph_t *)pointer;
+      pointer += sizeof(glyph_t) + ((glyph_t *)pointer)->DataSize;
+    }
+    else
+      pointer++;
+  }
+  return glyphs[character] ?: glyphs[0x3F];
+}
+
 void TFT_String::set() {
   *data = 0x00;
   span = 0;
@@ -129,18 +150,29 @@ void TFT_String::add(uint8_t *string, int8_t index, uint8_t *itemString) {
 }
 
 void TFT_String::add(uint8_t *string, uint8_t max_len) {
-  while (*string && max_len) {
+  wchar_t wchar;
+  uint8_t *string1 = string, *string2;
+  while (*string1 && max_len) {
 /* 
     string = get_utf8_value_cb(string, read_byte, &wchar);
     if (wchar > 255) wchar |= 0x0080;
     uint8_t ch = uint8_t(wchar & 0x00FF);
  */
 
-    uint8_t ch = *string;
-    string++;
+    string2 = get_utf8_value_cb(string1, read_byte, &wchar);
+    uint32_t wlen = string2 - string1;
+    if (wlen > max_len)
+      break;
+    memcpy(&data[length], string1, wlen);
+    length += wlen;
+    max_len -= wlen;
 
-    add_character(ch);
-    max_len--;
+    if (wchar > 255)
+      wchar |= 0x0080;
+    uint8_t ch = uint8_t(wchar & 0x00FF);
+    span += glyph(ch)->DWidth;
+
+    string1 = string2;
   }
   eol();
 }

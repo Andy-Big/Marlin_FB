@@ -3,7 +3,7 @@
 
 //#define MKS_WIFI_ENABLED_WIFI_CONFIG 
 
-#define MKS_WIFI_SSID					"XMI_5"
+#define MKS_WIFI_SSID					"XMI_2"
 #define MKS_WIFI_KEY					"prollp74"
 
 #endif

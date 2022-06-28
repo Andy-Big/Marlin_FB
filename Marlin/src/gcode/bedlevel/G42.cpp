@@ -42,17 +42,10 @@ void GcodeSuite::G42() {
     const bool hasJ = parser.seenval('J');
     const int8_t iy = hasJ ? parser.value_int() : 0;
 
-    #if MOTHERBOARD != BOARD_MKS_ROBIN_NANO
-      if ((hasI && !WITHIN(ix, 0, bedlevel_settings.bedlevel_points - 1)) || (hasJ && !WITHIN(iy, 0, bedlevel_settings.bedlevel_points - 1))) {
-        SERIAL_ECHOLNPGM(STR_ERR_MESH_XY);
-        return;
-      }
-    #else
-      if ((hasI && !WITHIN(ix, 0, GRID_MAX_POINTS_X - 1)) || (hasJ && !WITHIN(iy, 0, GRID_MAX_POINTS_Y - 1))) {
-        SERIAL_ECHOLNPGM(STR_ERR_MESH_XY);
-        return;
-      }
-    #endif
+    if ((hasI && !WITHIN(ix, 0, bedlevel_settings.bedlevel_points.x - 1)) || (hasJ && !WITHIN(iy, 0, bedlevel_settings.bedlevel_points.y - 1))) {
+      SERIAL_ECHOLNPGM(STR_ERR_MESH_XY);
+      return;
+    }
 
     // Move to current_position, as modified by I, J, P parameters
     destination = current_position;

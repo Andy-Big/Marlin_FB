@@ -244,10 +244,8 @@ void menu_tune() {
   #endif // HAS_FAN
 */
 
-  #if ENABLED(RS_ADDSETTINGS)
-    if (psu_settings.psu_enabled)
-      EDIT_ITEM(bool, MSG_POWEROFF_AT_END, &autooff_settings.poweroff_at_printed);
-  #endif  // RS_ADDSETTINGS
+  if (psu_settings.psu_enabled)
+    EDIT_ITEM(bool, MSG_POWEROFF_AT_END, &autooff_settings.poweroff_at_printed);
 
   END_MENU();
 }

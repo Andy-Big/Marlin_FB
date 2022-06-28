@@ -156,7 +156,7 @@ void Touch::touch(touch_control_t *control) {
         break;
     #endif // TOUCH_SCREEN_CALIBRATION
 
-    case MENU_SCREEN: ui.goto_screen((screenFunc_t)control->data); break;
+    case MENU_SCREEN: ui.push_current_screen(); ui.goto_screen((screenFunc_t)control->data); break;
     case BACK: ui.goto_previous_screen(); break;
     case MENU_CLICK:
       TERN_(SINGLE_TOUCH_NAVIGATION, ui.encoderPosition = control->data);
@@ -259,6 +259,11 @@ void Touch::touch(touch_control_t *control) {
     // TODO: TOUCH could receive data to pass to the callback
     case BUTTON: ((screenFunc_t)control->data)(); break;
 
+    case ACTIVE_REGION:
+      if (control->data != 0)
+        ((void (*)()) control->data)();
+      break;
+
     default: break;
   }
 }
@@ -297,6 +302,15 @@ bool Touch::get_point(int16_t *x, int16_t *y) {
   #endif
   return is_touched;
 }
+
+
+void Touch::get_last_point(int16_t *xp, int16_t *yp)
+{
+  *xp = x;
+  *yp = y;
+}
+
+
 
 #if HAS_TOUCH_SLEEP
 

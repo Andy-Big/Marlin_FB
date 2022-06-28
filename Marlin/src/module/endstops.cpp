@@ -51,9 +51,7 @@
   #include "probe.h"
 #endif
 
-#if ENABLED(RS_ADDSETTINGS)
-  endstop_settings_t endstop_settings;
-#endif  // RS_ADDSETTINGS
+endstop_settings_t endstop_settings;
 
 Endstops endstops;
 
@@ -501,11 +499,7 @@ static void print_es_state(const bool is_hit, FSTR_P const flabel=nullptr) {
 void _O2 Endstops::report_states() {
   TERN_(BLTOUCH, bltouch._set_SW_mode());
   SERIAL_ECHOLNPGM(STR_M119_REPORT);
-  #if ENABLED(RS_ADDSETTINGS)
-    #define ES_REPORT(S) print_es_state(READ(S##_PIN) != endstop_settings.S##_INVERTING, F(STR_##S))
-  #else
-    #define ES_REPORT(S) print_es_state(READ(S##_PIN) != S##_ENDSTOP_INVERTING, F(STR_##S))
-  #endif  // ENABLED(RS_ADDSETTINGS)
+  #define ES_REPORT(S) print_es_state(READ(S##_PIN) != endstop_settings.S##_INVERTING, F(STR_##S))
   #if HAS_X_MIN
     ES_REPORT(X_MIN);
   #endif
@@ -611,11 +605,7 @@ void _O2 Endstops::report_states() {
 #else
   #define __ENDSTOP(AXIS, MINMAX) AXIS ##_## MINMAX
   #define _ENDSTOP_PIN(AXIS, MINMAX) AXIS ##_## MINMAX ##_PIN
-  #if ENABLED(RS_ADDSETTINGS)
-    #define _ENDSTOP_INVERTING(AXIS, MINMAX) endstop_settings.AXIS ##_## MINMAX ##_INVERTING
-  #else
-    #define _ENDSTOP_INVERTING(AXIS, MINMAX) AXIS ##_## MINMAX ##_ENDSTOP_INVERTING
-  #endif  // ENABLED(RS_ADDSETTINGS)
+  #define _ENDSTOP_INVERTING(AXIS, MINMAX) endstop_settings.AXIS ##_## MINMAX ##_INVERTING
 #endif
 #define _ENDSTOP(AXIS, MINMAX) __ENDSTOP(AXIS, MINMAX)
 

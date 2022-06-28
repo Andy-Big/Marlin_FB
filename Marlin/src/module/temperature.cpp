@@ -189,11 +189,7 @@
 #if HAS_HOTEND_THERMISTOR
   #define NEXT_TEMPTABLE(N) ,TEMPTABLE_##N
   #define NEXT_TEMPTABLE_LEN(N) ,TEMPTABLE_##N##_LEN
-  #if ENABLED(RS_ADDSETTINGS)
-    // static temp_entry_t* heater_ttbl_map[HOTENDS];
-  #else
-  static const temp_entry_t* heater_ttbl_map[HOTENDS] = ARRAY_BY_HOTENDS(TEMPTABLE_0 REPEAT_S(1, HOTENDS, NEXT_TEMPTABLE));
-  #endif
+  // static temp_entry_t* heater_ttbl_map[HOTENDS];
   static constexpr uint8_t heater_ttbllen_map[HOTENDS] = ARRAY_BY_HOTENDS(TEMPTABLE_0_LEN REPEAT_S(1, HOTENDS, NEXT_TEMPTABLE_LEN));
 #endif
 
@@ -202,19 +198,17 @@ Temperature thermalManager;
 PGMSTR(str_t_thermal_runaway, STR_T_THERMAL_RUNAWAY);
 PGMSTR(str_t_heating_failed, STR_T_HEATING_FAILED);
 
-#if ENABLED(RS_ADDSETTINGS)
-  thermistors_data_t thermistors_data;
+thermistors_data_t thermistors_data;
 
-  constexpr thermistor_types_t    thermistor_types[THERMISTORS_TYPES_COUNT] PROGMEM = {
-    //  type,     name,                           table,          table size,                                     fan temp,   max temp,   high temp
-        {1,       "Epcos 100k (1)",               temptable_1,    sizeof(temptable_1)/sizeof(*temptable_1),       50,         300,        0},
-        {5,       "ATC 104GT/104NT 100k (5)",     temptable_5,    sizeof(temptable_5)/sizeof(*temptable_5),       50,         310,        0},
-        {13,      "Hisens 3950 100k (13)",        temptable_13,   sizeof(temptable_13)/sizeof(*temptable_13),     50,         330,        0},
-        {61,      "Formbot b3950 100k (61)",      temptable_61,   sizeof(temptable_61)/sizeof(*temptable_61),     50,         350,        0},
-        {66,      "Dyze D500 4.7M (66)",          temptable_66,   sizeof(temptable_66)/sizeof(*temptable_66),     80,         530,        1},
-        {1047,    "Pt1000 4.7kΩ pullup (1047)",   temptable_1047, sizeof(temptable_1047)/sizeof(*temptable_1047), 70,         480,        1},
-      };
-#endif  // RS_ADDSETTINGS
+constexpr thermistor_types_t    thermistor_types[THERMISTORS_TYPES_COUNT] PROGMEM = {
+  //  type,     name,                           table,          table size,                                     fan temp,   max temp,   high temp
+      {1,       "Epcos 100k (1)",               temptable_1,    sizeof(temptable_1)/sizeof(*temptable_1),       50,         300,        0},
+      {5,       "ATC 104GT/104NT 100k (5)",     temptable_5,    sizeof(temptable_5)/sizeof(*temptable_5),       50,         310,        0},
+      {13,      "Hisens 3950 100k (13)",        temptable_13,   sizeof(temptable_13)/sizeof(*temptable_13),     50,         330,        0},
+      {61,      "Formbot b3950 100k (61)",      temptable_61,   sizeof(temptable_61)/sizeof(*temptable_61),     50,         350,        0},
+      {66,      "Dyze D500 4.7M (66)",          temptable_66,   sizeof(temptable_66)/sizeof(*temptable_66),     80,         530,        1},
+      {1047,    "Pt1000 4.7kΩ pullup (1047)",   temptable_1047, sizeof(temptable_1047)/sizeof(*temptable_1047), 70,         480,        1},
+    };
 
 /**
  * Macros to include the heater id in temp errors. The compiler's dead-code
@@ -309,11 +303,7 @@ PGMSTR(str_t_heating_failed, STR_T_HEATING_FAILED);
 #if HAS_HOTEND
   hotend_info_t Temperature::temp_hotend[HOTENDS];
   #define _HMT(N) HEATER_##N##_MAXTEMP,
-  #if ENABLED(RS_ADDSETTINGS)
-    celsius_t Temperature::hotend_maxtemp[HOTENDS] = ARRAY_BY_HOTENDS(HEATER_0_MAXTEMP, HEATER_1_MAXTEMP, HEATER_2_MAXTEMP, HEATER_3_MAXTEMP, HEATER_4_MAXTEMP, HEATER_5_MAXTEMP, HEATER_6_MAXTEMP, HEATER_7_MAXTEMP);
-  #else
-    const celsius_t Temperature::hotend_maxtemp[HOTENDS] = ARRAY_BY_HOTENDS(HEATER_0_MAXTEMP, HEATER_1_MAXTEMP, HEATER_2_MAXTEMP, HEATER_3_MAXTEMP, HEATER_4_MAXTEMP, HEATER_5_MAXTEMP, HEATER_6_MAXTEMP, HEATER_7_MAXTEMP);
-  #endif
+  celsius_t Temperature::hotend_maxtemp[HOTENDS] = ARRAY_BY_HOTENDS(HEATER_0_MAXTEMP, HEATER_1_MAXTEMP, HEATER_2_MAXTEMP, HEATER_3_MAXTEMP, HEATER_4_MAXTEMP, HEATER_5_MAXTEMP, HEATER_6_MAXTEMP, HEATER_7_MAXTEMP);
 #endif
 
 #if HAS_TEMP_REDUNDANT
@@ -1966,12 +1956,7 @@ void Temperature::manage_heater() {
 
     #if HAS_HOTEND_THERMISTOR
       // Thermistor with conversion table?
-      #if ENABLED(RS_ADDSETTINGS)
-        SCAN_THERMISTOR_TABLE(thermistor_types[thermistors_data.heater_type[e]].table, thermistor_types[thermistors_data.heater_type[e]].table_size);
-      #else
-      const temp_entry_t(*tt)[] = (temp_entry_t(*)[])(heater_ttbl_map[e]);
-      SCAN_THERMISTOR_TABLE((*tt), heater_ttbllen_map[e]);
-      #endif  // RS_ADDSETTINGS
+      SCAN_THERMISTOR_TABLE(thermistor_types[thermistors_data.heater_type[e]].table, thermistor_types[thermistors_data.heater_type[e]].table_size);
     #endif
 
     return 0;
@@ -1984,11 +1969,7 @@ void Temperature::manage_heater() {
     #if TEMP_SENSOR_BED_IS_CUSTOM
       return user_thermistor_to_deg_c(CTI_BED, raw);
     #elif TEMP_SENSOR_BED_IS_THERMISTOR
-      #if ENABLED(RS_ADDSETTINGS)
-        SCAN_THERMISTOR_TABLE(thermistor_types[thermistors_data.bed_type].table, thermistor_types[thermistors_data.bed_type].table_size);
-      #else
-      SCAN_THERMISTOR_TABLE(TEMPTABLE_BED, TEMPTABLE_BED_LEN);
-      #endif  // RS_ADDSETTINGS
+      SCAN_THERMISTOR_TABLE(thermistor_types[thermistors_data.bed_type].table, thermistor_types[thermistors_data.bed_type].table_size);
     #elif TEMP_SENSOR_BED_IS_AD595
       return TEMP_AD595(raw);
     #elif TEMP_SENSOR_BED_IS_AD8495
@@ -2157,18 +2138,14 @@ void Temperature::updateTemperaturesFromRawValues() {
         const bool heater_on = temp_hotend[e].target > 0;
         if (heater_on && rawtemp < temp_range[e].raw_min * tdir && !is_preheating(e)) {
           #if MAX_CONSECUTIVE_LOW_TEMPERATURE_ERROR_ALLOWED > 1
-          #if ENABLED(RS_ADDSETTINGS)
             if (thermistor_types[thermistors_data.heater_type[e]].high_temp == 1)
-          #endif
             if (++consecutive_low_temperature_error[e] >= MAX_CONSECUTIVE_LOW_TEMPERATURE_ERROR_ALLOWED)
           #endif
               min_temp_error((heater_id_t)e);
         }
         #if MAX_CONSECUTIVE_LOW_TEMPERATURE_ERROR_ALLOWED > 1
           else
-          #if ENABLED(RS_ADDSETTINGS)
             if (thermistor_types[thermistors_data.heater_type[e]].high_temp == 1)
-          #endif
             consecutive_low_temperature_error[e] = 0;
         #endif
       }
@@ -2475,21 +2452,12 @@ void Temperature::init() {
       while (analog_to_celsius_hotend(temp_range[NR].raw_min, NR) < tmin) \
         temp_range[NR].raw_min += TEMPDIR(NR) * (OVERSAMPLENR); \
     }while(0)
-    #if ENABLED(RS_ADDSETTINGS)
-      #define _TEMP_MAX_E(NR) do{ \
-        const celsius_t tmax = _MIN((uint16_t)thermalManager.hotend_maxtemp[NR], TERN(TEMP_SENSOR_##NR##_IS_CUSTOM, 2000, (int)pgm_read_word(&TEMPTABLE_##NR [TEMP_SENSOR_##NR##_MAXTEMP_IND].celsius) - 1)); \
-        temp_range[NR].maxtemp = tmax; \
-        while (analog_to_celsius_hotend(temp_range[NR].raw_max, NR) > tmax) \
-          temp_range[NR].raw_max -= TEMPDIR(NR) * (OVERSAMPLENR); \
-      }while(0)
-    #else
-      #define _TEMP_MAX_E(NR) do{ \
-        const celsius_t tmax = _MIN(HEATER_##NR##_MAXTEMP, TERN(TEMP_SENSOR_##NR##_IS_CUSTOM, 2000, (int)pgm_read_word(&TEMPTABLE_##NR [TEMP_SENSOR_##NR##_MAXTEMP_IND].celsius) - 1)); \
-        temp_range[NR].maxtemp = tmax; \
-        while (analog_to_celsius_hotend(temp_range[NR].raw_max, NR) > tmax) \
-          temp_range[NR].raw_max -= TEMPDIR(NR) * (OVERSAMPLENR); \
-      }while(0)
-    #endif
+    #define _TEMP_MAX_E(NR) do{ \
+      const celsius_t tmax = _MIN((uint16_t)thermalManager.hotend_maxtemp[NR], TERN(TEMP_SENSOR_##NR##_IS_CUSTOM, 2000, (int)pgm_read_word(&TEMPTABLE_##NR [TEMP_SENSOR_##NR##_MAXTEMP_IND].celsius) - 1)); \
+      temp_range[NR].maxtemp = tmax; \
+      while (analog_to_celsius_hotend(temp_range[NR].raw_max, NR) > tmax) \
+        temp_range[NR].raw_max -= TEMPDIR(NR) * (OVERSAMPLENR); \
+    }while(0)
 
     #define _MINMAX_TEST(N,M) (HOTENDS > N && TEMP_SENSOR_##N > 0 && TEMP_SENSOR_##N != 998 && TEMP_SENSOR_##N != 999 && defined(HEATER_##N##_##M##TEMP))
 

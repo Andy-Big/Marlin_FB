@@ -542,25 +542,17 @@ typedef struct SettingsDataStruct {
     uint8_t ui_language;                                // M414 S
   #endif
 
-  #if ENABLED(RS_ADDSETTINGS)
-    planner_axinvert_t      invert_axes;
-    thermistors_data_t      thermistors_data;
-    celsius_t               hotend_maxtemp[HOTENDS];
-    psu_settings_t          psu_settings;
-    endstop_settings_t      endstop_settings;
-    #if MOTHERBOARD != BOARD_MKS_ROBIN_NANO
-      bedlevel_settings_t     bedlevel_settings;
-    #endif
-#endif  // RS_ADDSETTINGS
+  planner_axinvert_t      invert_axes;
+  thermistors_data_t      thermistors_data;
+  celsius_t               hotend_maxtemp[HOTENDS];
+  psu_settings_t          psu_settings;
+  endstop_settings_t      endstop_settings;
+  bedlevel_settings_t     bedlevel_settings;
 } SettingsData;
 
-#if ENABLED(RS_ADDSETTINGS)
-  autooff_settings_t    autooff_settings;
-  psu_settings_t        psu_settings;
-  #if MOTHERBOARD != BOARD_MKS_ROBIN_NANO
-    bedlevel_settings_t   bedlevel_settings;
-  #endif
-#endif  // RS_ADDSETTINGS
+autooff_settings_t    autooff_settings;
+psu_settings_t        psu_settings;
+bedlevel_settings_t   bedlevel_settings;
 
 //static_assert(sizeof(SettingsData) <= MARLIN_EEPROM_SIZE, "EEPROM too small to contain SettingsData!");
 
@@ -1542,27 +1534,23 @@ void MarlinSettings::postprocess() {
       EEPROM_WRITE(ui.language);
     #endif
 
-    #if ENABLED(RS_ADDSETTINGS)
-      // Motors DIR inverting
-      EEPROM_WRITE(planner.invert_axis);
+    // Motors DIR inverting
+    EEPROM_WRITE(planner.invert_axis);
 
-      // Thermistors type
-      EEPROM_WRITE(thermistors_data);
+    // Thermistors type
+    EEPROM_WRITE(thermistors_data);
 
-      // Max temperatures
-      EEPROM_WRITE(thermalManager.hotend_maxtemp);
+    // Max temperatures
+    EEPROM_WRITE(thermalManager.hotend_maxtemp);
 
-      // Extra settings
-      EEPROM_WRITE(psu_settings);
+    // Extra settings
+    EEPROM_WRITE(psu_settings);
 
-      // Endstops settings
-      EEPROM_WRITE(endstop_settings);
+    // Endstops settings
+    EEPROM_WRITE(endstop_settings);
 
-      #if MOTHERBOARD != BOARD_MKS_ROBIN_NANO
-        // Bed leveling settings
-        EEPROM_WRITE(bedlevel_settings);
-      #endif
-      #endif  // RS_ADDSETTINGS
+    // Bed leveling settings
+    EEPROM_WRITE(bedlevel_settings);
 
     //
     // Report final CRC and Data Size
@@ -1599,10 +1587,8 @@ void MarlinSettings::postprocess() {
 
     TERN_(EXTENSIBLE_UI, ExtUI::onConfigurationStoreWritten(!eeprom_error));
 
-    #if ENABLED(RS_ADDSETTINGS)
-      autooff_settings.poweroff_at_printed = false;
-      autooff_settings.sscreen_need_draw = true;
-    #endif  // RS_ADDSETTINGS
+    autooff_settings.poweroff_at_printed = false;
+    autooff_settings.sscreen_need_draw = true;
 
     return !eeprom_error;
   }
@@ -2513,27 +2499,26 @@ void MarlinSettings::postprocess() {
       }
       #endif
 
-      #if ENABLED(RS_ADDSETTINGS)
-        // Motors DIR inverting
-        EEPROM_READ((uint8_t *)&planner.invert_axis, sizeof(planner.invert_axis));
+      // Motors DIR inverting
+      EEPROM_READ((uint8_t *)&planner.invert_axis, sizeof(planner.invert_axis));
 
-        // Thermistors type
-        EEPROM_READ((uint8_t *)&thermistors_data, sizeof(thermistors_data));
+      // Thermistors type
+      EEPROM_READ((uint8_t *)&thermistors_data, sizeof(thermistors_data));
 
-        // Max temperatures
-        EEPROM_READ((uint8_t *)&thermalManager.hotend_maxtemp, sizeof(thermalManager.hotend_maxtemp));
+      // Max temperatures
+      EEPROM_READ((uint8_t *)&thermalManager.hotend_maxtemp, sizeof(thermalManager.hotend_maxtemp));
 
-        // Extra settings
-        EEPROM_READ((uint8_t *)&psu_settings, sizeof(psu_settings));
+      // Extra settings
+      EEPROM_READ((uint8_t *)&psu_settings, sizeof(psu_settings));
 
-        // Endstops settings
-        EEPROM_READ((uint8_t *)&endstop_settings, sizeof(endstop_settings));
+      // Endstops settings
+      EEPROM_READ((uint8_t *)&endstop_settings, sizeof(endstop_settings));
 
-        #if MOTHERBOARD != BOARD_MKS_ROBIN_NANO
-          // Bed leveling settings
-          EEPROM_READ((uint8_t *)&bedlevel_settings, sizeof(bedlevel_settings));
-        #endif
-      #endif  // RS_ADDSETTINGS
+      // Bed leveling settings
+      EEPROM_READ((uint8_t *)&bedlevel_settings, sizeof(bedlevel_settings));
+      #if MOTHERBOARD == BOARD_MKS_ROBIN_NANO
+        bedlevel_settings.bltouch_enabled = false;
+      #endif
 
 
       DEBUG_ECHO_MSG("EEPROM Readed");
@@ -2604,10 +2589,8 @@ void MarlinSettings::postprocess() {
 
     EEPROM_FINISH();
 
-    #if ENABLED(RS_ADDSETTINGS)
-      autooff_settings.poweroff_at_printed = false;
-      autooff_settings.sscreen_need_draw = true;
-    #endif  // RS_ADDSETTINGS
+    autooff_settings.poweroff_at_printed = false;
+    autooff_settings.sscreen_need_draw = true;
 
     return !eeprom_error;
   }
@@ -2779,86 +2762,82 @@ void MarlinSettings::reset() {
     planner.settings.axis_steps_per_mm[i] = pgm_read_float(&_DASU[ALIM(i, _DASU)]);
     planner.settings.max_feedrate_mm_s[i] = pgm_read_float(&_DMF[ALIM(i, _DMF)]);
     
-    #if ENABLED(RS_ADDSETTINGS)
-      // Motors DIR inverting
-      planner.invert_axis.invert_axis[X_AXIS] = INVERT_X_DIR;
-      planner.invert_axis.invert_axis[Y_AXIS] = INVERT_Y_DIR;
-      planner.invert_axis.invert_axis[Z_AXIS] = INVERT_Z_DIR;
-      planner.invert_axis.invert_axis[E_AXIS] = INVERT_E0_DIR;
+    // Motors DIR inverting
+    planner.invert_axis.invert_axis[X_AXIS] = INVERT_X_DIR;
+    planner.invert_axis.invert_axis[Y_AXIS] = INVERT_Y_DIR;
+    planner.invert_axis.invert_axis[Z_AXIS] = INVERT_Z_DIR;
+    planner.invert_axis.invert_axis[E_AXIS] = INVERT_E0_DIR;
 
-      // Thermistors type
-      thermistors_data.heater_type[0] = 0;
-      thermistors_data.fan_auto_temp[0] = 50;
-      thermistors_data.high_temp[0] = 0;
+    // Thermistors type
+    thermistors_data.heater_type[0] = 0;
+    thermistors_data.fan_auto_temp[0] = 50;
+    thermistors_data.high_temp[0] = 0;
+    thermalManager.hotend_maxtemp[0] = 300;
+    #if (HOTENDS > 1)
+      thermistors_data.heater_type[1] = 0;
+      thermistors_data.fan_auto_temp[1] = 50;
+      thermistors_data.high_temp[1] = 0;
       thermalManager.hotend_maxtemp[0] = 300;
-      #if (HOTENDS > 1)
-        thermistors_data.heater_type[1] = 0;
-        thermistors_data.fan_auto_temp[1] = 50;
-        thermistors_data.high_temp[1] = 0;
-        thermalManager.hotend_maxtemp[0] = 300;
-      #endif
-      thermistors_data.bed_type = 0;
-      for (uint8_t i = 0;  i < THERMISTORS_TYPES_COUNT; i++)
+    #endif
+    thermistors_data.bed_type = 0;
+    for (uint8_t i = 0;  i < THERMISTORS_TYPES_COUNT; i++)
+    {
+      if (thermistor_types[i].type == TEMP_SENSOR_0)
       {
-        if (thermistor_types[i].type == TEMP_SENSOR_0)
-        {
-          thermistors_data.heater_type[0] = i;
-          thermistors_data.fan_auto_temp[0] = thermistor_types[i].fan_auto_temp;
-          thermistors_data.high_temp[0] = thermistor_types[i].high_temp;
-          thermalManager.hotend_maxtemp[0] = thermistor_types[i].max_temp;
-        }
-        #if (HOTENDS > 1)
-          if (thermistor_types[i].type == TEMP_SENSOR_1)
-          {
-            thermistors_data.heater_type[1] = i;
-            thermistors_data.fan_auto_temp[1] = thermistor_types[i].fan_auto_temp;
-            thermistors_data.high_temp[1] = thermistor_types[i].high_temp;
-            thermalManager.hotend_maxtemp[1] = thermistor_types[i].max_temp;
-          }
-        #endif
-        if (thermistor_types[i].type == TEMP_SENSOR_BED)
-          thermistors_data.bed_type = i;
+        thermistors_data.heater_type[0] = i;
+        thermistors_data.fan_auto_temp[0] = thermistor_types[i].fan_auto_temp;
+        thermistors_data.high_temp[0] = thermistor_types[i].high_temp;
+        thermalManager.hotend_maxtemp[0] = thermistor_types[i].max_temp;
       }
+      #if (HOTENDS > 1)
+        if (thermistor_types[i].type == TEMP_SENSOR_1)
+        {
+          thermistors_data.heater_type[1] = i;
+          thermistors_data.fan_auto_temp[1] = thermistor_types[i].fan_auto_temp;
+          thermistors_data.high_temp[1] = thermistor_types[i].high_temp;
+          thermalManager.hotend_maxtemp[1] = thermistor_types[i].max_temp;
+        }
+      #endif
+      if (thermistor_types[i].type == TEMP_SENSOR_BED)
+        thermistors_data.bed_type = i;
+    }
 
-      // PSU settings
-      psu_settings.psu_enabled = false;
+    // PSU settings
+    psu_settings.psu_enabled = false;
 
-      // Endstop settings
-      #if HAS_X_MIN
-        endstop_settings.X_MIN_INVERTING = X_MIN_ENDSTOP_INVERTING;
-      #endif
-      #if HAS_X_MAX
-        endstop_settings.X_MAX_INVERTING = X_MAX_ENDSTOP_INVERTING;
-      #endif
-      #if HAS_Y_MIN
-        endstop_settings.Y_MIN_INVERTING = Y_MIN_ENDSTOP_INVERTING;
-      #endif
-      #if HAS_Y_MAX
-        endstop_settings.Y_MAX_INVERTING = Y_MAX_ENDSTOP_INVERTING;
-      #endif
-      #if HAS_Z_MIN
-        endstop_settings.Z_MIN_INVERTING = Z_MIN_ENDSTOP_INVERTING;
-      #endif
-      #if HAS_Z_MAX
-        endstop_settings.Z_MAX_INVERTING = Z_MAX_ENDSTOP_INVERTING;
-      #endif
-      #if HAS_Z2_MIN
-        endstop_settings.Z2_MIN_INVERTING = Z2_MIN_ENDSTOP_INVERTING;
-      #endif
-      #if HAS_Z2_MAX
-        endstop_settings.Z2_MAX_INVERTING = Z2_MAX_ENDSTOP_INVERTING;
-      #endif
-      #if HAS_Z_MIN_PROBE_PIN
-        endstop_settings.Z_MIN_PROBE_INVERTING = Z_MIN_PROBE_ENDSTOP_INVERTING;
-      #endif
+    // Endstop settings
+    #if HAS_X_MIN
+      endstop_settings.X_MIN_INVERTING = X_MIN_ENDSTOP_INVERTING;
+    #endif
+    #if HAS_X_MAX
+      endstop_settings.X_MAX_INVERTING = X_MAX_ENDSTOP_INVERTING;
+    #endif
+    #if HAS_Y_MIN
+      endstop_settings.Y_MIN_INVERTING = Y_MIN_ENDSTOP_INVERTING;
+    #endif
+    #if HAS_Y_MAX
+      endstop_settings.Y_MAX_INVERTING = Y_MAX_ENDSTOP_INVERTING;
+    #endif
+    #if HAS_Z_MIN
+      endstop_settings.Z_MIN_INVERTING = Z_MIN_ENDSTOP_INVERTING;
+    #endif
+    #if HAS_Z_MAX
+      endstop_settings.Z_MAX_INVERTING = Z_MAX_ENDSTOP_INVERTING;
+    #endif
+    #if HAS_Z2_MIN
+      endstop_settings.Z2_MIN_INVERTING = Z2_MIN_ENDSTOP_INVERTING;
+    #endif
+    #if HAS_Z2_MAX
+      endstop_settings.Z2_MAX_INVERTING = Z2_MAX_ENDSTOP_INVERTING;
+    #endif
+    #if HAS_Z_MIN_PROBE_PIN
+      endstop_settings.Z_MIN_PROBE_INVERTING = Z_MIN_PROBE_ENDSTOP_INVERTING;
+    #endif
 
-      #if MOTHERBOARD != BOARD_MKS_ROBIN_NANO
-        // Bed leveling settings
-        bedlevel_settings.bltouch_enabled = false;
-        bedlevel_settings.bedlevel_points = 4;
-      #endif
-
-    #endif  // RS_ADDSETTINGS
+    // Bed leveling settings
+    bedlevel_settings.bltouch_enabled = false;
+    bedlevel_settings.bedlevel_points.x = 4;
+    bedlevel_settings.bedlevel_points.y = 4;
   }
 
   planner.settings.min_segment_time_us = DEFAULT_MINSEGMENTTIME;
@@ -2868,9 +2847,7 @@ void MarlinSettings::reset() {
   planner.settings.min_feedrate_mm_s = feedRate_t(DEFAULT_MINIMUMFEEDRATE);
   planner.settings.min_travel_feedrate_mm_s = feedRate_t(DEFAULT_MINTRAVELFEEDRATE);
 
-  #if ENABLED(RS_ADDSETTINGS)
-    planner.invert_axis.z2_vs_z_dir = ENABLED(INVERT_Z2_VS_Z_DIR);
-  #endif // RS_ADDSETTINGS
+  planner.invert_axis.z2_vs_z_dir = ENABLED(INVERT_Z2_VS_Z_DIR);
 
   #if HAS_CLASSIC_JERK
     #ifndef DEFAULT_XJERK
@@ -3321,10 +3298,8 @@ void MarlinSettings::reset() {
 
   DEBUG_ECHO_MSG("Hardcoded Default Settings Loaded");
 
-  #if ENABLED(RS_ADDSETTINGS)
-    autooff_settings.poweroff_at_printed = false;
-    autooff_settings.sscreen_need_draw = true;
-  #endif  // RS_ADDSETTINGS
+  autooff_settings.poweroff_at_printed = false;
+  autooff_settings.sscreen_need_draw = true;
 
 }
 

@@ -325,10 +325,8 @@ void menu_main() {
 
     SUBMENU(MSG_MOTION, menu_motion);
 
-    #if ENABLED(RS_ADDSETTINGS)
-      if (psu_settings.psu_enabled)
-        EDIT_ITEM(bool, MSG_POWEROFF_AT_END, &autooff_settings.poweroff_at_printed);
-    #endif  // RS_ADDSETTINGS
+    if (psu_settings.psu_enabled)
+      EDIT_ITEM(bool, MSG_POWEROFF_AT_END, &autooff_settings.poweroff_at_printed);
 
   }
 
@@ -387,10 +385,8 @@ void menu_main() {
   // Switch power on/off
   //
   #if ENABLED(PSU_CONTROL)
-    #if ENABLED(RS_ADDSETTINGS)
-      if (psu_settings.psu_enabled)
-      {
-    #endif
+    if (psu_settings.psu_enabled)
+    {
       if (powerManager.psu_on)
         #if ENABLED(PS_OFF_CONFIRM)
           CONFIRM_ITEM(MSG_SWITCH_PS_OFF,
@@ -403,9 +399,7 @@ void menu_main() {
         #endif
       else
         GCODES_ITEM(MSG_SWITCH_PS_ON, PSTR("M80"));
-    #if ENABLED(RS_ADDSETTINGS)
-      }
-    #endif
+    }
   #endif
 
   #if ENABLED(SDSUPPORT) && DISABLED(MEDIA_MENU_AT_TOP)

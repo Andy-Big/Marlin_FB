@@ -65,15 +65,13 @@
 void menu_tmc();
 void menu_backlash();
 
-#if ENABLED(RS_ADDSETTINGS)
-  void menu_advanced_axesdir();
-  void menu_advanced_endstop_inverting();
-  #if ENABLED(BLTOUCH)
-    void menu_advanced_bltouch();
-  #endif
-#endif
+void menu_advanced_axesdir();
+void menu_advanced_endstop_inverting();
+void menu_advanced_bedlevelsetup();
+
 void bltouch_report();
 void menu_bltouch();
+void menu_bedlevel_points();
 
 
 #if HAS_MOTOR_CURRENT_DAC
@@ -268,103 +266,102 @@ void menu_bltouch();
 //
 #if SHOW_MENU_ADVANCED_TEMPERATURE
 
-  #if ENABLED(RS_ADDSETTINGS)
-    void menu_thermistors_list();
+  void menu_thermistors_list();
 
-    static  uint8_t therm_num = 0;
+  static  uint8_t therm_num = 0;
 
-    void thermistors_set_type(uint32_t type) {
-      if (therm_num < 255)
-      {
-        thermistors_data.heater_type[therm_num] = type;
-        thermistors_data.fan_auto_temp[therm_num] = thermistor_types[type].fan_auto_temp;
-        thermistors_data.high_temp[therm_num] = thermistor_types[type].high_temp;
-        thermalManager.hotend_maxtemp[therm_num] = thermistor_types[type].max_temp;
-      }
-      else
-      {
-        thermistors_data.bed_type = type;
-      }
-      ui.goto_previous_screen();
+  void thermistors_set_type(uint32_t type) {
+    if (therm_num < 255)
+    {
+      thermistors_data.heater_type[therm_num] = type;
+      thermistors_data.fan_auto_temp[therm_num] = thermistor_types[type].fan_auto_temp;
+      thermistors_data.high_temp[therm_num] = thermistor_types[type].high_temp;
+      thermalManager.hotend_maxtemp[therm_num] = thermistor_types[type].max_temp;
     }
+    else
+    {
+      thermistors_data.bed_type = type;
+    }
+    ui.goto_previous_screen();
+  }
 
-    void menu_thermistors_hot0_list() {
-      therm_num = 0;
+  void menu_thermistors_hot0_list() {
+    therm_num = 0;
+    menu_thermistors_list();
+  }
+
+  #if (HOTENDS > 1)
+    void menu_thermistors_hot1_list() {
+      therm_num = 1;
       menu_thermistors_list();
     }
+  #endif
 
-    #if (HOTENDS > 1)
-      void menu_thermistors_hot1_list() {
-        therm_num = 1;
-        menu_thermistors_list();
-      }
+  void menu_thermistors_bed_list() {
+    therm_num = 255;
+    menu_thermistors_list();
+  }
+
+  void menu_thermistors_list() {
+    START_MENU();
+
+    #if THERMISTORS_TYPES_COUNT > 0
+      ACTION_ITEM_P(thermistor_types[0].name, []{ thermistors_set_type(0); });
+    #endif
+    #if THERMISTORS_TYPES_COUNT > 1
+      ACTION_ITEM_P(thermistor_types[1].name, []{ thermistors_set_type(1); });
+    #endif
+    #if THERMISTORS_TYPES_COUNT > 2
+      ACTION_ITEM_P(thermistor_types[2].name, []{ thermistors_set_type(2); });
+    #endif
+    #if THERMISTORS_TYPES_COUNT > 3
+      ACTION_ITEM_P(thermistor_types[3].name, []{ thermistors_set_type(3); });
+    #endif
+    #if THERMISTORS_TYPES_COUNT > 4
+      ACTION_ITEM_P(thermistor_types[4].name, []{ thermistors_set_type(4); });
+    #endif
+    #if THERMISTORS_TYPES_COUNT > 5
+      ACTION_ITEM_P(thermistor_types[5].name, []{ thermistors_set_type(5); });
+    #endif
+    #if THERMISTORS_TYPES_COUNT > 6
+      ACTION_ITEM_P(thermistor_types[6].name, []{ thermistors_set_type(6); });
+    #endif
+    #if THERMISTORS_TYPES_COUNT > 7
+      ACTION_ITEM_P(thermistor_types[7].name, []{ thermistors_set_type(7); });
+    #endif
+    #if THERMISTORS_TYPES_COUNT > 8
+      ACTION_ITEM_P(thermistor_types[8].name, []{ thermistors_set_type(8); });
+    #endif
+    #if THERMISTORS_TYPES_COUNT > 9
+      ACTION_ITEM_P(thermistor_types[9].name, []{ thermistors_set_type(9); });
     #endif
 
-    void menu_thermistors_bed_list() {
-      therm_num = 255;
-      menu_thermistors_list();
-    }
+    END_MENU();
+  }
 
-    void menu_thermistors_list() {
-      START_MENU();
+  void menu_advanced_thermistors() {
+    START_MENU();
 
-      #if THERMISTORS_TYPES_COUNT > 0
-        ACTION_ITEM_P(thermistor_types[0].name, []{ thermistors_set_type(0); });
-      #endif
-      #if THERMISTORS_TYPES_COUNT > 1
-        ACTION_ITEM_P(thermistor_types[1].name, []{ thermistors_set_type(1); });
-      #endif
-      #if THERMISTORS_TYPES_COUNT > 2
-        ACTION_ITEM_P(thermistor_types[2].name, []{ thermistors_set_type(2); });
-      #endif
-      #if THERMISTORS_TYPES_COUNT > 3
-        ACTION_ITEM_P(thermistor_types[3].name, []{ thermistors_set_type(3); });
-      #endif
-      #if THERMISTORS_TYPES_COUNT > 4
-        ACTION_ITEM_P(thermistor_types[4].name, []{ thermistors_set_type(4); });
-      #endif
-      #if THERMISTORS_TYPES_COUNT > 5
-        ACTION_ITEM_P(thermistor_types[5].name, []{ thermistors_set_type(5); });
-      #endif
-      #if THERMISTORS_TYPES_COUNT > 6
-        ACTION_ITEM_P(thermistor_types[6].name, []{ thermistors_set_type(6); });
-      #endif
-      #if THERMISTORS_TYPES_COUNT > 7
-        ACTION_ITEM_P(thermistor_types[7].name, []{ thermistors_set_type(7); });
-      #endif
-      #if THERMISTORS_TYPES_COUNT > 8
-        ACTION_ITEM_P(thermistor_types[8].name, []{ thermistors_set_type(8); });
-      #endif
-      #if THERMISTORS_TYPES_COUNT > 9
-        ACTION_ITEM_P(thermistor_types[9].name, []{ thermistors_set_type(9); });
-      #endif
+    char itemlbl[64];
+    strcpy(itemlbl, GET_TEXT(MSG_NOZZLE1));
+    strcat(itemlbl, ": ");
+    strcat(itemlbl, thermistor_types[thermistors_data.heater_type[0]].name);
+    SUBMENU_P(itemlbl, menu_thermistors_hot0_list);
 
-      END_MENU();
-    }
-
-    void menu_advanced_thermistors() {
-      START_MENU();
-
-      char itemlbl[64];
-      strcpy(itemlbl, STR_E0);
+    #if (HOTENDS > 1)
+      strcpy(itemlbl, STR_E1);
       strcat(itemlbl, ": ");
-      strcat(itemlbl, thermistor_types[thermistors_data.heater_type[0]].name);
-      SUBMENU_P(itemlbl, menu_thermistors_hot0_list);
+      strcat(itemlbl, thermistor_types[thermistors_data.heater_type[1]].name);
+      SUBMENU_P(itemlbl, menu_thermistors_hot1_list);
+    #endif
 
-      #if (HOTENDS > 1)
-        strcpy(itemlbl, STR_E1);
-        strcat(itemlbl, ": ");
-        strcat(itemlbl, thermistor_types[thermistors_data.heater_type[1]].name);
-        SUBMENU_P(itemlbl, menu_thermistors_hot1_list);
-      #endif
+    strcpy(itemlbl, GET_TEXT(MSG_BED1));
+    strcat(itemlbl, ": ");
+    strcat(itemlbl, thermistor_types[thermistors_data.bed_type].name);
+    SUBMENU_P(itemlbl, menu_thermistors_bed_list);
 
-      strcpy(itemlbl, "BED: ");
-      strcat(itemlbl, thermistor_types[thermistors_data.bed_type].name);
-      SUBMENU_P(itemlbl, menu_thermistors_bed_list);
-
-      END_MENU();
-    }
-  #endif  // RS_ADDSETTINGS
+    END_MENU();
+  }
 
   void menu_advanced_temperature() {
     START_MENU();
@@ -456,10 +453,8 @@ void menu_bltouch();
       #endif
     #endif
 
-    #if ENABLED(RS_ADDSETTINGS)
-      SUBMENU(MSG_MENU_THERMISTORS, menu_advanced_thermistors);
-      EDIT_ITEM(int3, MSG_HOTEND_AUTO_FAN, &thermistors_data.fan_auto_temp[0], 20, thermalManager.hotend_maxtemp[0]);
-    #endif
+    SUBMENU(MSG_MENU_THERMISTORS, menu_advanced_thermistors);
+    EDIT_ITEM(int3, MSG_HOTEND_AUTO_FAN, &thermistors_data.fan_auto_temp[0], 20, thermalManager.hotend_maxtemp[0]);
 
     END_MENU();
   }
@@ -713,10 +708,8 @@ void menu_advanced_settings() {
   if (!is_busy)
     SUBMENU(MSG_STEPS_PER_MM, menu_advanced_steps_per_mm);
 
-  #if ENABLED(RS_ADDSETTINGS)
-    SUBMENU(MSG_AXIS_DIRECTION, menu_advanced_axesdir);
-    SUBMENU(MSG_ENDSTOP_INVERTING, menu_advanced_endstop_inverting);
-  #endif
+  SUBMENU(MSG_AXIS_DIRECTION, menu_advanced_axesdir);
+  SUBMENU(MSG_ENDSTOP_INVERTING, menu_advanced_endstop_inverting);
 
   #if ENABLED(BACKLASH_GCODE)
     SUBMENU(MSG_BACKLASH, menu_backlash);
@@ -770,12 +763,8 @@ void menu_advanced_settings() {
     SUBMENU(MSG_PASSWORD_SETTINGS, password.access_menu_password);
   #endif
 
-  #if ENABLED(RS_ADDSETTINGS)
-      #if ENABLED(BLTOUCH)
-        SUBMENU(MSG_BLTOUCH_SETTINGS, menu_advanced_bltouch);
-      #endif
-      EDIT_ITEM(bool, MSG_PSU_MODULE_ON, &psu_settings.psu_enabled);
-  #endif
+    SUBMENU(MSG_BEDLEVEL_SETTINGS, menu_advanced_bedlevelsetup);
+    EDIT_ITEM(bool, MSG_PSU_MODULE_ON, &psu_settings.psu_enabled);
 
   #if ENABLED(EEPROM_SETTINGS) && DISABLED(SLIM_LCD_MENUS)
     CONFIRM_ITEM(MSG_INIT_EEPROM,
@@ -790,7 +779,6 @@ void menu_advanced_settings() {
 
 
 
-  #if ENABLED(RS_ADDSETTINGS)
   void menu_advanced_axesdir()
   {
     START_MENU();
@@ -842,20 +830,23 @@ void menu_advanced_settings() {
     END_MENU();
   }
 
-  #if ENABLED(BLTOUCH)
-    void menu_advanced_bltouch() {
-      START_MENU();
-      // BACK_ITEM(MSG_ADVANCED_SETTINGS);
+  void menu_advanced_bedlevelsetup() {
+    START_MENU();
+    // BACK_ITEM(MSG_ADVANCED_SETTINGS);
 
+
+    #if MOTHERBOARD != BOARD_MKS_ROBIN_NANO
       EDIT_ITEM(bool, MSG_BLTOUCH, &bedlevel_settings.bltouch_enabled);
-      EDIT_ITEM(uint8, MSG_LEVEL_BED_POINTS, &bedlevel_settings.bedlevel_points, 3, GRID_MAX_POINTS_X);
+    #endif
+    SUBMENU(MSG_LEVEL_BED_POINTS, menu_bedlevel_points);
+    #if MOTHERBOARD != BOARD_MKS_ROBIN_NANO
       if (bedlevel_settings.bltouch_enabled)
         SUBMENU(MSG_BLTOUCH_TOOLS, menu_bltouch);
+    #endif
 
 
-      END_MENU();
-    }
-  #endif
+    END_MENU();
+  }
   
   
   #if ENABLED(BLTOUCH_LCD_VOLTAGE_MENU)
@@ -873,7 +864,7 @@ void menu_advanced_settings() {
     }
   #endif
 
-  #if ENABLED(BLTOUCH)
+  #if MOTHERBOARD != BOARD_MKS_ROBIN_NANO
     void menu_bltouch() {
       START_MENU();
       // BACK_ITEM(MSG_CONFIGURATION);
@@ -897,7 +888,16 @@ void menu_advanced_settings() {
     }
   #endif
 
-  #endif  //   RS_ADDSETTINGS
+  void menu_bedlevel_points()
+  {
+    START_MENU();
+
+    EDIT_ITEM(uint8, MSG_LEVEL_BED_POINTS_X, &bedlevel_settings.bedlevel_points.x, 3, GRID_MAX_POINTS_X);
+    EDIT_ITEM(uint8, MSG_LEVEL_BED_POINTS_Y, &bedlevel_settings.bedlevel_points.y, 3, GRID_MAX_POINTS_Y);
+
+    END_MENU();
+  }
+
 
 
 #endif // HAS_LCD_MENU
