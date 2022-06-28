@@ -25,6 +25,7 @@
 //
 
 #include "../../inc/MarlinConfigPre.h"
+#include "../tft/ui_common.h"
 
 #if ENABLED(LCD_BED_LEVELING)
 
@@ -54,13 +55,22 @@
   void goto_tramming_wizard();
 #endif
 
+void change_point_edit_mesh();
+void change_Z_edit_mesh();
 
   //
   // Motion > Level Bed handlers
   //
 
   // LCD probed points are from defaults
-  constexpr uint8_t total_probe_points = TERN(AUTO_BED_LEVELING_3POINT, 3, GRID_MAX_POINTS);
+  static uint8_t total_probe_points;
+
+  constexpr uint16_t   F_X = 10, F_Y = 10, F_WIDTH = 300, F_HEIGHT = 240;
+  constexpr uint16_t   LEG_WIDTH = 240, LEG_HEIGHT = 40;
+  constexpr uint16_t   MAX_COLOR = 240, MIN_COLOR = 120;
+
+  static uint8_t xind = 0, yind = 0; // =0
+
 
   //
   // Bed leveling is done. Wait for G29 to complete.
@@ -110,14 +120,8 @@
         #if ENABLED(MESH_BED_LEVELING)
           queue.inject(F("G29S2"));
         #else
-          #if MOTHERBOARD != BOARD_MKS_ROBIN_NANO
-            if (!bedlevel_settings.bltouch_enabled)
-              queue.inject(F("G29V1"));
-          #else
-            #if ENABLED(PROBE_MANUALLY)
-              queue.inject(F("G29V1"));
-            #endif
-          #endif
+          if (!bedlevel_settings.bltouch_enabled)
+            queue.inject(F("G29V1"));
         #endif
       }
       else
@@ -169,14 +173,8 @@
     #if ENABLED(MESH_BED_LEVELING)
       queue.inject(manual_probe_index ? F("G29S2") : F("G29S1"));
     #else
-      #if MOTHERBOARD != BOARD_MKS_ROBIN_NANO
-        if (!bedlevel_settings.bltouch_enabled)
-          queue.inject(F("G29V1"));
-      #else
-        #if ENABLED(PROBE_MANUALLY)
-          queue.inject(F("G29V1"));
-        #endif
-      #endif
+      if (!bedlevel_settings.bltouch_enabled)
+        queue.inject(F("G29V1"));
     #endif
   }
 
@@ -185,6 +183,7 @@
   //         Move to the first probe position
   //
   void _lcd_level_bed_homing_done() {
+    total_probe_points = bedlevel_settings.bedlevel_points.x * bedlevel_settings.bedlevel_points.y;
     if (ui.should_draw()) {
       MenuItem_static::draw(1, GET_TEXT(MSG_LEVEL_BED_WAITING));
       // Color UI needs a control to detect a touch
@@ -227,21 +226,177 @@
     sync_plan_position();
   }
 
+
+
   void menu_edit_mesh() {
-    static uint8_t xind, yind; // =0
+
     START_MENU();
-    // BACK_ITEM(MSG_BED_LEVELING);
-    #if MOTHERBOARD != BOARD_MKS_ROBIN_NANO
-      EDIT_ITEM(uint8, MSG_MESH_X, &xind, 0, (bedlevel_settings.bedlevel_points) - 1);
-      EDIT_ITEM(uint8, MSG_MESH_Y, &yind, 0, (bedlevel_settings.bedlevel_points) - 1);
-      EDIT_ITEM_FAST(float43, MSG_MESH_EDIT_Z, &Z_VALUES(xind, yind), -(LCD_PROBE_Z_RANGE) * 0.5, (LCD_PROBE_Z_RANGE) * 0.5, refresh_planner);
-    #else
-      EDIT_ITEM(uint8, MSG_MESH_X, &xind, 0, (GRID_MAX_POINTS_X) - 1);
-      EDIT_ITEM(uint8, MSG_MESH_Y, &yind, 0, (GRID_MAX_POINTS_Y) - 1);
-      EDIT_ITEM_FAST(float43, MSG_MESH_EDIT_Z, &Z_VALUES(xind, yind), -(LCD_PROBE_Z_RANGE) * 0.5, (LCD_PROBE_Z_RANGE) * 0.5, refresh_planner);
+
+    float max_z = 0, min_z = 0, color_step_pos = 0, color_step_neg = 0;
+
+    uint16_t xc = 0, yc = 0, wc = 0, hc = 0;
+    float z_intencity;
+    uint16_t z_color;
+
+//    tft.add_rectangle(0, 0, F_WIDTH+2, F_HEIGHT+2, COLOR_MESH_FRAME);
+
+    // find min and max Z-values
+    for (uint8_t ix = 0; ix < bedlevel_settings.bedlevel_points.x; ix++)
+    {
+      for (uint8_t iy = 0; iy < bedlevel_settings.bedlevel_points.y; iy++)
+      {
+        if (Z_VALUES(ix, iy) > 0 && Z_VALUES(ix, iy) > max_z)
+          max_z = Z_VALUES(ix, iy);
+        if (Z_VALUES(ix, iy) < 0 && Z_VALUES(ix, iy) < min_z)
+          min_z = Z_VALUES(ix, iy);
+      }
+    }
+    color_step_pos = (max_z == 0) ? 0 : (MAX_COLOR - MIN_COLOR) / max_z;
+    color_step_neg = (min_z == 0) ? 0 : (MAX_COLOR - MIN_COLOR) / (-min_z);
+
+    // fill color map
+    tft.canvas(F_X, F_Y, F_WIDTH, F_HEIGHT);
+    tft.set_background(COLOR_MESH_FRAME);
+    tft.set_font(SMALL_FONT_NAME);
+    wc = F_WIDTH / bedlevel_settings.bedlevel_points.x;
+    hc = F_HEIGHT / bedlevel_settings.bedlevel_points.y;
+    yc = hc * (bedlevel_settings.bedlevel_points.y - 1) + 1;
+    uint16_t points_count = bedlevel_settings.bedlevel_points.y * bedlevel_settings.bedlevel_points.x;
+    for (uint8_t iy = 0; iy < bedlevel_settings.bedlevel_points.y; iy++)
+    {
+      xc = 1;
+      for (uint8_t ix = 0; ix < bedlevel_settings.bedlevel_points.x; ix++)
+      {
+        if (Z_VALUES(ix, iy) >= 0)
+        {
+          z_intencity = Z_VALUES(ix, iy) * color_step_pos;
+          z_color = (z_intencity > 0) ? z_intencity : z_intencity * -1;
+          z_color = MAX_COLOR - z_color;
+          z_color = RGB(MAX_COLOR, z_color, z_color);
+        }
+        else
+        {
+          z_intencity = Z_VALUES(ix, iy) * color_step_neg;
+          z_color = (z_intencity > 0) ? z_intencity : z_intencity * -1;
+          z_color = MAX_COLOR - z_color;
+          z_color = RGB(z_color, z_color, MAX_COLOR);
+        }
+        if (xind == ix && yind == iy)
+        {
+          tft.add_bar(xc, yc, wc-1, hc-1, COLOR_BLACK);
+          tft.add_bar(xc+3, yc+3, wc-7, hc-7, z_color);
+        }
+        else
+        {
+          tft.add_bar(xc, yc, wc-1, hc-1, z_color);
+        }
+        if (points_count < 21)
+        {
+          tft_string.set((uint8_t *)ftostr12(Z_VALUES(ix, iy)));
+          tft.add_text(xc + tft_string.center(wc), yc + (hc - tft_string.font_height()) / 2, COLOR_BLACK, tft_string);
+        }
+        xc += wc;
+      }
+      yc -= hc;
+    }
+    touch.add_control(ACTIVE_REGION, F_X, F_Y, F_WIDTH, F_HEIGHT, (intptr_t)&change_point_edit_mesh);
+
+    tft.set_font(MENU_FONT_NAME);
+    #ifdef SYMBOLS_FONT_NAME
+      tft.add_glyphs(SYMBOLS_FONT_NAME);
     #endif
+
+    // draw color legend
+    yc = F_X + F_HEIGHT + 14;
+    
+    // min Z color
+    xc = F_WIDTH / 2 - LEG_WIDTH / 2 + F_X;
+    tft.canvas(xc, yc, LEG_WIDTH / 3, LEG_HEIGHT);
+    z_color = RGB(MIN_COLOR, MIN_COLOR, MAX_COLOR);
+    tft.set_background(z_color);
+    tft.add_bar(0, 0, LEG_WIDTH / 3, LEG_HEIGHT, z_color);
+    tft_string.set((uint8_t *)ftostr12(min_z));
+    tft.add_text(tft_string.center(LEG_WIDTH / 3), (LEG_HEIGHT - tft_string.font_height()) / 2, COLOR_BLACK, tft_string);
+    
+    // neitral Z color
+    xc += LEG_WIDTH / 3;
+    tft.canvas(xc, yc, LEG_WIDTH / 3, LEG_HEIGHT);
+    z_color = RGB(MAX_COLOR, MAX_COLOR, MAX_COLOR);
+    tft.set_background(z_color);
+    tft.add_bar(0, 0, LEG_WIDTH / 3, LEG_HEIGHT, z_color);
+    tft_string.set("0.0");
+    tft.add_text(tft_string.center(LEG_WIDTH / 3), (LEG_HEIGHT - tft_string.font_height()) / 2, COLOR_BLACK, tft_string);
+    
+    // max Z color
+    xc += LEG_WIDTH / 3;
+    tft.canvas(xc, yc, LEG_WIDTH / 3, LEG_HEIGHT);
+    z_color = RGB(MAX_COLOR, MIN_COLOR, MIN_COLOR);
+    tft.set_background(z_color);
+    tft.add_bar(0, 0, LEG_WIDTH / 3, LEG_HEIGHT, z_color);
+    tft_string.set((uint8_t *)ftostr12(max_z));
+    tft.add_text(tft_string.center(LEG_WIDTH / 3), (LEG_HEIGHT - tft_string.font_height()) / 2, COLOR_BLACK, tft_string);
+    
+    // current Z value
+    xc = F_X + F_WIDTH + 20;
+    yc = 180;
+    tft.canvas(xc, yc, TFT_WIDTH - xc, 54);
+    tft.set_background(COLOR_BACKGROUND);
+    tft_string.set("Z: ");
+    tft_string.add((uint8_t *)ftostr12(Z_VALUES(xind, yind)));
+    tft.add_text(tft_string.center(TFT_WIDTH - xc), 4, COLOR_MENU_TEXT, tft_string);
+    touch.add_control(MENU_SCREEN, xc-5, yc-5, TFT_WIDTH - xc, 54, (intptr_t)&change_Z_edit_mesh);
+
+    // DONE button
+    xc = F_X + F_WIDTH + 20;
+    yc = 260;
+    tft.canvas(xc, yc, TFT_WIDTH - xc, 54);
+    tft.set_background(COLOR_BACKGROUND);
+    tft_string.set((uint8_t *)GET_TEXT(MSG_BUTTON_DONE));
+    tft.add_text(tft_string.center(TFT_WIDTH - xc), 4, COLOR_MENU_TEXT, tft_string);
+    touch.add_control(BACK, xc-5, yc-5, TFT_WIDTH - xc, 54);
+    tft.
+
+
+/*
+    // BACK_ITEM(MSG_BED_LEVELING);
+    EDIT_ITEM(uint8, MSG_MESH_X, &xind, 0, (bedlevel_settings.bedlevel_points.x) - 1);
+    EDIT_ITEM(uint8, MSG_MESH_Y, &yind, 0, (bedlevel_settings.bedlevel_points.y) - 1);
+    EDIT_ITEM_FAST(float43, MSG_MESH_EDIT_Z, &Z_VALUES(xind, yind), -(LCD_PROBE_Z_RANGE) * 0.5, (LCD_PROBE_Z_RANGE) * 0.5, refresh_planner);
+*/
     END_MENU();
   }
+
+  void change_point_edit_mesh()
+  {
+    uint16_t  coord_x = 0, coord_y = 0;
+    uint16_t wc = 0, hc = 0;
+    touch.get_last_point((int16_t*)&coord_x, (int16_t*)&coord_y);
+
+    if (coord_x == 0 || coord_y == 0)
+      return;
+    
+    coord_x -= F_X;
+    coord_y -= F_Y;
+
+    wc = F_WIDTH / bedlevel_settings.bedlevel_points.x;
+    hc = F_HEIGHT / bedlevel_settings.bedlevel_points.y;
+
+    xind = coord_x / wc;
+    yind = (F_HEIGHT - coord_y) / hc;
+
+    ui.refresh();
+  }
+
+
+  void change_Z_edit_mesh()
+  {
+    START_MENU();
+
+    EDIT_ITEM_FAST(float43, MSG_MESH_EDIT_Z, &Z_VALUES(xind, yind), -(LCD_PROBE_Z_RANGE) * 0.5, (LCD_PROBE_Z_RANGE) * 0.5, refresh_planner);
+
+    END_MENU();
+  }
+
 
 #endif // MESH_EDIT_MENU
 
@@ -267,36 +422,20 @@ void menu_bed_leveling() {
   // BACK_ITEM(MSG_MOTION);
 
   // Auto Home if not using manual probing
-  #if MOTHERBOARD != BOARD_MKS_ROBIN_NANO
-    if (bedlevel_settings.bltouch_enabled)
-      if (!is_homed) GCODES_ITEM(MSG_AUTO_HOME, G28_STR);
-  #else
-    #if NONE(PROBE_MANUALLY, MESH_BED_LEVELING)
-      if (!is_homed) GCODES_ITEM(MSG_AUTO_HOME, G28_STR);
-    #endif
-  #endif
+  if (bedlevel_settings.bltouch_enabled)
+    if (!is_homed) GCODES_ITEM(MSG_AUTO_HOME, G28_STR);
 
   // Level Bed
-  #if MOTHERBOARD != BOARD_MKS_ROBIN_NANO
-    if (!bedlevel_settings.bltouch_enabled)
-    {
-      // Manual leveling uses a guided procedure
-      SUBMENU(MSG_LEVEL_BED_MANUAL, _lcd_level_bed_continue);
-    }
-    else
-    {
-      // Automatic leveling can just run the G-code
-      GCODES_ITEM(MSG_LEVEL_BED_AUTO, is_homed ? PSTR("G29") : PSTR("G29N"));
-    }
-  #else
-    #if EITHER(PROBE_MANUALLY, MESH_BED_LEVELING)
-      // Manual leveling uses a guided procedure
-      SUBMENU(MSG_LEVEL_BED, _lcd_level_bed_continue);
-    #else
-      // Automatic leveling can just run the G-code
-      GCODES_ITEM(MSG_LEVEL_BED, is_homed ? PSTR("G29") : PSTR("G29N"));
-    #endif
-  #endif
+  if (!bedlevel_settings.bltouch_enabled)
+  {
+    // Manual leveling uses a guided procedure
+    SUBMENU(MSG_LEVEL_BED_MANUAL, _lcd_level_bed_continue);
+  }
+  else
+  {
+    // Automatic leveling can just run the G-code
+    GCODES_ITEM(MSG_LEVEL_BED_AUTO, is_homed ? PSTR("G29") : PSTR("G29N"));
+  }
   
   #if ENABLED(MESH_EDIT_MENU)
     if (is_valid) SUBMENU(MSG_EDIT_MESH, menu_edit_mesh);
@@ -330,14 +469,8 @@ void menu_bed_leveling() {
   #if ENABLED(BABYSTEP_ZPROBE_OFFSET)
     SUBMENU(MSG_ZPROBE_ZOFFSET, lcd_babystep_zoffset);
   #else
-    #if MOTHERBOARD != BOARD_MKS_ROBIN_NANO
-      if (bedlevel_settings.bltouch_enabled)
-        EDIT_ITEM(LCD_Z_OFFSET_TYPE, MSG_ZPROBE_ZOFFSET, &probe.offset.z, Z_PROBE_OFFSET_RANGE_MIN, Z_PROBE_OFFSET_RANGE_MAX);
-    #else
-      #if HAS_BED_PROBE
-        EDIT_ITEM(LCD_Z_OFFSET_TYPE, MSG_ZPROBE_ZOFFSET, &probe.offset.z, Z_PROBE_OFFSET_RANGE_MIN, Z_PROBE_OFFSET_RANGE_MAX);
-      #endif
-    #endif
+    if (bedlevel_settings.bltouch_enabled)
+      EDIT_ITEM(LCD_Z_OFFSET_TYPE, MSG_ZPROBE_ZOFFSET, &probe.offset.z, Z_PROBE_OFFSET_RANGE_MIN, Z_PROBE_OFFSET_RANGE_MAX);
   #endif
 
   #if ENABLED(LEVEL_BED_CORNERS)
