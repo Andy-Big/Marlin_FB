@@ -836,6 +836,8 @@ namespace Language_en {
     LSTR MSG_NOZZLE1                        = _UxGT("Hotend");
     LSTR MSG_BED1                           = _UxGT("Bed");
 
+    LSTR MSG_CHANGE                         = _UxGT("Change");
+
   #endif  // RS_STYLE_COLOR_UI
 
 

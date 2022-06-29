@@ -24,7 +24,7 @@
 * [История](#история)
 
 ## Главное
-Обновлено 19.02.2022
+Обновлено 29.06.2022
 - WiFi интерфейс для управления принтером и передачи файлов
 - активирован Linear Advance
 - активирована возможность использовать встроенные в прошивку ретракты (командами G10, G11)
@@ -42,6 +42,8 @@
 - интерфейс - стандартный графический с измененным главным экраном
 - выбор языка интерфейса - английский или русский
 - хранение настроек (EEPROM) во внешней SPI-флэш W25Q64
+- настраиваемое количества точек сетки выравнивания стола
+- цветовая карта высот сетки выравнивания стола
 
 ## Соответствие вариантов прошивки разным платам
 Прошивка собрана в нескольких вариантах, каждый из которых подходит к определенной плате, которая встречается в принтере Reborn.
@@ -126,14 +128,20 @@
 Когда прошивка встречает эту команду в коде, она выводит данные из нее в прогресс печати и счетчик оставшегося времени. Если счетчик времени зеленого цвета - значит он получает данные из команды **M73**. Если слайсер не поддерживает эту команду или если по каким-то причинам прощивка не встречает эту команду в течении 3 минут, то она переходит на расчет прогресса и оставшегося времени по внутреннему методу - исходя из размера файла и количества уже считанных из него байт. В этом случае счетчик времени обычного серого цвета.
 
 ## История
+### 29.06.2022
+**v1.9.1**
+- добавлена раздельная настройка количества точек сетки кривизны стола по осям X и Y
+- в меню редактирования значений точек сетки кривизны стола добавлена для наглядности цветовая карта высот точек
+- исправлена ошибка, из-за которой при отключенном 3D-touch сетка кривизны стола строилась только по максимальному количеству точек
+
 ### 25.06.2022
 **v1.9**
 - **\*** добавлена поддержка 3D-touch (BL-touch), в доп. настройках его можно включить или выключить, по умолчанию выключен; по подключению 3D-touch смотрите выше в описании
 - **\*** парковка стола осталась прежней - по штатным концевикам
 - **\*** при выключенном 3D-touch все пункты, связанные с его работой, скрываются из меню (кроме возможности включить его)
 - **\*** добавлена настройка инверсии сигнала от 3D-touch
-- **\*** добавлена настройка количества точек сетки кривизны стола: 3х3, 4х4, 5х5 или 6х6
-- **\*** построение сетки кривизны стола происходит автоматически если 3D-touch включен в настройках, или вручную если 3D-touch выключен
+- добавлена настройка количества точек сетки кривизны стола: 3х3, 4х4, 5х5 или 6х6
+- построение сетки кривизны стола происходит автоматически если 3D-touch включен в настройках, или вручную если 3D-touch выключен
 - **\*** активирован мастер определения смещения 3D-touch от сопла по Z
 - **\*** активирован мастер выравнивания углов стола с помощью 3D-touch (если он включен)
 - **\*** в мастере выравнивания углов добавлены подсказки в какую сторону и на сколько нужно подкрутить винт
@@ -143,7 +151,6 @@
 - убрана парковка по X/Y при прерывании печати пользователем, теперь принтер при прерывании печати просто поднимет сопло на 10 мм и остановится
 - при выключении принтера кнопокй PWC (при подключенном этом модуле) принтер выключается не сразу, а после остывания сопла
 **\*** - работает только с платами Robin Nano v1.3 и Robin Nano S v1.3. На красных платах Robin Nano v1.1 (они же - Reborn 2.0) подключение BL-touch, к сожалению, не предусмотрено.
-
 
 ### 19.02.2022
 **v1.8**
@@ -271,6 +278,8 @@ Based on [Marlin 3D Printer Firmware](https://github.com/MarlinFirmware/Marlin) 
 - interface - standard graphical with a modified main screen
 - choice of interface language - English or Russian
 - storage of settings (EEPROM) in an external SPI flash W25Q64
+- configurable number of bed leveling grid points
+- bed leveling grid height color map
 
 ## Correspondence of firmware variants to different boards
 The firmware is assembled in several variants, each of which is suitable for a specific board that is found in the Reborn printer.
@@ -354,6 +363,12 @@ The **M73** command is inserted into the g-code by the slicer. In this command, 
 When the firmware encounters this command in the code, it outputs data from it to the print progress and the remaining time counter. If the time counter is green, then it is receiving data from the **M73** command. If the slicer does not support this command or if for some reason the firmware does not meet this command within 3 minutes, then it switches to calculating the progress and the remaining time using the internal method - based on the file size and the number of bytes already read from it. In this case, the time counter is a normal gray color.
 
 ## Version history
+
+### 06/29/2022
+**v1.9.1**
+- added separate setting for the number of bed level grid points along the X and Y axes
+- in the menu for editing the values of the bed level grid points, a color map of point heights has been added for clarity
+- fixed a bug due to which, when 3D-touch was disabled, the bed level grid was built only by the maximum number of points
 
 ### 06/25/2022
 **v1.9**

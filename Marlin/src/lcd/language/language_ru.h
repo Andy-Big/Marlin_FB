@@ -957,6 +957,8 @@ namespace Language_ru {
     LSTR MSG_NOZZLE1                        = _UxGT("Хотэнд");
     LSTR MSG_BED1                           = _UxGT("Стол");
 
+    LSTR MSG_CHANGE                         = _UxGT("Изменить");
+
 
   #endif  // RS_STYLE_COLOR_UI
 

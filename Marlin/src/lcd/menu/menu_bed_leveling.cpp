@@ -236,7 +236,7 @@ void change_Z_edit_mesh();
 
     uint16_t xc = 0, yc = 0, wc = 0, hc = 0;
     float z_intencity;
-    uint16_t z_color;
+    uint16_t z_color, cur_z_color;
 
 //    tft.add_rectangle(0, 0, F_WIDTH+2, F_HEIGHT+2, COLOR_MESH_FRAME);
 
@@ -285,6 +285,7 @@ void change_Z_edit_mesh();
         {
           tft.add_bar(xc, yc, wc-1, hc-1, COLOR_BLACK);
           tft.add_bar(xc+3, yc+3, wc-7, hc-7, z_color);
+          cur_z_color = z_color;
         }
         else
         {
@@ -301,11 +302,6 @@ void change_Z_edit_mesh();
     }
     touch.add_control(ACTIVE_REGION, F_X, F_Y, F_WIDTH, F_HEIGHT, (intptr_t)&change_point_edit_mesh);
 
-    tft.set_font(MENU_FONT_NAME);
-    #ifdef SYMBOLS_FONT_NAME
-      tft.add_glyphs(SYMBOLS_FONT_NAME);
-    #endif
-
     // draw color legend
     yc = F_X + F_HEIGHT + 14;
     
@@ -315,7 +311,7 @@ void change_Z_edit_mesh();
     z_color = RGB(MIN_COLOR, MIN_COLOR, MAX_COLOR);
     tft.set_background(z_color);
     tft.add_bar(0, 0, LEG_WIDTH / 3, LEG_HEIGHT, z_color);
-    tft_string.set((uint8_t *)ftostr12(min_z));
+    tft_string.set((uint8_t *)ftostr43sign(min_z));
     tft.add_text(tft_string.center(LEG_WIDTH / 3), (LEG_HEIGHT - tft_string.font_height()) / 2, COLOR_BLACK, tft_string);
     
     // neitral Z color
@@ -324,7 +320,7 @@ void change_Z_edit_mesh();
     z_color = RGB(MAX_COLOR, MAX_COLOR, MAX_COLOR);
     tft.set_background(z_color);
     tft.add_bar(0, 0, LEG_WIDTH / 3, LEG_HEIGHT, z_color);
-    tft_string.set("0.0");
+    tft_string.set("0.000");
     tft.add_text(tft_string.center(LEG_WIDTH / 3), (LEG_HEIGHT - tft_string.font_height()) / 2, COLOR_BLACK, tft_string);
     
     // max Z color
@@ -333,27 +329,39 @@ void change_Z_edit_mesh();
     z_color = RGB(MAX_COLOR, MIN_COLOR, MIN_COLOR);
     tft.set_background(z_color);
     tft.add_bar(0, 0, LEG_WIDTH / 3, LEG_HEIGHT, z_color);
-    tft_string.set((uint8_t *)ftostr12(max_z));
+    tft_string.set((uint8_t *)ftostr43sign(max_z));
     tft.add_text(tft_string.center(LEG_WIDTH / 3), (LEG_HEIGHT - tft_string.font_height()) / 2, COLOR_BLACK, tft_string);
     
+    tft.set_font(MENU_FONT_NAME);
+    #ifdef SYMBOLS_FONT_NAME
+      tft.add_glyphs(SYMBOLS_FONT_NAME);
+    #endif
+
+
     // current Z value
-    xc = F_X + F_WIDTH + 20;
-    yc = 180;
+    xc = F_X + F_WIDTH + 10;
+    yc = 15;
     tft.canvas(xc, yc, TFT_WIDTH - xc, 54);
     tft.set_background(COLOR_BACKGROUND);
     tft_string.set("Z: ");
-    tft_string.add((uint8_t *)ftostr12(Z_VALUES(xind, yind)));
+    tft_string.add((uint8_t *)ftostr43sign(Z_VALUES(xind, yind)));
+    tft.add_text(tft_string.center(TFT_WIDTH - xc), 4, cur_z_color, tft_string);
+
+    // CHANGE button
+    yc = 75;
+    tft.canvas(xc, yc, TFT_WIDTH - xc, 54);
+    tft.set_background(COLOR_BACKGROUND);
+    tft_string.set((uint8_t *)GET_TEXT(MSG_CHANGE));
     tft.add_text(tft_string.center(TFT_WIDTH - xc), 4, COLOR_MENU_TEXT, tft_string);
-    touch.add_control(MENU_SCREEN, xc-5, yc-5, TFT_WIDTH - xc, 54, (intptr_t)&change_Z_edit_mesh);
+    touch.add_control(MENU_SCREEN, xc, yc, TFT_WIDTH - xc, 54, (intptr_t)&change_Z_edit_mesh);
 
     // DONE button
-    xc = F_X + F_WIDTH + 20;
     yc = 260;
     tft.canvas(xc, yc, TFT_WIDTH - xc, 54);
     tft.set_background(COLOR_BACKGROUND);
     tft_string.set((uint8_t *)GET_TEXT(MSG_BUTTON_DONE));
     tft.add_text(tft_string.center(TFT_WIDTH - xc), 4, COLOR_MENU_TEXT, tft_string);
-    touch.add_control(BACK, xc-5, yc-5, TFT_WIDTH - xc, 54);
+    touch.add_control(BACK, xc, yc, TFT_WIDTH - xc, 54);
 
 
 /*

@@ -28,6 +28,7 @@
 #include "../inc/MarlinConfig.h"
 
 #include "motion.h"
+#include "endstops.h"
 
   enum ProbePtRaise : uint8_t {
     PROBE_PT_NONE,      // No raise or stow after run_z_probe
@@ -38,7 +39,8 @@
   };
 
 #if USES_Z_MIN_PROBE_PIN
-  #define PROBE_TRIGGERED() (READ(Z_MIN_PROBE_PIN) != Z_MIN_PROBE_ENDSTOP_INVERTING)
+//  #define PROBE_TRIGGERED() (READ(Z_MIN_PROBE_PIN) != Z_MIN_PROBE_ENDSTOP_INVERTING)
+  #define PROBE_TRIGGERED() (READ(Z_MIN_PROBE_PIN) != endstop_settings.Z_MIN_PROBE_INVERTING)
 #else
   #define PROBE_TRIGGERED() (READ(Z_MIN_PIN) != Z_MIN_ENDSTOP_INVERTING)
 #endif
