@@ -32,7 +32,6 @@
 #include "../../gcode/gcode.h"
 #include "../../module/settings.h"
 #include "../../module/stepper.h"
-#include "../../libs/fst_SPI/fst_spi.h"
 
 void menu_pause_option();
 
@@ -199,8 +198,6 @@ void MenuItem_static::draw(const uint8_t row, FSTR_P const fstr, const uint8_t s
 bool MarlinUI::detected() { return true; }
 
 void MarlinUI::init_lcd() {
-  fstspi.Init();
-  fstspi.TouchEnable();
   tft.init();
   tft.set_font(MENU_FONT_NAME);
   #ifdef SYMBOLS_FONT_NAME

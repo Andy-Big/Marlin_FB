@@ -22,7 +22,6 @@
 #pragma once
 
 #include "../../inc/MarlinConfigPre.h"
-#include "../../libs/fst_SPI/fst_touch.h"
 
 #include "tft_color.h"
 #include "tft_image.h"
@@ -31,17 +30,15 @@
   #include "../tft_io/touch_calibration.h"
 #endif
 
-// #if ENABLED(TFT_TOUCH_DEVICE_GT911)
-//   #include HAL_PATH(../../HAL, tft/gt911.h)
-//   #define TOUCH_DRIVER_CLASS GT911
-// #elif ENABLED(TFT_TOUCH_DEVICE_XPT2046)
-//   #include HAL_PATH(../../HAL, tft/xpt2046.h)
-//   #define TOUCH_DRIVER_CLASS XPT2046
-// #else
-//   #error "Unknown Touch Screen Type."
-// #endif
-
-#define TOUCH_DRIVER_CLASS touchspi
+#if ENABLED(TFT_TOUCH_DEVICE_GT911)
+  #include HAL_PATH(../../HAL, tft/gt911.h)
+  #define TOUCH_DRIVER_CLASS GT911
+#elif ENABLED(TFT_TOUCH_DEVICE_XPT2046)
+  #include HAL_PATH(../../HAL, tft/xpt2046.h)
+  #define TOUCH_DRIVER_CLASS XPT2046
+#else
+  #error "Unknown Touch Screen Type."
+#endif
 
 // Menu Navigation
 extern int8_t encoderTopLine, encoderLine, screen_items;
@@ -102,7 +99,7 @@ typedef struct __attribute__((__packed__)) {
 
 class Touch {
   private:
-//    static TOUCH_DRIVER_CLASS io;
+    static TOUCH_DRIVER_CLASS io;
     static int16_t x, y;
     static bool enabled;
 

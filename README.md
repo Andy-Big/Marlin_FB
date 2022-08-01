@@ -26,29 +26,26 @@
 
 ## Главное
 Обновлено 28.07.2022
-- работа с файловой системой на SD-карте производится с помощью быстрой и гибкой библиотеки FatFS
-- каталоги в списке файлов выводятся вверху списка
-- сохранение и загрузка настроек в файл .ini на SD-карте ([подробнее](#Сохранение-и-загрузка-параметров-в-файл-ini))
-- цветовая карта высот сетки выравнивания стола
-- возможность передачи файла обновления прошивки по WiFi с автоматической перезагрузкой и перепрошивкой принтера
-- включена подстройка винтами стола по 4 точкам, соответствующим положению регулировочных винтов ("Выровнять углы") вручную или с помощью сенсора BL-Touch
-- сенсор BL-Touch может быть включен или выключен в меню настроек
-- настраиваемое количества точек сетки выравнивания стола
 - WiFi интерфейс для управления принтером и передачи файлов
 - активирован Linear Advance
 - активирована возможность использовать встроенные в прошивку ретракты (командами G10, G11)
 - отображение картинки предпросмотра при выборе файла (поддерживается предпросмотр PrusaSlicer и только на платах Robin Nano v1.3 и Robin Nano S v1.3)
 - активен датчик окончания филамента
 - предусмотрено подключение модуля управления питанием (PSU) MKS PWC
-- настройка в меню автоматического отключения питания по окончанию текущей печати (при подключенном модуле управления питанием)
-- настройка в меню направления вращения моторов X/Y/Z/Z2/E
-- настройка в меню инверсии концевиков
-- включена калибровка стола (вручную или с помощью сенсора BL-Touch)
+- добавлена настройка автоматического отключения питания по окончанию текущей печати (при подключенном модуле управления питанием)
+- добавлена настройка направления вращения моторов X/Y/Z/Z2/E
+- добавлена настройка инверсии концевиков
+- включена калибровка стола ("Выровнять стол" с ручной подгонкой высоты сопла по 9 точкам)
+- включена подстройка винтами стола по 4 точкам, соответствующим положению регулировочных винтов ("Выровнять углы")
 - исправлены все косяки вывода русскоязычных надписей
-- поддержка русских имен файлов и каталогов
+- поддержка русских имен файлов
+- по умолчанию стоит ограничение на ускорения осей - 3000 мм/сек\*сек, скорость - 250 мм/сек
 - интерфейс - стандартный графический с измененным главным экраном
 - выбор языка интерфейса - английский или русский
 - хранение настроек (EEPROM) во внешней SPI-флэш W25Q64
+- настраиваемое количества точек сетки выравнивания стола
+- цветовая карта высот сетки выравнивания стола
+- сохранение и загрузка настроек в файл .ini на SD-карте ([подробнее](#Сохранение-и-загрузка-параметров-в-файл-ini))
 
 ## Соответствие вариантов прошивки разным платам
 Прошивка собрана в нескольких вариантах, каждый из которых подходит к определенной плате, которая встречается в принтере Reborn.
@@ -317,29 +314,26 @@ Based on [Marlin 3D Printer Firmware](https://github.com/MarlinFirmware/Marlin) 
 
 ## The main thing
 Updated 07/29/2022
-- work with the file system on the SD card is done using the fast and flexible FatFS library
-- directories in the list of files are displayed at the top of the list
-- saving and loading settings to the .ini file on the SD card ([more](#Saving-and-loading-parameters-to-ini-file))
-- bed leveling grid height colormap
-- the ability to transfer the firmware update file via WiFi with automatic reboot and flashing the printer
-- enabled adjustment of the table screws by 4 points corresponding to the position of the adjusting screws ("Align corners") manually or using the BL-Touch sensor
-- BL-Touch sensor can be turned on or off in the settings menu
-- configurable number of bed leveling grid points
+- activated Linear Advance
 - WiFi interface for printer control and file transfer
-- Linear Advance activated
-- activated the ability to use the retracts built into the firmware (by commands G10, G11)
-- displaying a preview image when a file is selected (PrusaSlicer preview is supported and only on Robin Nano v1.3 and Robin Nano S v1.3 boards)
-- active filament end sensor
-- connection of the power management unit MKS PWC is provided
-- setting in the menu to automatically turn off the power at the end of the current print (when the power management module is connected)
-- setting in the menu of the direction of rotation of motors X/Y/Z/Z2/E
-- setting in the menu inversion of limit switches
-- bed leveling is enabled (manually or using the BL-Touch sensor)
+- the filament end sensor is active
+- connection of the power management unit (PSU) MKS PWC is provided
+- added setting for automatic power off at the end of the current print job (if the power management module is connected)
+- added direction of rotation of motors X/Y/Z/Z2/E
+- added endstops inverting settings
+- the ability to use the retracts built into the firmware is activated (by commands G10, G11)
+- displaying a preview picture when selecting a file (PrusaSlicer preview is supported and only on Robin Nano v1.3 and Robin Nano S v1.3 boards)
+- table calibration is enabled ("Align the table" with manual adjustment of the nozzle height by 9 points)
+- adjustment is enabled by the table screws at 4 points, corresponding to the position of the adjusting screws ("Align the corners")
 - fixed all the jambs of the output of Russian-language inscriptions
-- support for Russian file and directory names
-- interface - standard graphic with a modified main screen
+- support for Russian filenames
+- by default, there is a limit on the acceleration of the axes - 3000 mm/s\*s, speed - 250 mm/s
+- interface - standard graphical with a modified main screen
 - choice of interface language - English or Russian
 - storage of settings (EEPROM) in an external SPI flash W25Q64
+- configurable number of bed leveling grid points
+- bed leveling grid height color map
+- save and load settings to .ini file on SD card ([more](#Saving-and-loading-parameters-to-ini-file))
 
 ## Correspondence of firmware variants to different boards
 The firmware is assembled in several variants, each of which is suitable for a specific board that is found in the Reborn printer.

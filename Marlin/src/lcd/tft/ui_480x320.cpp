@@ -59,7 +59,6 @@ void MarlinUI::tft_idle() {
   #endif
 
   tft.queue.async();
-  touchspi._ReadCoords();
   TERN_(TOUCH_SCREEN, touch.idle());
 }
 

@@ -31,7 +31,6 @@
 #include "xpt2046.h"
 #include "pinconfig.h"
 
-/*
 uint16_t delta(uint16_t a, uint16_t b) { return a > b ? a - b : b - a; }
 
 SPI_HandleTypeDef XPT2046::SPIx;
@@ -170,6 +169,5 @@ uint16_t XPT2046::SoftwareIO(uint16_t data) {
   return result;
 }
 
-*/
 #endif // HAS_TFT_XPT2046
 #endif // HAL_STM32
