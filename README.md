@@ -6,6 +6,7 @@
 # Прошивка MarlinRB для принтера Flyingbear Reborn
 
 ### Собранные готовые файлы прошивки находятся в [разделе Releases](https://github.com/Andy-Big/Marlin_FB_Reborn/releases)
+Последняя версия: **2.0.9.3-v2.1.1** от 02.08.2022
 
 Работает с платами: **MKS Robin Nano v1.3** (съемные драйвера, контроллер STM32F407), **MKS Robin Nano S v1.3** (несъемные драйвера, контроллер STM32F407) и **MKS Robin Nano v1.1** (красная плата со съемными драйверами, контроллер STM32F103, может иметь название Flyingbear Reborn v2.0).
 ![Interface](IMG/IMG_20211026_223227.jpg)
@@ -25,27 +26,30 @@
 * [История](#история)
 
 ## Главное
-Обновлено 28.07.2022
+Обновлено 02.08.2022
+- работа с файловой системой на SD-карте производится с помощью быстрой и гибкой библиотеки FatFS
+- каталоги в списке файлов выводятся вверху списка
+- сохранение и загрузка настроек в файл .ini на SD-карте ([подробнее](#Сохранение-и-загрузка-параметров-в-файл-ini))
+- цветовая карта высот сетки выравнивания стола
+- возможность передачи файла обновления прошивки по WiFi с автоматической перезагрузкой и перепрошивкой принтера
+- включена подстройка винтами стола по 4 точкам, соответствующим положению регулировочных винтов ("Выровнять углы") вручную или с помощью сенсора BL-Touch
+- сенсор BL-Touch может быть включен или выключен в меню настроек
+- настраиваемое количества точек сетки выравнивания стола
 - WiFi интерфейс для управления принтером и передачи файлов
 - активирован Linear Advance
 - активирована возможность использовать встроенные в прошивку ретракты (командами G10, G11)
 - отображение картинки предпросмотра при выборе файла (поддерживается предпросмотр PrusaSlicer и только на платах Robin Nano v1.3 и Robin Nano S v1.3)
 - активен датчик окончания филамента
 - предусмотрено подключение модуля управления питанием (PSU) MKS PWC
-- добавлена настройка автоматического отключения питания по окончанию текущей печати (при подключенном модуле управления питанием)
-- добавлена настройка направления вращения моторов X/Y/Z/Z2/E
-- добавлена настройка инверсии концевиков
-- включена калибровка стола ("Выровнять стол" с ручной подгонкой высоты сопла по 9 точкам)
-- включена подстройка винтами стола по 4 точкам, соответствующим положению регулировочных винтов ("Выровнять углы")
+- настройка в меню автоматического отключения питания по окончанию текущей печати (при подключенном модуле управления питанием)
+- настройка в меню направления вращения моторов X/Y/Z/Z2/E
+- настройка в меню инверсии концевиков
+- включена калибровка стола (вручную или с помощью сенсора BL-Touch)
 - исправлены все косяки вывода русскоязычных надписей
-- поддержка русских имен файлов
-- по умолчанию стоит ограничение на ускорения осей - 3000 мм/сек\*сек, скорость - 250 мм/сек
+- поддержка русских имен файлов и каталогов
 - интерфейс - стандартный графический с измененным главным экраном
 - выбор языка интерфейса - английский или русский
 - хранение настроек (EEPROM) во внешней SPI-флэш W25Q64
-- настраиваемое количества точек сетки выравнивания стола
-- цветовая карта высот сетки выравнивания стола
-- сохранение и загрузка настроек в файл .ini на SD-карте ([подробнее](#Сохранение-и-загрузка-параметров-в-файл-ini))
 
 ## Соответствие вариантов прошивки разным платам
 Прошивка собрана в нескольких вариантах, каждый из которых подходит к определенной плате, которая встречается в принтере Reborn.
@@ -163,15 +167,20 @@ BEDLEVEL_Z_VALUES = 0.000, 0.000, 0.000, 0.000, 0.000, 0.000
 
 
 ## История
+### 02.08.2022
+**2.0.9.3-v2.1.1**
+- [X] **полностью и окончательно исправлена работа Linear Advance со всеми драйверами, включая TMC2208/TMC2225** ([коммит в Марлине](https://github.com/MarlinFirmware/Marlin/commit/232a104a927988c63f8c0c53a8c2e26005166e2d))
+- [X] подправлена работа помощника выравнивания углов стола (меню `Мастер уровня стола`), теперь там отображается абсолютная высота углов и автоматически производится замер при переходе в другой угол
+
 ### 29.07.2022
-**v2.1**
+**2.0.9.3-v2.1**
 - [X] Добавлена возможность выгрузки настроек в файл конфигурации .ini на SD-карте и загрузку настроек из него командами `M5000`, `M5001` и из меню принтера, сохраняется и загружается почти 90 параметров ([подробнее](#Сохранение-и-загрузка-параметров-в-файл-ini)) 
 - [X] Добавлены настройки параметров парковки экструдера при паузе или замене прутка и параметры замены прутка в меню `Настройки` - `Доп. настройки` - `Пауза / Замена прутка`
 - [X] Исправлен вывод некоторых текстов в меню
 - [X] Применены все последние изменения и багфиксы оригинального Марлина вплоть до 28.07.2022
 
 ### 23.07.2022
-**v2.0**
+**2.0.9.3-v2.0**
 - [X] [Timofey Titovets](https://github.com/Nefelim4ag) с небольшой моей помощью обновил базу Марлина до последней версии 2.1
 - [X] Работа с файлами на SD-карте полностью переведена на более современную и удобную файловую библиотеку FatFS
 - [X] Подправлена работа модуля WiFi - теперь он корректно отдает статус интерфейсу Beeprint
@@ -181,13 +190,13 @@ BEDLEVEL_Z_VALUES = 0.000, 0.000, 0.000, 0.000, 0.000, 0.000
 - [X] Применены все последние изменения и багфиксы оригинального Марлина вплоть до 23.07.2022
 
 ### 29.06.2022
-**v1.9.1**
+**2.0.9.3-v1.9.1**
 - [X] Добавлена раздельная настройка количества точек сетки кривизны стола по осям X и Y
 - [X] В меню редактирования значений точек сетки кривизны стола добавлена для наглядности цветовая карта высот точек
 - [X] Исправлена ошибка, из-за которой при отключенном 3D-touch сетка кривизны стола строилась только по максимальному количеству точек
 
 ### 25.06.2022
-**v1.9**
+**2.0.9.3-v1.9**
 - [X] **\*** Добавлена поддержка 3D-touch (BL-touch), в доп. настройках его можно включить или выключить, по умолчанию выключен; по подключению 3D-touch смотрите выше в описании
 - [X] **\*** Парковка стола осталась прежней - по штатным концевикам
 - [X] **\*** При выключенном 3D-touch все пункты, связанные с его работой, скрываются из меню (кроме возможности включить его)
@@ -205,7 +214,7 @@ BEDLEVEL_Z_VALUES = 0.000, 0.000, 0.000, 0.000, 0.000, 0.000
 **\*** - работает только с платами Robin Nano v1.3 и Robin Nano S v1.3. На красных платах Robin Nano v1.1 (они же - Reborn 2.0) подключение BL-touch, к сожалению, не предусмотрено.
 
 ### 19.02.2022
-**v1.8**
+**2.0.9.3-v1.8**
 - [X] Исправлена ошибка в Марлине, из-за которой при неудачной калибровке тача дисплей зависал на экране с крестиками в левом верхнем и правом нижнем углах, не реагируя на нажатия
 - [X] В меню Доп. настройки добавлен пункт настройки инверсии концевиков; это позволяет использовать неродные концевики, настраивая их режим работы
 - [X] В выбор термисторов добавлен Pt1000 4.7kΩ pullup (1047)
@@ -217,7 +226,7 @@ BEDLEVEL_Z_VALUES = 0.000, 0.000, 0.000, 0.000, 0.000, 0.000
 - [X] Из главного меню во время печати убраны пункты паузы/возобновления и остановки печати, и пункт тюнинга; эти действия доступны по кнопкам в главном окне
 
 ### 29.01.2022
-**v1.7**
+**2.0.9.3-v1.7**
 - [X] На главный экран добавлены кнопки быстрого доступа к настройкам потока (flowrate) и скорости (feedrate) с показом текущего значения
 - [X] В меню настроек температуры добавлена настройка типов термисторов для сопла и стола; пока доступен выбор из 4 распространенных типов, при запросах на другие типы они будут добавляться
 - [X] Ядро Марлина обновлено до версии 2.0.9.3
@@ -294,6 +303,7 @@ BEDLEVEL_Z_VALUES = 0.000, 0.000, 0.000, 0.000, 0.000, 0.000
 # MarlinRB firmware for Flyingbear Reborn printer
 
 ### The bulded ready to flash firmware files are in the [Releases section](https://github.com/Andy-Big/Marlin_FB_Reborn/releases)
+Latest version: **2.1-v2.1.1** from 08.02.2022
 
 Works with boards: **MKS Robin Nano v1.3** (removable drivers, STM32F407 controller), **MKS Robin Nano S v1.3** (non-removable drivers, STM32F407 controller) and **MKS Robin Nano v1.1** (red board with removable drivers, STM32F103 controller, can have the name Flyingbear Reborn v2.0).
 ![Interface](IMG/IMG_20211026_223227.jpg)
@@ -313,27 +323,30 @@ Based on [Marlin 3D Printer Firmware](https://github.com/MarlinFirmware/Marlin) 
 * [Version history](#version-history)
 
 ## The main thing
-Updated 07/29/2022
-- activated Linear Advance
+Updated 08/02/2022
+- work with the file system on the SD card is done using the fast and flexible FatFS library
+- directories in the list of files are displayed at the top of the list
+- saving and loading settings to the .ini file on the SD card ([more](#Saving-and-loading-parameters-to-ini-file))
+- bed leveling grid height colormap
+- the ability to transfer the firmware update file via WiFi with automatic reboot and flashing the printer
+- enabled adjustment of the table screws by 4 points corresponding to the position of the adjusting screws ("Align corners") manually or using the BL-Touch sensor
+- BL-Touch sensor can be turned on or off in the settings menu
+- configurable number of bed leveling grid points
 - WiFi interface for printer control and file transfer
-- the filament end sensor is active
-- connection of the power management unit (PSU) MKS PWC is provided
-- added setting for automatic power off at the end of the current print job (if the power management module is connected)
-- added direction of rotation of motors X/Y/Z/Z2/E
-- added endstops inverting settings
-- the ability to use the retracts built into the firmware is activated (by commands G10, G11)
-- displaying a preview picture when selecting a file (PrusaSlicer preview is supported and only on Robin Nano v1.3 and Robin Nano S v1.3 boards)
-- table calibration is enabled ("Align the table" with manual adjustment of the nozzle height by 9 points)
-- adjustment is enabled by the table screws at 4 points, corresponding to the position of the adjusting screws ("Align the corners")
+- Linear Advance activated
+- activated the ability to use the retracts built into the firmware (by commands G10, G11)
+- displaying a preview image when a file is selected (PrusaSlicer preview is supported and only on Robin Nano v1.3 and Robin Nano S v1.3 boards)
+- active filament end sensor
+- connection of the power management unit MKS PWC is provided
+- setting in the menu to automatically turn off the power at the end of the current print (when the power management module is connected)
+- setting in the menu of the direction of rotation of motors X/Y/Z/Z2/E
+- setting in the menu inversion of limit switches
+- bed leveling is enabled (manually or using the BL-Touch sensor)
 - fixed all the jambs of the output of Russian-language inscriptions
-- support for Russian filenames
-- by default, there is a limit on the acceleration of the axes - 3000 mm/s\*s, speed - 250 mm/s
-- interface - standard graphical with a modified main screen
+- support for Russian file and directory names
+- interface - standard graphic with a modified main screen
 - choice of interface language - English or Russian
 - storage of settings (EEPROM) in an external SPI flash W25Q64
-- configurable number of bed leveling grid points
-- bed leveling grid height color map
-- save and load settings to .ini file on SD card ([more](#Saving-and-loading-parameters-to-ini-file))
 
 ## Correspondence of firmware variants to different boards
 The firmware is assembled in several variants, each of which is suitable for a specific board that is found in the Reborn printer.
@@ -450,15 +463,20 @@ It is not necessary to specify all the parameters in the file, it can contain an
 
 ## Version history
 
+### 08/02/2022
+**2.1-v2.1.1**
+- [X] **Fully and permanently fixed Linear Advance with all drivers, including TMC2208/TMC2225** ([commit in Marlin](https://github.com/MarlinFirmware/Marlin/commit/232a104a927988c63f8c0c53a8c2e26005166e2d))
+- [X] corrected the work of the table corners alignment assistant (`Tramming Wizard` menu), now it displays the absolute height of the corners and automatically measures when moving to another corner
+
 ### 07/29/2022
-**v2.1**
+**2.1-v2.1**
 - [X] Added the ability to save settings to the .ini configuration file on the SD card and load settings from it using the `M5000`, `M5001` commands and from the printer menu, almost 90 parameters are saved and loaded ([more](#Saving-and-loading-parameters-to-ini-file))
 - [X] Added settings for extruder parking parameters when pausing or changing filament and parameters for changing filament in the menu `Settings` - `Advanced settings` - `Pause / Filament change`
 - [X] Fixed output of some texts in the menu
 - [X] Applied all the latest changes and bug fixes of the original Marlin up to 07/28/2022
 
 ### 07/23/2022
-**v2.0**
+**2.1-v2.0**
 - [X] [Timofey Titovets](https://github.com/Nefelim4ag) updated the Marlin base to the latest version 2.1 with a little help from me
 - [X] Work with files on the SD card has been completely transferred to a more modern and convenient file library FatFS
 - [X] Fixed the work of the WiFi module - now it correctly gives the status to the Beeprint interface
@@ -468,13 +486,13 @@ It is not necessary to specify all the parameters in the file, it can contain an
 - [X] Applied all the latest changes and bug fixes of the original Marlin up to 07/23/2022
 
 ### 06/29/2022
-**v1.9.1**
+**2.0.9.3-v1.9.1**
 - [X] Added separate setting for the number of bed level grid points along the X and Y axes
 - [X] In the menu for editing the values of the bed level grid points, a color map of point heights has been added for clarity
 - [X] Fixed a bug due to which, when 3D-touch was disabled, the bed level grid was built only by the maximum number of points
 
 ### 06/25/2022
-**v1.9**
+**2.0.9.3-v1.9**
 - [X] **\*** Added support for BL-touch (3D-touch), you can turn it on or off in the advanced settings, it's off by default; for connecting BL-touch, see above in the description
 - [X] **\*** Table parking remains the same - by standard limit switches
 - [X] **\*** When BL-touch is turned off, all items related to its operation are hidden from the menu (except for the ability to turn it on)
@@ -492,7 +510,7 @@ It is not necessary to specify all the parameters in the file, it can contain an
 **\*** - only works with Robin Nano v1.3 and Robin Nano S v1.3 boards. On the red Robin Nano v1.1 boards (they are also Reborn 2.0), the BL-touch connection, unfortunately, is not provided.
 
 ### 02/19/2022
-**v1.8**
+**2.0.9.3-v1.8**
 - [X] Fixed a bug in Marlin, due to which, if the calibration of the touch was unsuccessful, the display freeze on the screen with crosses in the upper left and lower right corners, not responding to pressing
 - [X] In the Advanced settings menu added setting for endstops inverting; this allows you to use non-stock endstop switches by setting their mode of operation
 - [X] Added Pt1000 4.7kΩ pullup (1047) to the thermistor selection
@@ -504,7 +522,7 @@ It is not necessary to specify all the parameters in the file, it can contain an
 - [X] From the main menu during printing, the Pause/Resume, Stop and Tuning items have been removed; these actions are available via buttons in the main window
 
 ### 01/29/2022
-**v1.7**
+**2.0.9.3-v1.7**
 - [X] Buttons for quick access to the settings of the flow (flowrate) and speed (feedrate) have been added to the main screen, with showing the current value
 - [X] In the temperature settings menu, the setting of thermistor types for the nozzle and bed has been added; while there is a choice of 4 common types, requests for other types will be added
 - [X] Marlin core updated to version 2.0.9.3
@@ -516,7 +534,7 @@ It is not necessary to specify all the parameters in the file, it can contain an
 - [X] In the tuning menu, the retract length setting has been added, the speed (feedrate) and flow (flowrate) settings have been removed, because they are now available directly from the status screen
 
 ### 01/17/2022
-**v1.6**
+**2.0.9.3-v1.6**
 - [X] The work of the firmware with the power control unit (PSU) MKS PWC is activated; if this module is present, the printer can automatically turn off the power when an error is detected - for example, uncontrolled heating of the hotend or table; turn off the printer on the command of the module is disabled so that the printer does not turn off by itself if there is no power management module
 - [X] Added motor inversion settings to the settings menu
 - [X] Changed the processing of the pause command (M25) - now this command by default brings the nozzle to the parking position and waits for the user to press the screen
