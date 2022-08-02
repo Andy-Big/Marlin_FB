@@ -22,6 +22,7 @@
 
 #include "../../../inc/MarlinConfig.h"
 
+/*
 #if HAS_TFT_XPT2046 || HAS_RES_TOUCH_BUTTONS
 
 #include "xpt2046.h"
@@ -35,11 +36,11 @@ uint16_t delta(uint16_t a, uint16_t b) { return a > b ? a - b : b - a; }
   SPIClass XPT2046::SPIx(TOUCH_BUTTONS_HW_SPI_DEVICE);
 
   static void touch_spi_init(uint8_t spiRate) {
-    /**
-     * STM32F1 APB2 = 72MHz, APB1 = 36MHz, max SPI speed of this MCU if 18Mhz
-     * STM32F1 has 3 SPI ports, SPI1 in APB2, SPI2/SPI3 in APB1
-     * so the minimum prescale of SPI1 is DIV4, SPI2/SPI3 is DIV2
-     */
+    
+    // STM32F1 APB2 = 72MHz, APB1 = 36MHz, max SPI speed of this MCU if 18Mhz
+    // STM32F1 has 3 SPI ports, SPI1 in APB2, SPI2/SPI3 in APB1
+    // so the minimum prescale of SPI1 is DIV4, SPI2/SPI3 is DIV2
+    
     uint8_t clock;
     switch (spiRate) {
       case SPI_FULL_SPEED:    clock = SPI_CLOCK_DIV4;  break;
@@ -142,3 +143,5 @@ uint16_t XPT2046::SoftwareIO(uint16_t data) {
 }
 
 #endif // HAS_TFT_XPT2046
+
+*/

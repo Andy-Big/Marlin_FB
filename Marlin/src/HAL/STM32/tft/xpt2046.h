@@ -20,7 +20,7 @@
  *
  */
 #pragma once
-
+/*
 #ifdef STM32F1xx
   #include <stm32f1xx_hal.h>
 #elif defined(STM32F4xx)
@@ -79,3 +79,5 @@ public:
   static void Init();
   static bool getRawPoint(int16_t *x, int16_t *y);
 };
+
+*/
