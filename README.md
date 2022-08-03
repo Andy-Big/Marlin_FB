@@ -8,6 +8,8 @@
 ### Собранные готовые файлы прошивки находятся в [разделе Releases](https://github.com/Andy-Big/Marlin_FB_Reborn/releases)
 Последняя версия: **2.0.9.3-v2.1.1** от 02.08.2022
 
+Если вы готовы поддержать этот проект 100 рублями, то вы можете сделать это через ЮМани по [вот этой ссылке](https://yoomoney.ru/quickpay/button-widget?targets=&default-sum=100&button-text=11&yoomoney-payment-type=on&button-size=m&button-color=orange&successURL=&quickpay=small&account=4100117918513407&) :)
+
 Работает с платами: **MKS Robin Nano v1.3** (съемные драйвера, контроллер STM32F407), **MKS Robin Nano S v1.3** (несъемные драйвера, контроллер STM32F407) и **MKS Robin Nano v1.1** (красная плата со съемными драйверами, контроллер STM32F103, может иметь название Flyingbear Reborn v2.0).
 ![Interface](IMG/IMG_20211026_223227.jpg)
 
