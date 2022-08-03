@@ -248,6 +248,10 @@
   #include "feature/easythreed_ui.h"
 #endif
 
+
+#include "libs/fst_SPI/spi_flash.h"
+
+
 PGMSTR(M112_KILL_STR, "M112 Shutdown");
 
 MarlinState marlin_state = MF_INITIALIZING;
@@ -1169,6 +1173,8 @@ void setup() {
   // UI must be initialized before EEPROM
   // (because EEPROM code calls the UI).
 
+  SETUP_RUN(spiflash.Init());
+  SETUP_RUN(spiflash.InitFS());
   SETUP_RUN(ui.init());
 
   #if PIN_EXISTS(SAFE_POWER)
@@ -1345,8 +1351,6 @@ void setup() {
   #endif
 
   TERN_(HAS_FANCHECK, fan_check.init());
-
-  f_mount(&FS_flash, DISK_FLASH, 1);
 
   SETUP_RUN(settings.first_load()); // Load data from EEPROM if available (or use defaults)
                                       // This also updates variables in the planner, elsewhere

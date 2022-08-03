@@ -241,6 +241,25 @@ void menu_info_board() {
   PSTRING_ITEM(MSG_INFO_BAUDRATE, STRINGIFY(BAUDRATE), SS_CENTER); // Baud: 250000
   PSTRING_ITEM(MSG_INFO_PROTOCOL, PROTOCOL_VERSION, SS_CENTER);    // Protocol: 1.0
   PSTRING_ITEM(MSG_INFO_PSU, PSU_NAME, SS_CENTER);
+
+  char tname[64];
+  uint32_t  mtotal = 0, mfree = 0;
+  FATFS *fs = &FS_flash;
+
+  if (f_getfree(DISK_FLASH, &mfree, &fs) != FR_OK)
+  {
+    sprintf(tname, "%s: - / - KB", GET_TEXT(MSG_INTERNAL_MEMORY));
+  }
+  else
+  {
+    mfree *= fs->csize * fs->ssize;
+    mfree /= 1024;
+    mtotal = fs->n_fatent * fs->csize * fs->ssize;
+    mtotal /= 1024;
+    sprintf(tname, "%s: %ld / %ld KB", GET_TEXT(MSG_INTERNAL_MEMORY), mfree, mtotal);
+  }
+  STATIC_ITEM_F(FPSTR(tname), SS_CENTER);
+
   END_SCREEN();
 }
 

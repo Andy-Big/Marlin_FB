@@ -7,11 +7,12 @@
 #define FF_DEBUG
 
 
-#define     DISK_SD     "0"
-#define     DISK_FLASH  "1"
+#define     DISK_SD     "0:"
+#define     DISK_FLASH  "1:"
 
+
+extern FATFS  FS_flash;
 extern FATFS FS_sd;
-extern FATFS FS_flash;
 
 
 char*		FATFS_GetFileExtension(char *fname);

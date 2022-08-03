@@ -4,8 +4,8 @@
 #include "fatfs_shared.h"
 
 
-FATFS FS_sd;
-FATFS FS_flash;
+FATFS 				FS_sd;
+FATFS         FS_flash;
 
 
 

@@ -142,6 +142,7 @@ void		FastSpi::Init(void)
 	HAL_SPI_Init(&hFstSpi);
 
 	inited = true;
+	current_mode = FST_MODE_UNKNOW;
 }
 //==============================================================================
 
@@ -193,12 +194,15 @@ void		FastSpi::TouchEnable()
 {
 	if (!inited)
 		Init();
-	if (current_mode != FST_MODE_TOUCH)
-	{
-		while ((GetFlags() & SPI_FLAG_BSY) || (GetFlags() & SPI_FLAG_TXE) == 0 || hFstSpi.State != HAL_SPI_STATE_READY);
-		while ( IsDMAReady() == 0);
-		FlashDisable();
-	}
+
+	if (current_mode == FST_MODE_TOUCH)
+		return;
+
+	FlashDisable();
+
+	while ((GetFlags() & SPI_FLAG_BSY) || (GetFlags() & SPI_FLAG_TXE) == 0 || hFstSpi.State != HAL_SPI_STATE_READY);
+	while ( IsDMAReady() == 0);
+
 	// DMA
 	FST_SPI_DMA_CLK_ENABLE();
 
@@ -290,12 +294,15 @@ void		FastSpi::TouchDisable()
 {
 	if (current_mode != FST_MODE_TOUCH)
 		return;
+
 	while ((GetFlags() & SPI_FLAG_BSY) || (GetFlags() & SPI_FLAG_TXE) == 0 || hFstSpi.State != HAL_SPI_STATE_READY);
 	while ( IsDMAReady() == 0);
 	_touch_CS_Disable();
 
 	HAL_DMA_DeInit(hFstSpi.hdmarx);
 	HAL_DMA_DeInit(hFstSpi.hdmatx);
+	
+	current_mode = FST_MODE_UNKNOW;
 }
 //==============================================================================
 
@@ -343,12 +350,14 @@ void		FastSpi::FlashEnable()
 {
 	if (!inited)
 		Init();
-	if (current_mode != FST_MODE_FLASH)
-	{
-		while ((GetFlags() & SPI_FLAG_BSY) || (GetFlags() & SPI_FLAG_TXE) == 0 || hFstSpi.State != HAL_SPI_STATE_READY);
-		while ( IsDMAReady() == 0);
-		TouchDisable();
-	}
+	
+	if (current_mode == FST_MODE_FLASH)
+		return;
+
+	TouchDisable();
+
+	while ((GetFlags() & SPI_FLAG_BSY) || (GetFlags() & SPI_FLAG_TXE) == 0 || hFstSpi.State != HAL_SPI_STATE_READY);
+	while ( IsDMAReady() == 0);
 	// Prepare SPI for Flash
 	hFstSpi.Instance = FST_SPI;
 	hFstSpi.Init.Mode = SPI_MODE_MASTER;
@@ -429,6 +438,7 @@ void		FastSpi::FlashEnable()
 	HAL_NVIC_EnableIRQ(FST_SPI_DMA_STREAM_TX_IRQ);
 
 	hFstSpi.Instance->CR1 |= SPI_CR1_SPE;
+
 	current_mode = FST_MODE_FLASH;
 }
 //==============================================================================
@@ -440,12 +450,15 @@ void		FastSpi::FlashDisable()
 {
 	if (current_mode != FST_MODE_FLASH)
 		return;
+	
 	while ((GetFlags() & SPI_FLAG_BSY) || (GetFlags() & SPI_FLAG_TXE) == 0 || hFstSpi.State != HAL_SPI_STATE_READY);
 	while ( IsDMAReady() == 0);
 
 	/* SPI1 DMA DeInit */
 	HAL_DMA_DeInit(hFstSpi.hdmarx);
 	HAL_DMA_DeInit(hFstSpi.hdmatx);
+
+	current_mode = FST_MODE_UNKNOW;
 }
 //==============================================================================
 

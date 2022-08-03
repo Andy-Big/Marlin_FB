@@ -10,11 +10,8 @@
 
 #include "diskio.h"		/* FatFs lower layer API */
 
-volatile uint8_t __attribute__ ((aligned (4))) buf_copy[512];
 
-/* Definitions of physical drive number for each drive */
-#define DEV_SD		0	/* Example: Map MMC/SD card to physical drive 1 */
-#define DEV_FLASH	1	/* Example: Map MMC/SD card to physical drive 1 */
+volatile uint8_t __attribute__ ((aligned (4))) fat_buff_copy[W25Q_SECTOR_SIZE_PHYS*2];
 
 
 /*-----------------------------------------------------------------------*/
@@ -25,10 +22,14 @@ DSTATUS disk_status (
 	BYTE pdrv		/* Physical drive nmuber to identify the drive */
 )
 {
-	if(pdrv == DEV_SD)
+	if(pdrv == FAT_DEV_SD)
 	{
 		return RES_OK;	
-	} else 	if(pdrv == DEV_SD)
+	}
+
+
+
+	if(pdrv == FAT_DEV_FLASH)
 	{
 		return RES_OK;	
 	};
@@ -48,14 +49,27 @@ DSTATUS disk_initialize (
 {
 	int result;
 		
-	if(pdrv == DEV_SD){
-		result=SD_Init();
+	if(pdrv == FAT_DEV_SD)
+	{
+		result = SD_Init();
 		if(result != 0)
 		{
 			return STA_NOINIT;
-		};
-		return(0);
-	};
+		}
+		return 0;
+	}
+
+
+
+	if(pdrv == FAT_DEV_FLASH)
+	{
+		if (!spiflash.Init())
+		{
+			return STA_NOINIT;
+		}
+		return 0;
+	}
+
 	return STA_NODISK;
 }
 
@@ -72,29 +86,28 @@ DRESULT disk_read (
 	UINT count		/* Number of sectors to read */
 )
 {
-uint8_t res=0;
+	uint8_t res=0;
 	
-	if(pdrv == DEV_SD){
-	
+	if(pdrv == FAT_DEV_SD)
+	{
 		if(((uint32_t)buff % 4) != 0)
 		{
 			DEBUG("Buffer not aligned");
 			while (count--)
 			{
-				res=SD_transfer((uint8_t *)buf_copy, (uint32_t) sector, 1, SD2UM);
+				res=SD_transfer((uint8_t *)fat_buff_copy, (uint32_t) sector, 1, SD2UM);
 				if(res != 0)
 				{
-					res=SD_transfer((uint8_t *)buf_copy, (uint32_t) sector, 1, SD2UM);
+					res=SD_transfer((uint8_t *)fat_buff_copy, (uint32_t) sector, 1, SD2UM);
 					if(res != 0)
 					{
 						return RES_ERROR;
-					};
-				};
-				memcpy((uint8_t *)buff,(uint8_t *)buf_copy,512);
+					}
+				}
+				memcpy((uint8_t *)buff,(uint8_t *)fat_buff_copy,512);
 				buff += 512; //uint
 				sector++;
 			}
-
 		}
 		else
 		{
@@ -106,11 +119,36 @@ uint8_t res=0;
 				if(res != 0)
 				{
 					return RES_ERROR;
-				};
-			};
-		};
+				}
+			}
+		}
 		return RES_OK;
-	};
+	}
+
+
+
+	if(pdrv == FAT_DEV_FLASH)
+	{
+		uint32_t	addr = sector * W25Q_SECTOR_SIZE_LOG;
+		addr += W25Q_SECTOR_RESERVED_OFFSET;
+
+		if(((uint32_t)buff % 4) != 0)
+		{
+			while (count--)
+			{
+				spiflash.ReadBuffDMA(addr, W25Q_SECTOR_SIZE_LOG, (uint8_t *)fat_buff_copy);
+				memcpy((uint8_t *)buff, (uint8_t *)fat_buff_copy, W25Q_SECTOR_SIZE_LOG);
+				buff += W25Q_SECTOR_SIZE_LOG; //uint
+				addr += W25Q_SECTOR_SIZE_LOG;
+			}
+		}
+		else
+		{
+			spiflash.ReadBuffDMA(addr, W25Q_SECTOR_SIZE_LOG * count, (uint8_t *)buff);
+		}
+		return RES_OK;
+	}
+
 	return RES_PARERR;	
 }
 
@@ -129,19 +167,19 @@ DRESULT disk_write (
 {
 	uint8_t res;
 
-	if(pdrv == DEV_SD)
+	if(pdrv == FAT_DEV_SD)
 	{
 		if(((uint32_t)buff % 4) != 0)
 		{
 			DEBUG("Buffer not aligned");
 			while (count--)
 			{
-				memcpy((uint8_t *)buf_copy,(uint8_t *)buff, 512);
+				memcpy((uint8_t *)fat_buff_copy,(uint8_t *)buff, 512);
 
-				res=SD_transfer((uint8_t *)buf_copy, (uint32_t) sector, 1, UM2SD);
+				res=SD_transfer((uint8_t *)fat_buff_copy, (uint32_t) sector, 1, UM2SD);
 				if(res != 0)
 				{
-					res=SD_transfer((uint8_t *)buf_copy, (uint32_t) sector, 1, UM2SD);
+					res=SD_transfer((uint8_t *)fat_buff_copy, (uint32_t) sector, 1, UM2SD);
 					if(res != 0)
 					{
 						return RES_ERROR;
@@ -167,9 +205,43 @@ DRESULT disk_write (
 		};
 	
 		return RES_OK;
-	};
+	}
 
-return RES_PARERR;
+
+
+	if(pdrv == FAT_DEV_FLASH)
+	{
+		uint32_t	addr = sector * W25Q_SECTOR_SIZE_LOG;
+		uint32_t	addr_in_buffer = addr % W25Q_SECTOR_SIZE_PHYS;
+		uint32_t	sector_num = 0xFFFFFFFF;
+
+		addr += W25Q_SECTOR_RESERVED_OFFSET;
+		while (count--)
+		{
+			if (sector_num != (addr / W25Q_SECTOR_SIZE_PHYS))
+			{
+				sector_num = addr / W25Q_SECTOR_SIZE_PHYS;
+				spiflash.ReadBuffDMA(sector_num * W25Q_SECTOR_SIZE_PHYS, W25Q_SECTOR_SIZE_PHYS, (uint8_t*)fat_buff_copy);
+				spiflash.EraseSector(addr);
+			}
+			memcpy((uint8_t*)fat_buff_copy+addr_in_buffer, (uint8_t*)buff, W25Q_SECTOR_SIZE_LOG);
+			addr += W25Q_SECTOR_SIZE_LOG;
+			addr_in_buffer += W25Q_SECTOR_SIZE_LOG;
+			if (sector_num != (addr / W25Q_SECTOR_SIZE_PHYS))
+			{
+				spiflash.WriteBuff(sector_num * W25Q_SECTOR_SIZE_PHYS, W25Q_SECTOR_SIZE_PHYS, (uint8_t*)fat_buff_copy, false);
+				addr_in_buffer = 0;
+			}
+		}
+		if (addr_in_buffer > 0)
+		{
+			spiflash.WriteBuff(sector_num * W25Q_SECTOR_SIZE_PHYS, W25Q_SECTOR_SIZE_PHYS, (uint8_t*)fat_buff_copy, false);
+			addr_in_buffer = 0;
+		}
+		return RES_OK;
+	}
+
+	return RES_PARERR;
 }
 
 
@@ -184,9 +256,10 @@ DRESULT disk_ioctl (
 	void *buff		/* Buffer to send/receive control data */
 )
 {
-	DRESULT res = RES_ERROR; 
+	DRESULT 	res = RES_ERROR;
+	uint32_t	sc = 0;
 
-	if(pdrv == DEV_SD)
+	if(pdrv == FAT_DEV_SD)
 	{
 		switch (cmd)
 		{
@@ -204,10 +277,42 @@ DRESULT disk_ioctl (
 				res= RES_OK;
 				break;
 		}
-	
 		return res;
-	};
-	return(RES_OK);
+	}
+
+
+
+	if(pdrv == FAT_DEV_FLASH)
+	{
+		switch (cmd)
+		{
+			case CTRL_SYNC:
+				res = RES_OK;
+				break;
+	
+			case GET_SECTOR_SIZE:
+				*(DWORD*)buff = W25Q_SECTOR_SIZE_LOG;
+				res= RES_OK;
+				break;
+	
+			case GET_SECTOR_COUNT:
+				sc = spiflash.GetSectorsCount();
+				sc -= W25Q_SECTOR_RESERVED_COUNT;
+				sc *= W25Q_SECTOR_COUNT_LOG_IN_PHYS;
+
+				*(DWORD*)buff = sc;
+				res= RES_OK;
+				break;
+	
+			case GET_BLOCK_SIZE:
+				*(DWORD*)buff = W25Q_SECTOR_SIZE_LOG;
+				res= RES_OK;
+				break;
+		}
+		return res;
+	}
+
+	return(RES_ERROR);
 };
 
 DWORD get_fattime (void)

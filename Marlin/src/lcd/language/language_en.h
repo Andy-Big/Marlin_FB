@@ -891,6 +891,7 @@ namespace Language_en {
   LSTR MSG_PAUSE_SLOW_LOAD_LENGTH         = _UxGT("Slow load length, mm");
   LSTR MSG_PAUSE_FAST_LOAD_FEEDRATE       = _UxGT("Fast load feedrate, mm/s");
   LSTR MSG_PAUSE_FAST_LOAD_LENGTH         = _UxGT("Fast load length, mm");
+  LSTR MSG_INTERNAL_MEMORY                = _UxGT("Internal memory");
 
 
   // These strings can be the same in all languages

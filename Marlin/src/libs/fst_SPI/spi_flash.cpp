@@ -1,14 +1,10 @@
 #include "spi_flash.h"
 
-
-#include "spi_flash.h"
-
+FIL           filFlashFile;
 
 W25Q_storage	spiflash;
-
-extern			SPI_HandleTypeDef	hFstSpi;
-
-volatile uint32_t		d = 0;
+extern			  SPI_HandleTypeDef	hFstSpi;
+volatile      uint32_t		d = 0;
 
 
 
@@ -89,6 +85,8 @@ void			W25Q_storage::_WaitBusy()
 	uint16_t	rxval = 0;
 	_bust_counts = 0;
 
+	fstspi.FlashEnable();
+
 	while ((fstspi.GetFlags() & SPI_FLAG_BSY) || (fstspi.GetFlags() & SPI_FLAG_TXE) == 0 || fstspi.hFstSpi.State != HAL_SPI_STATE_READY);
 	_wait_cs();
 
@@ -131,8 +129,10 @@ void			W25Q_storage::W25Q_storage::_WriteEnable()
 
 
 
-void			W25Q_storage::Init()
+bool			W25Q_storage::Init()
 {
+  bool  res = true;
+
 	fstspi.Init();
 	fstspi.FlashEnable();
 	uint32_t f_id = ReadID();
@@ -164,27 +164,14 @@ void			W25Q_storage::Init()
 			_info.sector_size = 4096;
 			_info.page_size = 256;
 			break;
+    
+    default:
+      res = false;
 
 	}
 	_wait_cs();
-}
-//==============================================================================
 
-
-
-
-uint32_t		W25Q_storage::GetSectorSize()
-{
-	return _info.sector_size;
-}
-//==============================================================================
-
-
-
-
-uint32_t		W25Q_storage::GetSectorsCount()
-{
-	return _info.sectors_count;
+  return res;
 }
 //==============================================================================
 
@@ -293,7 +280,7 @@ void				W25Q_storage::EraseSector(uint32_t addr)
 
 
 
-void				W25Q_storage::WriteBuff(uint32_t addr, uint32_t dlen, uint8_t *dbuff)
+void				W25Q_storage::WriteBuff(uint32_t addr, uint32_t dlen, uint8_t *dbuff, bool erase)
 {
 	if (dlen == 0 || dbuff == 0)
 		return;
@@ -329,7 +316,8 @@ void				W25Q_storage::WriteBuff(uint32_t addr, uint32_t dlen, uint8_t *dbuff)
 	while (dlen)
 	{
 		// sector erase
-		EraseSector(addr);
+		if (erase)
+			EraseSector(addr);
 
 		while (towritesect)
 		{
@@ -368,6 +356,40 @@ void				W25Q_storage::WriteBuff(uint32_t addr, uint32_t dlen, uint8_t *dbuff)
 	}
 
 	return;
+}
+//==============================================================================
+
+
+
+bool				W25Q_storage::InitFS()
+{
+  FRESULT res = FR_OK;
+
+  if ((res = f_mount(&FS_flash, DISK_FLASH, 1)) != FR_OK)
+  {
+    if (res == FR_NO_FILESYSTEM)
+    {
+      SERIAL_ECHOLNPGM("FlashFS - FAT not found, creating new");
+      if (f_mkfs(DISK_FLASH, NULL, (uint8_t*)fat_buff_copy + W25Q_SECTOR_SIZE_PHYS, W25Q_SECTOR_SIZE_PHYS) != FR_OK)
+      {
+        SERIAL_ECHOLNPGM("FlashFS - create FAT error, breaking");
+        return false;
+      }
+      SERIAL_ECHOLNPGM("FlashFS - new FAT created");
+      if (f_mount(&FS_flash, DISK_FLASH, 1) != FR_OK)
+      {
+        SERIAL_ECHOLNPGM("FlashFS - open new FAT error, breaking");
+        return false;
+      }
+    }
+    else
+    {
+      SERIAL_ECHOLNPGM("FlashFS - mount FAT error, breaking");
+      return false;
+    }
+
+  }
+  SERIAL_ECHOLNPGM("FlashFS - FAT opened success");
 }
 //==============================================================================
 

@@ -981,6 +981,7 @@ namespace Language_ru {
   LSTR MSG_PAUSE_SLOW_LOAD_LENGTH         = _UxGT("Длина медл.загрузки, мм");
   LSTR MSG_PAUSE_FAST_LOAD_FEEDRATE       = _UxGT("Скорость быстр.загрузки, мм/с");
   LSTR MSG_PAUSE_FAST_LOAD_LENGTH         = _UxGT("Длина быстр.загрузки, мм");
+  LSTR MSG_INTERNAL_MEMORY                = _UxGT("Внутренняя память");
 
 
 }

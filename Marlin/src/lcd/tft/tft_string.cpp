@@ -120,13 +120,57 @@ unsigned char read_byte(const unsigned char *byte) { return *byte; }
 void TFT_String::add(const char *tpl, const int8_t index, const char *cstr/*=nullptr*/, FSTR_P const fstr/*=nullptr*/) {
 //  lchar_t wc;
 
-  while (*tpl) {
-
-/*
+  lchar_t wc;
+  uint8_t *string1 = (uint8_t*)tpl, *string2;
+  while (*string1 && length < MAX_STRING_LENGTH) {
+/* 
     tpl = get_utf8_value_cb(tpl, read_byte_ram, wc);
     if (wc > 255) wc |= 0x0080;
     const uint8_t ch = uint8_t(wc & 0x00FF);
  */
+
+    string2 = (uint8_t*)get_utf8_value_cb(string1, read_byte, wc);
+    uint32_t wlen = string2 - string1;
+    if (length + wlen > MAX_STRING_LENGTH)
+      break;
+
+    if (wc > 255)
+      wc |= 0x0080;
+    uint8_t ch = uint8_t(wc & 0x00FF);
+
+    if (ch == '=' || ch == '~' || ch == '*') {
+      if (index >= 0) {
+        int8_t inum = index + ((ch == '=') ? 0 : LCD_FIRST_TOOL);
+        if (ch == '*') add_character('E');
+        if (inum >= 10) { add_character('0' + (inum / 10)); inum %= 10; }
+        add_character('0' + inum);
+      }
+      else
+        add(index == -2 ? GET_TEXT_F(MSG_CHAMBER) : GET_TEXT_F(MSG_BED));
+    }
+    else if (ch == '$' && fstr)
+      add(fstr);
+    else if (ch == '$' && cstr)
+      add(cstr);
+    else if (ch == '@')
+      add_character(AXIS_CHAR(index));
+    else
+    {
+      memcpy(&data[length], string1, wlen);
+      length += wlen;
+      span += glyph(ch)->DWidth;
+    }
+
+    string1 = string2;
+  }
+/*
+  while (*tpl) {
+
+
+    tpl = get_utf8_value_cb(tpl, read_byte_ram, wc);
+    if (wc > 255) wc |= 0x0080;
+    const uint8_t ch = uint8_t(wc & 0x00FF);
+
     uint8_t ch = *tpl;
     tpl++;
 
@@ -151,6 +195,7 @@ void TFT_String::add(const char *tpl, const int8_t index, const char *cstr/*=nul
     else
       add_character(ch);
   }
+*/
   eol();
 }
 

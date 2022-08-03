@@ -208,6 +208,7 @@ constexpr uint8_t epps = ENCODER_PULSES_PER_STEP;
 void MarlinUI::init() {
 
   init_lcd();
+  
 
   #if HAS_DIGITAL_BUTTONS
     #if BUTTON_EXISTS(EN1)

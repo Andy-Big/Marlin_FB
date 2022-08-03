@@ -5,6 +5,9 @@
 
 #include "../../../src/MarlinCore.h"
 #include "fst_spi.h"
+#include "../fatfs/ff.h"
+#include "../fatfs/diskio.h"
+#include "../fatfs/fatfs_shared.h"
 
 #define	ZB25VQ_INSTEAD_W25Q
 
@@ -30,6 +33,7 @@ typedef struct
 	uint32_t	page_size;
 } w25q_info_t;
 
+extern FIL    filFlashFile;
 
 class	W25Q_storage
 {
@@ -45,15 +49,24 @@ class	W25Q_storage
 		void				_WriteEnable();
 
 	public:
-		void				Init();
-		uint32_t		GetSectorSize();
-		uint32_t		GetSectorsCount();
+		bool				Init();
+		FORCE_INLINE uint32_t		GetSectorSize() {
+            return _info.sector_size;
+          };
+		FORCE_INLINE uint32_t		GetSectorsCount() {
+          if (_info.sectors_count > 100)
+            return _info.sectors_count;
+          else
+            return 0;
+          };
+;
 		uint32_t		ReadID();
 		void				ReadBuff(uint32_t addr, uint32_t dlen, uint8_t *dbuff);
 		void				ReadBuffDMA(uint32_t addr, uint32_t dlen, uint8_t *dbuff);
 		void				EraseSector(uint32_t addr);
-		void				WriteBuff(uint32_t addr, uint32_t dlen, uint8_t *dbuff);
+		void				WriteBuff(uint32_t addr, uint32_t dlen, uint8_t *dbuff, bool erase = true);
 
+		bool				InitFS();
 };
 
 extern W25Q_storage	spiflash;
