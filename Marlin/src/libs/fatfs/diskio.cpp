@@ -271,7 +271,7 @@ DRESULT disk_ioctl (
 				break;
 	
 			case GET_SECTOR_SIZE:
-				*(DWORD*)buff = 512;
+				*(WORD*)buff = 512;
 				res= RES_OK;
 				break;
 	
@@ -294,7 +294,7 @@ DRESULT disk_ioctl (
 				break;
 	
 			case GET_SECTOR_SIZE:
-				*(DWORD*)buff = W25Q_SECTOR_SIZE_LOG;
+				*(WORD*)buff = W25Q_SECTOR_SIZE_LOG;
 				res= RES_OK;
 				break;
 	
@@ -304,6 +304,8 @@ DRESULT disk_ioctl (
 				sc *= W25Q_SECTOR_COUNT_LOG_IN_PHYS;
 
 				*(DWORD*)buff = sc;
+			  SERIAL_ECHOLNPGM("FlasFS: ioctl - sectors count: ", *(DWORD*)buff);
+
 				res= RES_OK;
 				break;
 	

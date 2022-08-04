@@ -5839,6 +5839,7 @@ FRESULT f_mkfs (
 #if FF_MAX_SS != FF_MIN_SS
 	if (disk_ioctl(pdrv, GET_SECTOR_SIZE, &ss) != RES_OK) return FR_DISK_ERR;
 	if (ss > FF_MAX_SS || ss < FF_MIN_SS || (ss & (ss - 1))) return FR_DISK_ERR;
+
 #else
 	ss = FF_MAX_SS;
 #endif
@@ -5848,7 +5849,6 @@ FRESULT f_mkfs (
 	n_root = (opt->n_root >= 1 && opt->n_root <= 32768 && (opt->n_root % (ss / SZDIRE)) == 0) ? opt->n_root : 512;
 	sz_au = (opt->au_size <= 0x1000000 && (opt->au_size & (opt->au_size - 1)) == 0) ? opt->au_size : 0;
 	sz_au /= ss;	/* Byte --> Sector */
-
 	/* Get working buffer */
 	sz_buf = len / ss;		/* Size of working buffer [sector] */
 	if (sz_buf == 0) return FR_NOT_ENOUGH_CORE;

@@ -133,6 +133,7 @@ bool			W25Q_storage::Init()
 {
   bool  res = true;
 
+  SERIAL_ECHOLNPGM("FlasFS: SPI flash init");
 	fstspi.Init();
 	fstspi.FlashEnable();
 	uint32_t f_id = ReadID();
@@ -145,6 +146,7 @@ bool			W25Q_storage::Init()
 			_info.sectors_count = 1024;
 			_info.sector_size = 4096;
 			_info.page_size = 256;
+		  SERIAL_ECHOLNPGM("FlasFS: SPI flash 4 MB found");
 			break;
 
 		// w25q64
@@ -154,6 +156,7 @@ bool			W25Q_storage::Init()
 			_info.sectors_count = 2048;
 			_info.sector_size = 4096;
 			_info.page_size = 256;
+		  SERIAL_ECHOLNPGM("FlasFS: SPI flash 8 MB found");
 			break;
 
 		// w25q128
@@ -163,9 +166,11 @@ bool			W25Q_storage::Init()
 			_info.sectors_count = 4096;
 			_info.sector_size = 4096;
 			_info.page_size = 256;
+		  SERIAL_ECHOLNPGM("FlasFS: SPI flash 16 MB found");
 			break;
     
     default:
+		  SERIAL_ECHOLNPGM("FlasFS: SPI flash init error");
       res = false;
 
 	}
@@ -369,20 +374,25 @@ bool				W25Q_storage::InitFS()
   {
     if (res == FR_NO_FILESYSTEM)
     {
+		  SERIAL_ECHOLNPGM("FlasFS: filesysytem nor found, creating new");
       if (f_mkfs(DISK_FLASH, NULL, (uint8_t*)fat_buff_copy + W25Q_SECTOR_SIZE_PHYS, W25Q_SECTOR_SIZE_PHYS) != FR_OK)
       {
+			  SERIAL_ECHOLNPGM("FlasFS: error creating new filesystem");
         return false;
       }
+		  SERIAL_ECHOLNPGM("FlasFS: new filesystem created");
       if (f_mount(&FS_flash, DISK_FLASH, 1) != FR_OK)
       {
+			  SERIAL_ECHOLNPGM("FlasFS: error mounting filesystem");
         return false;
       }
     }
     else
     {
+		  SERIAL_ECHOLNPGM("FlasFS: error access to FlashFS");
       return false;
     }
-
+	  SERIAL_ECHOLNPGM("FlasFS: FlashFS filesystem mounted success");
   }
 
 	return true;

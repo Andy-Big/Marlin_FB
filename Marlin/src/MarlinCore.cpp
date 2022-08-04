@@ -1173,8 +1173,6 @@ void setup() {
   // UI must be initialized before EEPROM
   // (because EEPROM code calls the UI).
 
-  SETUP_RUN(spiflash.Init());
-  SETUP_RUN(spiflash.InitFS());
   SETUP_RUN(ui.init());
 
   #if PIN_EXISTS(SAFE_POWER)
@@ -1188,21 +1186,6 @@ void setup() {
 
   #if BOTH(SDSUPPORT, SDCARD_EEPROM_EMULATION)
     SETUP_RUN(card.mount());          // Mount media with settings before first_load
-  #endif
-
-  delay(100);   // delay while display filled by black
-  volatile uint32_t boot_ms = millis();
-  #if BOTH(HAS_WIRED_LCD, SHOW_BOOTSCREEN)
-    SETUP_RUN(ui.show_bootscreen());
-    const millis_t bootscreen_ms = millis();
-  #endif
-  boot_ms = millis() - boot_ms;
-
-  #if PIN_EXISTS(TFT_BACKLIGHT)
-//    WRITE(TFT_BACKLIGHT_PIN, 1);
-    #if HAS_LCD_BRIGHTNESS
-      ui._set_brightness();
-    #endif
   #endif
 
   MYSERIAL1.begin(BAUDRATE);
@@ -1226,6 +1209,24 @@ void setup() {
     #endif
   #endif
   SERIAL_ECHOLNPGM("start");
+
+  SETUP_RUN(spiflash.Init());
+  SETUP_RUN(spiflash.InitFS());
+
+  delay(100);   // delay while display filled by black
+  volatile uint32_t boot_ms = millis();
+  #if BOTH(HAS_WIRED_LCD, SHOW_BOOTSCREEN)
+    SETUP_RUN(ui.show_bootscreen());
+    const millis_t bootscreen_ms = millis();
+  #endif
+  boot_ms = millis() - boot_ms;
+
+  #if PIN_EXISTS(TFT_BACKLIGHT)
+//    WRITE(TFT_BACKLIGHT_PIN, 1);
+    #if HAS_LCD_BRIGHTNESS
+      ui._set_brightness();
+    #endif
+  #endif
 
   SERIAL_ECHOLNPGM("Boot logo time, ms: ", boot_ms);
   
