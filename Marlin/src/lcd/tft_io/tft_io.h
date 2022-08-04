@@ -129,6 +129,8 @@ public:
   // static void WriteMultiple(uint16_t Color, uint16_t Count) { static uint16_t Data; Data = Color; TransmitDMA(DMA_MINC_DISABLE, &Data, Count); }
   inline static void WriteMultiple(uint16_t Color, uint32_t Count) { io.WriteMultiple(Color, Count); };
 
+  static void Flip_X(bool flip);
+
 protected:
   static uint32_t lcd_id;
 };

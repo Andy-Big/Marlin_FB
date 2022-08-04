@@ -883,7 +883,7 @@ static void wifi_gcode_exec(uint8_t *cmd_line) {
 
                 if (strncmp((char *)&tmpStr[index], "1:", 2) == 0)
                   gCfgItems.fileSysType = FILE_SYS_SD;
-                else if (strncmp((char *)&tmpStr[index], "0:", 2) == 0)
+                else if (strncmp((char *)&tmpStr[index], DISK_SD, 2) == 0)
                   gCfgItems.fileSysType = FILE_SYS_USB;
 
                 strcpy((char *)path, (char *)&tmpStr[index]);
@@ -914,7 +914,7 @@ static void wifi_gcode_exec(uint8_t *cmd_line) {
                     gCfgItems.fileSysType = FILE_SYS_SD;
                     has_path_selected = 1;
                   }
-                  else if (strncmp_P((char *)&tmpStr[index], PSTR("0:"), 2) == 0) {
+                  else if (strncmp_P((char *)&tmpStr[index], PSTR(DISK_SD), 2) == 0) {
                     gCfgItems.fileSysType = FILE_SYS_USB;
                     has_path_selected = 1;
                   }

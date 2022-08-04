@@ -45,6 +45,8 @@
   #error "Unsupported display resolution!"
 #endif
 
+#include "../tgui/tgui.h"
+
 void draw_heater_status(uint16_t x, uint16_t y, const int8_t Heater);
 void draw_fan_status(uint16_t x, uint16_t y, const bool blink);
 

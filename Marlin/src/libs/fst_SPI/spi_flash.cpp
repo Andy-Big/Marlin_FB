@@ -369,27 +369,23 @@ bool				W25Q_storage::InitFS()
   {
     if (res == FR_NO_FILESYSTEM)
     {
-      SERIAL_ECHOLNPGM("FlashFS - FAT not found, creating new");
       if (f_mkfs(DISK_FLASH, NULL, (uint8_t*)fat_buff_copy + W25Q_SECTOR_SIZE_PHYS, W25Q_SECTOR_SIZE_PHYS) != FR_OK)
       {
-        SERIAL_ECHOLNPGM("FlashFS - create FAT error, breaking");
         return false;
       }
-      SERIAL_ECHOLNPGM("FlashFS - new FAT created");
       if (f_mount(&FS_flash, DISK_FLASH, 1) != FR_OK)
       {
-        SERIAL_ECHOLNPGM("FlashFS - open new FAT error, breaking");
         return false;
       }
     }
     else
     {
-      SERIAL_ECHOLNPGM("FlashFS - mount FAT error, breaking");
       return false;
     }
 
   }
-  SERIAL_ECHOLNPGM("FlashFS - FAT opened success");
+
+	return true;
 }
 //==============================================================================
 

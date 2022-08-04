@@ -73,7 +73,7 @@ card_flags_t CardReader::flag;
 // char                  CardReader::filename[FF_SFN_BUF], CardReader::longFilename[FF_LFN_BUF];
 uint8_t CardReader::activefileitems[MAX_DIR_DEPTH];
 dir_active_items_t CardReader::active_dir_items;
-FIL CardReader::curfile;
+FIL filSdFile;
 FILINFO CardReader::curfilinfo;
 
 IF_DISABLED(NO_SD_AUTOSTART, uint8_t CardReader::autofile_index); // = 0
@@ -94,7 +94,7 @@ CardReader::CardReader()
 {
     flag.sdprinting = flag.sdprintdone = flag.saving = flag.logging = false;
     FS_sd.fs_type = 0;
-    curfile.obj.fs = 0;
+    filSdFile.obj.fs = 0;
     curfilinfo.fname[0] = 0;
     curfilinfo.altname[0] = 0;
     for (uint16_t i = 0; i < MAX_DIR_DEPTH; i++)
@@ -212,7 +212,7 @@ bool CardReader::openFileRead(const char *const path, const uint8_t subcall_type
 
     abortFilePrintNow();
 
-    if (f_stat(path, &curfilinfo) == FR_OK && f_open(&curfile, path, FA_READ) == FR_OK)
+    if (f_stat(path, &curfilinfo) == FR_OK && f_open(&filSdFile, path, FA_READ) == FR_OK)
     {
         { // Don't remove this block, as the PORT_REDIRECT is a RAII
             PORT_REDIRECT(SerialMask::All);
@@ -264,7 +264,7 @@ bool CardReader::openFileWrite(const char *const path, bool owerwrite /*= false*
         flags |= FA_CREATE_ALWAYS;
     else
         flags |= FA_OPEN_ALWAYS | FA_OPEN_APPEND;
-    if (f_open(&curfile, path, flags) == FR_OK)
+    if (f_open(&filSdFile, path, flags) == FR_OK)
     {
         flag.saving = true;
         selectFileByName(path);
@@ -378,7 +378,7 @@ void CardReader::report_status()
 {
     if (isPrinting())
     {
-        SERIAL_ECHOPGM(STR_SD_PRINTING_BYTE, curfile.fptr);
+        SERIAL_ECHOPGM(STR_SD_PRINTING_BYTE, filSdFile.fptr);
         SERIAL_CHAR('/');
         SERIAL_ECHOLN(curfilinfo.fsize);
     }
@@ -544,7 +544,7 @@ void CardReader::write_command(char *const buf)
     end[3] = '\0';
 
     towrite = strlen(begin);
-    fres = f_write(&curfile, begin, towrite, &writed);
+    fres = f_write(&filSdFile, begin, towrite, &writed);
 
     if (fres != FR_OK || writed != towrite)
         SERIAL_ERROR_MSG(STR_SD_ERR_WRITE_TO_FILE);
@@ -602,8 +602,8 @@ bool CardReader::autofile_check()
 
 void CardReader::closefile(const bool store_location /*=false*/)
 {
-    f_close(&curfile);
-    curfile.obj.fs = 0;
+    f_close(&filSdFile);
+    filSdFile.obj.fs = 0;
 
     flag.saving = flag.logging = false;
     TERN_(EMERGENCY_PARSER, emergency_parser.enable());
@@ -869,7 +869,7 @@ int16_t CardReader::get()
     if (!isFileOpen())
         return -1;
 
-    if (f_read(&curfile, &val, 1, &readed) != FR_OK)
+    if (f_read(&filSdFile, &val, 1, &readed) != FR_OK)
         return -1;
 
     return val;
@@ -881,7 +881,7 @@ uint32_t CardReader::read(void *buf, uint32_t nbyte)
     if (!isFileOpen())
         return -1;
     UINT rd = 0;
-    if (f_read(&curfile, buf, nbyte, &rd) != FR_OK)
+    if (f_read(&filSdFile, buf, nbyte, &rd) != FR_OK)
         return -1;
     
     return rd;
@@ -893,7 +893,7 @@ uint32_t CardReader::write(void *buf, uint32_t nbyte)
     if (!isFileOpen())
         return -1;
     UINT wr = 0;
-    if (f_write(&curfile, buf, nbyte, &wr) != FR_OK)
+    if (f_write(&filSdFile, buf, nbyte, &wr) != FR_OK)
         return -1;
 
     return wr;
@@ -905,8 +905,8 @@ uint32_t CardReader::write(void *buf, uint32_t nbyte)
 //
 void CardReader::fileHasFinished()
 {
-    f_close(&curfile);
-    curfile.obj.fs = 0;
+    f_close(&filSdFile);
+    filSdFile.obj.fs = 0;
 
 #if HAS_MEDIA_SUBCALLS
     if (file_subcall_ctr > 0)
@@ -1089,7 +1089,7 @@ void CardReader::endFilePrintNow()
     TERN_(ADVANCED_PAUSE_FEATURE, did_pause_print = 0);
     flag.abort_sd_printing = false;
     if (isFileOpen())
-        f_close(&curfile);
+        f_close(&filSdFile);
 }
 
 //

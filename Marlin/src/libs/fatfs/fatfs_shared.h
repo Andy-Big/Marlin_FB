@@ -12,7 +12,7 @@
 
 
 extern FATFS  FS_flash;
-extern FATFS FS_sd;
+extern FATFS  FS_sd;
 
 
 char*		FATFS_GetFileExtension(char *fname);

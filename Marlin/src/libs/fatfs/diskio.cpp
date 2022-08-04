@@ -214,6 +214,7 @@ DRESULT disk_write (
 		uint32_t	addr = sector * W25Q_SECTOR_SIZE_LOG;
 		uint32_t	addr_in_buffer = addr % W25Q_SECTOR_SIZE_PHYS;
 		uint32_t	sector_num = 0xFFFFFFFF;
+		uint8_t		*inbuffer = (uint8_t*)buff;
 
 		addr += W25Q_SECTOR_RESERVED_OFFSET;
 		while (count--)
@@ -224,9 +225,11 @@ DRESULT disk_write (
 				spiflash.ReadBuffDMA(sector_num * W25Q_SECTOR_SIZE_PHYS, W25Q_SECTOR_SIZE_PHYS, (uint8_t*)fat_buff_copy);
 				spiflash.EraseSector(addr);
 			}
-			memcpy((uint8_t*)fat_buff_copy+addr_in_buffer, (uint8_t*)buff, W25Q_SECTOR_SIZE_LOG);
+			memcpy((uint8_t*)fat_buff_copy+addr_in_buffer, inbuffer, W25Q_SECTOR_SIZE_LOG);
 			addr += W25Q_SECTOR_SIZE_LOG;
 			addr_in_buffer += W25Q_SECTOR_SIZE_LOG;
+			inbuffer += W25Q_SECTOR_SIZE_LOG;
+
 			if (sector_num != (addr / W25Q_SECTOR_SIZE_PHYS))
 			{
 				spiflash.WriteBuff(sector_num * W25Q_SECTOR_SIZE_PHYS, W25Q_SECTOR_SIZE_PHYS, (uint8_t*)fat_buff_copy, false);

@@ -365,16 +365,18 @@ bool FileSettings::SaveSettings(char *fname /*= NULL*/)
     if (card.write(curline, len) != len)
       break;
     lines += 2;
-    sprintf(curline, "%s = %s %s\r\n", FSS_FILAMENTSENSOR_ENABLED, (runout.enabled ? "Yes" : "No"), FSSC_FILAMENTSENSOR_ENABLED);
-    len = strlen(curline);
-    if (card.write(curline, len) != len)
-      break;
-    lines++;
-    sprintf(curline, "%s = %0.2f %s\r\n", FSS_FILAMENTSENSOR_DISTANCE, runout.runout_distance(), FSSC_FILAMENTSENSOR_DISTANCE);
-    len = strlen(curline);
-    if (card.write(curline, len) != len)
-      break;
-    lines++;
+    #if ENABLED(FILAMENT_RUNOUT_SENSOR)
+      sprintf(curline, "%s = %s %s\r\n", FSS_FILAMENTSENSOR_ENABLED, (runout.enabled ? "Yes" : "No"), FSSC_FILAMENTSENSOR_ENABLED);
+      len = strlen(curline);
+      if (card.write(curline, len) != len)
+        break;
+      lines++;
+      sprintf(curline, "%s = %0.2f %s\r\n", FSS_FILAMENTSENSOR_DISTANCE, runout.runout_distance(), FSSC_FILAMENTSENSOR_DISTANCE);
+      len = strlen(curline);
+      if (card.write(curline, len) != len)
+        break;
+      lines++;
+    #endif
     
     /******** BED LEVELING ***********/
     sprintf(curline, "%s", (char*)"\r\n# ====== BED LEVELING ======\r\n");
@@ -531,21 +533,23 @@ bool FileSettings::SaveSettings(char *fname /*= NULL*/)
     if (card.write(curline, len) != len)
       break;
     lines++;
-    sprintf(curline, "%s = %0.5f %s\r\n", FSS_PID_BED_P, thermalManager.temp_bed.pid.Kp, FSSC_PID_BED_P);
-    len = strlen(curline);
-    if (card.write(curline, len) != len)
-      break;
-    lines++;
-    sprintf(curline, "%s = %0.5f %s\r\n", FSS_PID_BED_I, thermalManager.temp_bed.pid.Ki, FSSC_PID_BED_I);
-    len = strlen(curline);
-    if (card.write(curline, len) != len)
-      break;
-    lines++;
-    sprintf(curline, "%s = %0.5f %s\r\n", FSS_PID_BED_D, thermalManager.temp_bed.pid.Kd, FSSC_PID_BED_D);
-    len = strlen(curline);
-    if (card.write(curline, len) != len)
-      break;
-    lines++;
+    #if ENABLED(PIDTEMPBED)
+      sprintf(curline, "%s = %0.5f %s\r\n", FSS_PID_BED_P, thermalManager.temp_bed.pid.Kp, FSSC_PID_BED_P);
+      len = strlen(curline);
+      if (card.write(curline, len) != len)
+        break;
+      lines++;
+      sprintf(curline, "%s = %0.5f %s\r\n", FSS_PID_BED_I, thermalManager.temp_bed.pid.Ki, FSSC_PID_BED_I);
+      len = strlen(curline);
+      if (card.write(curline, len) != len)
+        break;
+      lines++;
+      sprintf(curline, "%s = %0.5f %s\r\n", FSS_PID_BED_D, thermalManager.temp_bed.pid.Kd, FSSC_PID_BED_D);
+      len = strlen(curline);
+      if (card.write(curline, len) != len)
+        break;
+      lines++;
+    #endif
     sprintf(curline, "%s = %d %s\r\n", FSS_THERMISTOR_TYPE_HOTEND, thermistors_data.heater_type[0], FSSC_THERMISTOR_TYPE_HOTEND);
     len = strlen(curline);
     if (card.write(curline, len) != len)
@@ -1148,32 +1152,34 @@ bool FileSettings::LoadSettings(char *fname /*= NULL*/)
         break;
 
       case 'F':   // ***************************  FFF  ********************************
-        if (strcmp(lexem, FSS_FILAMENTSENSOR_ENABLED) == 0)
-        {
-          if (pval.type != PARAMVAL_BOOL)
+        #if ENABLED(FILAMENT_RUNOUT_SENSOR)
+          if (strcmp(lexem, FSS_FILAMENTSENSOR_ENABLED) == 0)
           {
-            wres = false;
+            if (pval.type != PARAMVAL_BOOL)
+            {
+              wres = false;
+              break;
+            }
+            runout.enabled = pval.bool_val;
+            if (runout.enabled)
+              runout.reset();
+            params++;
             break;
           }
-          runout.enabled = pval.bool_val;
-          if (runout.enabled)
-            runout.reset();
-          params++;
-          break;
-        }
-        if (strcmp(lexem, FSS_FILAMENTSENSOR_DISTANCE) == 0)
-        {
-          if (pval.type != PARAMVAL_NUMERIC)
+          if (strcmp(lexem, FSS_FILAMENTSENSOR_DISTANCE) == 0)
           {
-            wres = false;
+            if (pval.type != PARAMVAL_NUMERIC)
+            {
+              wres = false;
+              break;
+            }
+            if (pval.float_val < 0)
+              pval.float_val = 0;
+            runout.set_runout_distance((float)pval.float_val);
+            params++;
             break;
           }
-          if (pval.float_val < 0)
-            pval.float_val = 0;
-          runout.set_runout_distance((float)pval.float_val);
-          params++;
-          break;
-        }
+        #endif
         if (strcmp(lexem, FSS_FWRETRACT_LENGTH) == 0)
         {
           if (pval.type != PARAMVAL_NUMERIC)
@@ -1615,39 +1621,41 @@ bool FileSettings::LoadSettings(char *fname /*= NULL*/)
           params++;
           break;
         }
-        if (strcmp(lexem, FSS_PID_BED_P) == 0)
-        {
-          if (pval.type != PARAMVAL_NUMERIC)
+        #if ENABLED(PIDTEMPBED)
+          if (strcmp(lexem, FSS_PID_BED_P) == 0)
           {
-            wres = false;
+            if (pval.type != PARAMVAL_NUMERIC)
+            {
+              wres = false;
+              break;
+            }
+            thermalManager.temp_bed.pid.Kp = (float)pval.float_val;
+            params++;
             break;
           }
-          thermalManager.temp_bed.pid.Kp = (float)pval.float_val;
-          params++;
-          break;
-        }
-        if (strcmp(lexem, FSS_PID_BED_I) == 0)
-        {
-          if (pval.type != PARAMVAL_NUMERIC)
+          if (strcmp(lexem, FSS_PID_BED_I) == 0)
           {
-            wres = false;
+            if (pval.type != PARAMVAL_NUMERIC)
+            {
+              wres = false;
+              break;
+            }
+            thermalManager.temp_bed.pid.Ki = (float)pval.float_val;
+            params++;
             break;
           }
-          thermalManager.temp_bed.pid.Ki = (float)pval.float_val;
-          params++;
-          break;
-        }
-        if (strcmp(lexem, FSS_PID_BED_D) == 0)
-        {
-          if (pval.type != PARAMVAL_NUMERIC)
+          if (strcmp(lexem, FSS_PID_BED_D) == 0)
           {
-            wres = false;
+            if (pval.type != PARAMVAL_NUMERIC)
+            {
+              wres = false;
+              break;
+            }
+            thermalManager.temp_bed.pid.Kd = (float)pval.float_val;
+            params++;
             break;
           }
-          thermalManager.temp_bed.pid.Kd = (float)pval.float_val;
-          params++;
-          break;
-        }
+        #endif
         if (strcmp(lexem, FSS_PSU_ENABLED) == 0)
         {
           if (pval.type != PARAMVAL_BOOL)

@@ -245,4 +245,19 @@ void TFT_IO::write_esc_sequence(const uint16_t *Sequence) {
   io.DataTransferEnd();
 }
 
+
+
+void TFT_IO::Flip_X(bool flip)
+{
+  uint16_t  orient;
+  #if TFT_DRIVER == ILI9488 || TFT_DRIVER == ILI9488_ID1 || TFT_DRIVER == AUTO
+    orient = IF_0((TFT_ORIENTATION) & TFT_EXCHANGE_XY, ILI9488_MADCTL_MV) | \
+                            IF_0((flip == true),    ILI9488_MADCTL_MX) | \
+                            IF_0((TFT_ORIENTATION) & TFT_INVERT_Y,    ILI9488_MADCTL_MY) | \
+                            (ILI9488_COLOR);
+    io.WriteReg(ILI9488_MADCTL);		// memory access control
+  #endif
+	io.WriteData(orient);
+}
+
 #endif // HAS_SPI_TFT || HAS_FSMC_TFT || HAS_LTDC_TFT

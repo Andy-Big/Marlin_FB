@@ -9,9 +9,12 @@
 #include "../../libs/numtostr.h"
 
 
-extern TFT tft;
-float total_size = 0;
-float one_percent = 0;
+extern TFT    tft;
+float         total_size = 0;
+float         one_percent = 0;
+uint32_t      last_value = 200;
+char          *fname = NULL;
+uint32_t      refr_ms;
 //char str[100];
 
 void mks_update_status(char *filename, uint32_t current_filesize, uint32_t file_size){
@@ -61,25 +64,83 @@ void mks_update_status(char *filename, uint32_t current_filesize, uint32_t file_
 }
 
 
-void mks_upload_screen(char *filename, uint32_t file_size){
+void mks_upload_prepare(char *filename, uint32_t file_size)
+{
+  fname = filename;
+  total_size = (float)file_size / 1024;
+  one_percent = total_size / 100;
+  last_value = 200;
+}
 
-      // fit to 0.01 MB
-      total_size = (float)file_size / 1048576;
-      one_percent = total_size / 100;
-      #ifndef SHOW_PROGRESS
-        tft.queue.reset();
-        tft.canvas(0, 0, TFT_WIDTH, TFT_HEIGHT);
-        tft.set_background(COLOR_BACKGROUND);
-        tft_string.set("File uploading...");
-        tft.add_text(tft_string.center(TFT_WIDTH), 100, COLOR_CONTROL_ENABLED, tft_string);
-        tft_string.set(filename);
-        tft.add_text(tft_string.center(TFT_WIDTH), 140, COLOR_CONTROL_ENABLED, tft_string);
 
-        tft_string.set(ftostr32_62(total_size));
-        tft_string.add(" MB ");
-        tft.add_text(tft_string.center(TFT_WIDTH), 180, COLOR_CONTROL_ENABLED, tft_string);
-        tft.queue.sync();
-      #endif
+void mks_upload_screen(char *filename, uint32_t file_size)
+{
+
+  // fit to 0.01 MB
+  total_size = (float)file_size / 1048576;
+  one_percent = total_size / 100;
+  #ifndef SHOW_PROGRESS
+    tft.queue.reset();
+    tft.canvas(0, 0, TFT_WIDTH, TFT_HEIGHT);
+    tft.set_background(COLOR_BACKGROUND);
+    tft_string.set("File uploading...");
+    tft.add_text(tft_string.center(TFT_WIDTH), 100, COLOR_CONTROL_ENABLED, tft_string);
+    tft_string.set(filename);
+    tft.add_text(tft_string.center(TFT_WIDTH), 140, COLOR_CONTROL_ENABLED, tft_string);
+
+    tft_string.set(ftostr32_62(total_size));
+    tft_string.add(" MB ");
+    tft.add_text(tft_string.center(TFT_WIDTH), 180, COLOR_CONTROL_ENABLED, tft_string);
+    tft.queue.sync();
+  #endif
+}
+
+
+void mks_srv_copying_screen(uint32_t done_size)
+{
+
+  if (millis() - refr_ms < 200)
+    return;
+  refr_ms = millis();
+  
+  tft.queue.reset();
+  tft.canvas(0, 0, TFT_WIDTH, TFT_HEIGHT);
+  tft.set_background(COLOR_BACKGROUND);
+  tft_string.set("Service file copying...");
+  tft.add_text(tft_string.center(TFT_WIDTH), 40, COLOR_CONTROL_ENABLED, tft_string);
+  if (fname != NULL)
+  {
+    tft_string.set(fname);
+    tft.add_text(tft_string.center(TFT_WIDTH), 80, COLOR_CONTROL_ENABLED, tft_string);
+  }
+
+  #ifndef SHOW_PROGRESS
+    // size
+    float current = (float)done_size / 1024;
+    uint32_t percent_done = current / one_percent;
+    if (percent_done > 100)
+      percent_done = 100;
+    if((percent_done != last_value))
+    {
+      tft_string.set(ftostr32_62(current));
+      tft_string.trim();
+      tft_string.add(" / ");
+      tft_string.add(ftostr32_62(total_size));
+      tft_string.add(" KB ");
+      tft.add_text(tft_string.center(TFT_WIDTH), 140, COLOR_CONTROL_ENABLED, tft_string);
+    
+      tft.add_bar(2, 180, TFT_WIDTH - 4, 40, COLOR_PROGRESS_BG);
+      tft.add_rectangle(2, 180, TFT_WIDTH - 4, 40, COLOR_PROGRESS_FRAME);
+      if (percent_done)
+        tft.add_bar(4, 182, ((TFT_WIDTH - 8) * percent_done) / 100, 36, COLOR_PROGRESS_BAR);
+      tft_string.set(pcttostrpctrj(percent_done));
+      tft_string.trim();
+      tft.add_text(240 - tft_string.width() / 2, 188, COLOR_PROGRESS_TEXT, tft_string);
+      last_value = percent_done;
+    }
+  #endif
+  tft.queue.sync();
+  //ui.update();
 }
 
 

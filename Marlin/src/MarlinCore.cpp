@@ -1191,10 +1191,12 @@ void setup() {
   #endif
 
   delay(100);   // delay while display filled by black
+  volatile uint32_t boot_ms = millis();
   #if BOTH(HAS_WIRED_LCD, SHOW_BOOTSCREEN)
     SETUP_RUN(ui.show_bootscreen());
     const millis_t bootscreen_ms = millis();
   #endif
+  boot_ms = millis() - boot_ms;
 
   #if PIN_EXISTS(TFT_BACKLIGHT)
 //    WRITE(TFT_BACKLIGHT_PIN, 1);
@@ -1225,6 +1227,8 @@ void setup() {
   #endif
   SERIAL_ECHOLNPGM("start");
 
+  SERIAL_ECHOLNPGM("Boot logo time, ms: ", boot_ms);
+  
   // Set up these pins early to prevent suicide
   #if HAS_KILL
     SETUP_LOG("KILL_PIN");

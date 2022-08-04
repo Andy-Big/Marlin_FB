@@ -65,7 +65,11 @@ void MarlinUI::tft_idle() {
 
 #if ENABLED(SHOW_BOOTSCREEN)
 
-  void MarlinUI::show_bootscreen() {
+  void MarlinUI::show_bootscreen()
+  {
+//    set_brightness(19);
+    TGUI_DrawLogo();
+/*
     tft.queue.reset();
 
     tft.canvas(0, 0, TFT_WIDTH, TFT_HEIGHT);
@@ -90,12 +94,12 @@ void MarlinUI::tft_idle() {
     tft_string.add(" v");
     tft_string.add(SHORT_REBORN_VERSION);
     tft.add_text(tft_string.center(TFT_WIDTH), SITE_URL_Y, COLOR_WEBSITE_URL, tft_string);
-/*
-    #ifdef WEBSITE_URL
-      tft_string.set(WEBSITE_URL);
-      tft.add_text(tft_string.center(TFT_WIDTH), SITE_URL_Y+25, COLOR_WEBSITE_URL, tft_string);
-    #endif
-*/
+
+    // #ifdef WEBSITE_URL
+    //   tft_string.set(WEBSITE_URL);
+    //   tft.add_text(tft_string.center(TFT_WIDTH), SITE_URL_Y+25, COLOR_WEBSITE_URL, tft_string);
+    // #endif
+
     tft_string.set("by AndyBig");
     tft.set_font(SMALL_FONT_NAME);
     tft.add_text(tft_string.center(TFT_WIDTH), SITE_URL_Y+25, COLOR_WEBSITE_URL, tft_string);
@@ -105,6 +109,7 @@ void MarlinUI::tft_idle() {
     #endif
 
     tft.queue.sync();
+*/
   }
 
   void MarlinUI::bootscreen_completion(const millis_t sofar) {

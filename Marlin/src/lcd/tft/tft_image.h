@@ -70,7 +70,7 @@ extern const uint8_t leveling_32x32x4[];
 extern const uint8_t slider_8x16x4[];
 
 enum MarlinImage : uint8_t {
-  imgBootScreen = 0x00,
+//  imgBootScreen = 0x00,
   imgFeedRate,
   imgFlowRate,
   imgHotEnd,

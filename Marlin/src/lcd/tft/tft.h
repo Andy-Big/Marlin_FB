@@ -90,6 +90,8 @@ class TFT {
     static inline void write_multiple(uint16_t Data, uint16_t Count) { io.WriteMultiple(Data, Count); }
     static inline void write_sequence(uint16_t *Data, uint16_t Count) { io.WriteSequence(Data, Count); }
     static inline void set_window(uint16_t Xmin, uint16_t Ymin, uint16_t Xmax, uint16_t Ymax) { io.set_window(Xmin, Ymin, Xmax, Ymax); }
+    static inline void flip_x(bool flip) { io.Flip_X(flip); }
+    static inline void write_pixel(uint16_t pix) { io.WriteData(pix); }
 
     static void fill(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint16_t color) { queue.fill(x, y, width, height, color); }
     static void canvas(uint16_t x, uint16_t y, uint16_t width, uint16_t height) { queue.canvas(x, y, width, height); }

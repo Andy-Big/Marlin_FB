@@ -30,6 +30,7 @@
 const tImage NoLogo                 = { nullptr, 0, 0, NOCOLORS };
 
 #if ENABLED(SHOW_BOOTSCREEN)
+/*
   const tImage MarlinLogo112x38x1   = { (void *)marlin_logo_112x38x1, 112, 38, GREYSCALE1 };
   const tImage MarlinLogo228x255x2  = { (void *)marlin_logo_228x255x2, 228, 255, GREYSCALE2 };
   const tImage MarlinLogo228x255x4  = { (void *)marlin_logo_228x255x4, 228, 255, GREYSCALE4 };
@@ -37,6 +38,7 @@ const tImage NoLogo                 = { nullptr, 0, 0, NOCOLORS };
   const tImage MarlinLogo320x240x16 = { (void *)marlin_logo_320x240x16, 320, 240, HIGHCOLOR };
   const tImage MarlinLogo480x320x16 = { (void *)marlin_logo_480x320x16, 480, 320, HIGHCOLOR };
   const tImage MarlinRBLogo220x190x16  = { (void *)bootscreen_marlin_rb_220x190x16,  220,  190, HIGHCOLOR };
+*/
 #endif
 const tImage Background320x30x16    = { (void *)background_320x30x16, 320, 30, HIGHCOLOR };
 
@@ -84,7 +86,7 @@ const tImage Images[imgCount] = {
   #if ENABLED(BOOT_MARLIN_RB_LOGO)
     MarlinRBLogo220x190x16,
   #else
-    TERN(SHOW_BOOTSCREEN, TERN(BOOT_MARLIN_LOGO_SMALL, MarlinLogo195x59x16, MARLIN_LOGO_FULL_SIZE), NoLogo),
+//    TERN(SHOW_BOOTSCREEN, TERN(BOOT_MARLIN_LOGO_SMALL, MarlinLogo195x59x16, MARLIN_LOGO_FULL_SIZE), NoLogo),
   #endif
   FeedRate_64x64x4,
   FlowRate_64x64x4,

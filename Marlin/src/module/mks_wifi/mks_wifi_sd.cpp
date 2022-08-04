@@ -8,6 +8,7 @@
 #include "../../libs/fatfs/fatfs_shared.h"
 #include "uart.h"
 #include "../../libs/numtostr.h"
+#include "../../lcd/tgui/tgui.h"
 
 
 #if ENABLED(TFT_480x320) || ENABLED(TFT_480x320_SPI)
@@ -25,12 +26,12 @@ volatile uint8_t *buff;
 volatile uint8_t buffer_ready;
 volatile uint8_t dma_stopped;
 
-FIL upload_file;
+
 
 void mks_wifi_sd_ls(void){
    DIR dir;
    FILINFO fno;
-   FRESULT res = f_opendir((DIR*)&dir, "0:");                       /* Open the directory */
+   FRESULT res = f_opendir((DIR*)&dir, DISK_SD);                       /* Open the directory */
    if (res == FR_OK)
    {
       for (;;) {
@@ -79,7 +80,7 @@ uint8_t get_dos_filename(char *filename, char* dosfilename)
    
    mks_wifi_sd_init();
 
-   FRESULT res = f_opendir((DIR *)&dir, "0:"); /* Open the directory */
+   FRESULT res = f_opendir((DIR *)&dir, DISK_SD); /* Open the directory */
 
    if (res == FR_OK)
    {
@@ -127,7 +128,6 @@ void mks_wifi_start_file_upload(ESP_PROTOC_FRAME *packet)
    uint8_t *data_packet;
    char file_name[256];
    FRESULT res = FR_OK;
-   FIL upload_file;
 
    save_bed = thermalManager.degTargetBed();
    save_e0=thermalManager.degTargetHotend(0);
@@ -149,7 +149,8 @@ void mks_wifi_start_file_upload(ESP_PROTOC_FRAME *packet)
    DEBUG("Start file %s size %d",file_name,file_size);
    
    //Отмонтировать SD от Marlin, Монтировать FATFs 
-   if(!mks_wifi_sd_init()){
+   if(!mks_wifi_sd_init())
+   {
       ERROR("Error SD mount");
       ui.set_status((const char *)"Error SD mount",true);
       ui.update();
@@ -159,7 +160,7 @@ void mks_wifi_start_file_upload(ESP_PROTOC_FRAME *packet)
    
    DEBUG("Open file");
    //открыть файл для записи
-   res=f_open((FIL *)&upload_file,file_name,FA_CREATE_ALWAYS | FA_WRITE);
+   res=f_open((FIL *)&filSdFile,file_name,FA_CREATE_ALWAYS | FA_WRITE);
    if(res){
       ERROR("File open error %d",res);
       ui.set_status((const char *)"File open error",true);
@@ -308,7 +309,7 @@ void mks_wifi_start_file_upload(ESP_PROTOC_FRAME *packet)
             file_inc_size += data_to_write; 
             DEBUG("%d [%d]Save %d bytes (%d of %d) ",buffer_ready,in_sector,data_to_write,file_inc_size,file_size);
             
-            res=f_write((FIL *)&upload_file,(uint8_t*)file_buff,data_to_write,&bytes_writen);
+            res=f_write((FIL *)&filSdFile,(uint8_t*)file_buff,data_to_write,&bytes_writen);
             if(res){
                ERROR("Write err %d",res);
                break;
@@ -351,7 +352,7 @@ void mks_wifi_start_file_upload(ESP_PROTOC_FRAME *packet)
                file_inc_size += file_data_size; 
 
                DEBUG("Save last %d bytes from buffer (%d of %d) ",file_data_size,file_inc_size,file_size);
-               res=f_write((FIL *)&upload_file,(uint8_t*)file_buff,file_data_size,&bytes_writen);
+               res=f_write((FIL *)&filSdFile,(uint8_t*)file_buff,file_data_size,&bytes_writen);
                if(res){
                   ERROR("Write err %d",res);
                  break;
@@ -428,56 +429,126 @@ void mks_wifi_start_file_upload(ESP_PROTOC_FRAME *packet)
 
    TERN_(USE_WATCHDOG, hal.watchdog_refresh());
    
-   f_close((FIL *)&upload_file);
+   f_close((FIL *)&filSdFile);
    DEBUG("File closed");
 
-   if( (file_size == file_inc_size) && (file_size == file_size_writen) ){
-         TERN_(USE_WATCHDOG, hal.watchdog_refresh());
+   if ( (file_size == file_inc_size) && (file_size == file_size_writen) )
+   {
+      TERN_(USE_WATCHDOG, hal.watchdog_refresh());
 //         mks_wifi_sd_deinit();
-         DEBUG("Remount SD");
+      DEBUG("Remount SD");
 
-         #if ENABLED(TFT_480x320) || ENABLED(TFT_480x320_SPI)
-         mks_end_transmit();
-         #endif
-         ui.set_status((const char *)"Upload done",true);
-         DEBUG("Upload ok");
-         BUZZ(1000,260);
+      #if ENABLED(TFT_480x320) || ENABLED(TFT_480x320_SPI)
+      mks_end_transmit();
+      #endif
+      ui.set_status((const char *)"Upload done",true);
+      DEBUG("Upload ok");
+      BUZZ(1000,260);
 
-         int32_t cres = strcmp(file_name, "0:/Robin_nano35.bin");
-         if(cres == 0)
+      char sf_fname[512];
+      strcpy(sf_fname, file_name+3);
+      int32_t cres = strcmp(sf_fname, "Robin_nano35.bin");
+      if(cres == 0)
+      {
+         TERN_(USE_WATCHDOG, hal.watchdog_refresh());
+         DEBUG("Firmware found, reboot");
+         safe_delay(1000);
+         NVIC_SystemReset();
+      }
+      strcpy(sf_fname, file_name+3);
+      sf_fname[strlen(TGUI_FPREFIX)] = 0;
+      cres = strcmp(sf_fname, TGUI_FPREFIX);
+      if(cres == 0)
+      {
+         TERN_(USE_WATCHDOG, hal.watchdog_refresh());
+         do
          {
-            TERN_(USE_WATCHDOG, hal.watchdog_refresh());
-            DEBUG("Firmware found, reboot");
-            safe_delay(1000);
-            NVIC_SystemReset();
-         }
-   }else{
-         TERN_(USE_WATCHDOG, hal.watchdog_refresh());
-         #if ENABLED(TFT_480x320) || ENABLED(TFT_480x320_SPI)
+            sf_fname[0] = 0;
+            strcat(sf_fname, DISK_FLASH);
+            strcat(sf_fname, (char*)"/");
+            strcat(sf_fname, TGUI_DIR);
+
+            // create directiry
+            f_mkdir(sf_fname);
+
+            strcat(sf_fname, (char*)"/");
+            strcat(sf_fname, file_name+3);
+
+            DEBUG("GUI image found, copying to SPI-flash");
+            if (f_open((FIL *)&filSdFile, file_name, FA_READ) != FR_OK)
+            {
+               DEBUG("Open file error: %s", file_name);
+               break;
+            }
+            if (f_open((FIL *)&filFlashFile, sf_fname, FA_WRITE | FA_CREATE_ALWAYS) != FR_OK)
+            {
+               DEBUG("Create file error: %s", sf_fname);
+               f_close(&filSdFile);
+               break;
+            }
+            UINT rd = 0, wr = 0, rd_tot = 0;
+            mks_upload_prepare(sf_fname, file_size);
+            mks_srv_copying_screen(rd_tot);
+            while (1)
+            {
+               if (f_read(&filSdFile, (uint8_t*)tguiFBuff, UIFBUFF_SIZE, &rd) != FR_OK || rd == 0)
+               {
+                  if (rd > 0)
+                     DEBUG("Read file error: %s", file_name);
+                  break;
+               }
+               if (f_write(&filFlashFile, (uint8_t*)tguiFBuff, rd, &wr) != FR_OK)
+               {
+                  DEBUG("Write file error: %s", sf_fname);
+                  break;
+               }
+               TERN_(USE_WATCHDOG, hal.watchdog_refresh());
+               rd_tot += rd;
+               mks_srv_copying_screen(rd_tot);
+               if (rd < UIFBUFF_SIZE)
+               {
+                  DEBUG("File copied succes: %s", sf_fname);
+                  break;
+               }
+            }
+            f_close(&filSdFile);
+            f_close(&filFlashFile);
+            if (rd == 0)
+               DEBUG("Copying file success");
+         } while (0);
+   
          mks_end_transmit();
-         #endif
-         ui.set_status((const char *)"Upload failed",true);
-         DEBUG("Upload failed! File size: %d; Recieve %d; SD write %d",file_size,file_inc_size,file_size_writen);
-         //Установить имя файла.
-         str[0]='0';
-         str[1]=':';
-         str[2]='/';
+         
+      }
+   }
+   else
+   {
+      TERN_(USE_WATCHDOG, hal.watchdog_refresh());
+      #if ENABLED(TFT_480x320) || ENABLED(TFT_480x320_SPI)
+      mks_end_transmit();
+      #endif
+      ui.set_status((const char *)"Upload failed",true);
+      DEBUG("Upload failed! File size: %d; Recieve %d; SD write %d",file_size,file_inc_size,file_size_writen);
+      //Установить имя файла.
+      str[0]='0';
+      str[1]=':';
+      str[2]='/';
 
-         memcpy((uint8_t *)str+3,(uint8_t *)&packet->data[5],(packet->dataLen - 5));
-         str[packet->dataLen - 5 + 3] = 0; 
+      memcpy((uint8_t *)str+3,(uint8_t *)&packet->data[5],(packet->dataLen - 5));
+      str[packet->dataLen - 5 + 3] = 0; 
 
-         DEBUG("Rename file %s",file_name);
-         f_rename(file_name,"file_failed.gcode");
+      DEBUG("Rename file %s",file_name);
+      f_rename(file_name,"file_failed.gcode");
 
-         TERN_(USE_WATCHDOG, hal.watchdog_refresh());
+      TERN_(USE_WATCHDOG, hal.watchdog_refresh());
 //         mks_wifi_sd_deinit();
-         DEBUG("Remount SD");
+      DEBUG("Remount SD");
 
-         BUZZ(436,392);
-         BUZZ(109,0);
-         BUZZ(436,392);
-         BUZZ(109,0);
-         BUZZ(436,392);
+      BUZZ(436,392);
+      BUZZ(109,0);
+      BUZZ(436,392);
+      BUZZ(109,0);
+      BUZZ(436,392);
    }
 
 

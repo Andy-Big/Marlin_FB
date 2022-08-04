@@ -27,6 +27,7 @@
 #if ENABLED(SDSUPPORT)
 
 extern const char M23_STR[], M24_STR[];
+extern FIL filSdFile;
 
 #if ENABLED(SDCARD_RATHERRECENTFIRST) && DISABLED(SDCARD_SORT_ALPHA)
   #define SD_ORDER(N,C) ((C) - 1 - (N))
@@ -132,7 +133,7 @@ public:
   #endif
   static uint8_t percentDone() {
     if (flag.sdprintdone) return 100;
-    if (isFileOpen() && curfilinfo.fsize) return curfile.fptr / ((curfilinfo.fsize + 99) / 100);
+    if (isFileOpen() && curfilinfo.fsize) return filSdFile.fptr / ((curfilinfo.fsize + 99) / 100);
     return 0;
   }
 
@@ -153,13 +154,13 @@ public:
 
   // Print File stats
   static uint32_t getFileSize()  { if (isFileOpen()) return curfilinfo.fsize; else return 0; }
-  static uint32_t getIndex()     { if (isFileOpen()) return curfile.fptr; else return 0; }
-  static bool isFileOpen()       { return isMounted() && curfile.obj.fs != 0; }
+  static uint32_t getIndex()     { if (isFileOpen()) return filSdFile.fptr; else return 0; }
+  static bool isFileOpen()       { return isMounted() && filSdFile.obj.fs != 0; }
   static bool eof()              { return getIndex() >= getFileSize(); }
 
   // File data operations
   static int16_t get();
-  static void setIndex(const uint32_t index)      { if (isFileOpen()) f_lseek(&curfile, index); }
+  static void setIndex(const uint32_t index)      { if (isFileOpen()) f_lseek(&filSdFile, index); }
 
   #if ENABLED(AUTO_REPORT_SD_STATUS)
     //
@@ -173,7 +174,6 @@ public:
     static uint32_t write(void *buf, uint32_t nbyte);
 
   private:
-    static FIL curfile;
     static FILINFO curfilinfo;
     static uint8_t activefileitems[MAX_DIR_DEPTH];
     static dir_active_items_t active_dir_items;
