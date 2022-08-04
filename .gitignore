@@ -44,7 +44,7 @@ applet/
 tags
 /__EXTRAS/
 /Releases/V1.3/*.bin
-/Releases/V1.3my/*.bin
+/Releases/V1.3my/*
 /Releases/SV1.3/*.bin
 /Releases/SMV1.3/*.bin
 /Releases/V1.1/*.bin
