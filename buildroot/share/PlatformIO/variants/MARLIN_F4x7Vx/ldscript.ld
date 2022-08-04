@@ -61,6 +61,7 @@ MEMORY
 RAM (xrw)   : ORIGIN = 0x20000000, LENGTH = LD_MAX_DATA_SIZE
 CCMRAM (rw) : ORIGIN = 0x10000000, LENGTH = 64K
 FLASH (rx)  : ORIGIN = 0x08000000 + LD_FLASH_OFFSET, LENGTH = LD_MAX_SIZE - LD_FLASH_OFFSET
+/* NOINIT (rwx) : ORIGIN = 0x20000000 + LD_MAX_DATA_SIZE - 0x2000, LENGTH = 0x2000 */
 }
 
 /* Define output sections */
@@ -151,7 +152,7 @@ SECTIONS
   * If initialized variables will be placed in this section,
   * the startup code needs to be modified to copy the init-values.
   */
-  .ccmram :
+  .ccmram (NOLOAD) :
   {
     . = ALIGN(4);
     _sccmram = .;       /* create a global symbol at ccmram start */
@@ -160,7 +161,8 @@ SECTIONS
 
     . = ALIGN(4);
     _eccmram = .;       /* create a global symbol at ccmram end */
-  } >CCMRAM AT> FLASH
+  } >CCMRAM
+/*  } >CCMRAM AT> FLASH */
 
 
   /* Uninitialized data section */
@@ -200,4 +202,10 @@ SECTIONS
   }
 
   .ARM.attributes 0 : { *(.ARM.attributes) }
+/*
+  .noinit (NOLOAD) :
+  {
+    KEEP(*(*.noinit*))
+  } > NOINIT
+*/
 }
