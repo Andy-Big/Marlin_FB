@@ -30,6 +30,7 @@
 
 #include "menu_item.h"
 #include "menu_addon.h"
+#include "menu_probe_offset.h"
 #include "../../gcode/queue.h"
 #include "../../module/motion.h"
 #include "../../module/planner.h"
@@ -48,6 +49,14 @@ inline void z_clearance_move() {
   do_z_clearance(Z_POST_CLEARANCE);
 }
 
+void cancel_probe_offset_wizard_and_go_back()
+{
+  probe.offset.z = z_offset_backup;
+  SET_SOFT_ENDSTOP_LOOSE(false);
+  TERN_(HAS_LEVELING, set_bed_leveling_enabled(leveling_was_active));
+  ui.goto_previous_screen_no_defer();
+}
+
 void set_offset_and_go_back(const_float_t z) {
   probe.offset.z = z;
   SET_SOFT_ENDSTOP_LOOSE(false);
@@ -57,7 +66,8 @@ void set_offset_and_go_back(const_float_t z) {
 
 void probe_offset_wizard_menu() {
   START_MENU();
-  calculated_z_offset = probe.offset.z + current_position.z - z_offset_ref;
+//  calculated_z_offset = probe.offset.z + current_position.z - z_offset_ref;
+  calculated_z_offset = current_position.z - z_offset_ref;
 
   if (LCD_HEIGHT >= 4)
     STATIC_ITEM(MSG_MOVE_NOZZLE_TO_BED, SS_CENTER|SS_INVERT);
@@ -107,7 +117,7 @@ void prepare_for_probe_offset_wizard() {
 
     // Probe for Z reference
     ui.wait_for_move = true;
-    z_offset_ref = probe.probe_at_point(wizard_pos, PROBE_PT_RAISE, 0, true);
+    z_offset_ref = probe.probe_at_point(wizard_pos, PROBE_PT_RAISE, 0, true) - probe.offset.z;
     ui.wait_for_move = false;
 
     // Stow the probe, as the last call to probe.probe_at_point(...) left
