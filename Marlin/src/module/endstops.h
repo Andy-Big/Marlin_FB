@@ -201,6 +201,11 @@ class Endstops {
      */
     static void update();
 
+    #if ENABLED(BD_SENSOR)
+      static bool bdp_state;
+      static void bdp_state_update(const bool z_state) { bdp_state = z_state; }
+    #endif
+
     /**
      * Get Endstop hit state.
      */
