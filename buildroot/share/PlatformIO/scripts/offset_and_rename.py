@@ -11,7 +11,11 @@
 import pioutil
 if pioutil.is_pio_build():
 <<<<<<< HEAD
+<<<<<<< HEAD
 	import os,sys,marlin
+=======
+    import sys,marlin
+>>>>>>> 306e03b03b (🧑‍💻 Use spaces indent for Python)
 =======
     import sys,marlin
 >>>>>>> 306e03b03b (🧑‍💻 Use spaces indent for Python)
@@ -58,6 +62,7 @@ if pioutil.is_pio_build():
     if 'rename' in board_keys:
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 		def rename_target(source, target, env):
 			firmware = os.path.join(target[0].dir.path, board.get("build.rename"))
 			if os.path.exists(firmware):
@@ -73,4 +78,10 @@ if pioutil.is_pio_build():
             Path(target[0].path).replace(Path(target[0].dir.path, board.get("build.rename")))
 >>>>>>> 306e03b03b (🧑‍💻 Use spaces indent for Python)
 
+=======
+        def rename_target(source, target, env):
+            from pathlib import Path
+            Path(target[0].path).replace(Path(target[0].dir.path, board.get("build.rename")))
+
+>>>>>>> 306e03b03b (🧑‍💻 Use spaces indent for Python)
         marlin.add_post_action(rename_target)
