@@ -68,6 +68,7 @@ if pioutil.is_pio_build():
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 		def rename_target(source, target, env):
 			firmware = os.path.join(target[0].dir.path, board.get("build.rename"))
 			if os.path.exists(firmware):
@@ -84,9 +85,16 @@ if pioutil.is_pio_build():
 >>>>>>> 306e03b03b (🧑‍💻 Use spaces indent for Python)
 
 =======
+=======
+        # If FIRMWARE_BIN is defined by config, override all
+        mf = env["MARLIN_FEATURES"]
+        if "FIRMWARE_BIN" in mf: new_name = mf["FIRMWARE_BIN"]
+        else: new_name = board.get("build.rename")
+
+>>>>>>> 2a1c2e26ed (✨ Robin Nano v1 CDC (USB mod) (#24619))
         def rename_target(source, target, env):
             from pathlib import Path
-            Path(target[0].path).replace(Path(target[0].dir.path, board.get("build.rename")))
+            Path(target[0].path).replace(Path(target[0].dir.path, new_name))
 
 >>>>>>> 306e03b03b (🧑‍💻 Use spaces indent for Python)
 =======
