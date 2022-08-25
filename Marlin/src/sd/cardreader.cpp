@@ -29,6 +29,7 @@
 #include "cardreader.h"
 
 #include "../MarlinCore.h"
+#include "../libs/hex_print.h"
 #include "../lcd/marlinui.h"
 
 #if ENABLED(DWIN_CREALITY_LCD)
