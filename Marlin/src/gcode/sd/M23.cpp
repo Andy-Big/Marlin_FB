@@ -42,7 +42,7 @@ void GcodeSuite::M23() {
   card.openFileRead(parser.command_args);
 
 
-  TERN_(LCD_SET_PROGRESS_MANUALLY, ui.set_progress(0));
+  TERN_(SET_PROGRESS_PERCENT, ui.set_progress(0));
 }
 
 #endif // SDSUPPORT
