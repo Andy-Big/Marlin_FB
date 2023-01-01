@@ -778,7 +778,7 @@ void menu_advanced_steps_per_mm() {
 
   #if ENABLED(DISTINCT_E_FACTORS)
     LOOP_L_N(n, E_STEPPERS)
-      EDIT_ITEM_FAST_N(float61, n, MSG_EN_STEPS, &planner.settings.axis_steps_per_mm[E_AXIS_N(n)], 5, 9999, []{
+      EDIT_ITEM_FAST_N(float72, n, MSG_EN_STEPS, &planner.settings.axis_steps_per_mm[E_AXIS_N(n)], 5, 9999, []{
         const uint8_t e = MenuItemBase::itemIndex;
         if (e == active_extruder)
           planner.refresh_positioning();
@@ -786,7 +786,7 @@ void menu_advanced_steps_per_mm() {
           planner.mm_per_step[E_AXIS_N(e)] = 1.0f / planner.settings.axis_steps_per_mm[E_AXIS_N(e)];
       });
   #elif E_STEPPERS
-    EDIT_ITEM_FAST_N(float61, E_AXIS, MSG_E_STEPS, &planner.settings.axis_steps_per_mm[E_AXIS], 5, 3200, []{ planner.refresh_positioning(); });
+    EDIT_ITEM_FAST_N(float72, E_AXIS, MSG_N_STEPS, &planner.settings.axis_steps_per_mm[E_AXIS], 5, 3200, []{ planner.refresh_positioning(); });
   #endif
 
   END_MENU();
