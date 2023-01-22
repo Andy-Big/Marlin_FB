@@ -529,6 +529,9 @@ constexpr thermistor_types_t    thermistor_types[THERMISTORS_TYPES_COUNT] PROGME
 #if ENABLED(PREVENT_COLD_EXTRUSION)
   bool Temperature::allow_cold_extrude = false;
   celsius_t Temperature::extrude_min_temp = EXTRUDE_MINTEMP;
+#else
+  constexpr bool Temperature::allow_cold_extrude;
+  constexpr celsius_t Temperature::extrude_min_temp;
 #endif
 
 #if HAS_ADC_BUTTONS

@@ -243,7 +243,7 @@ void GcodeSuite::M115() {
       const xyz_pos_t lmin = dmin.asLogical(), lmax = dmax.asLogical(),
                       wmin = cmin.asLogical(), wmax = cmax.asLogical();
 
-      SERIAL_ECHOLNPGM(
+      SERIAL_ECHOPGM(
         "area:{"
           "full:{"
             "min:{"
@@ -260,6 +260,8 @@ void GcodeSuite::M115() {
               ),
             "}" // max
           "}," // full
+      );
+      SERIAL_ECHOLNPGM(
           "work:{"
             "min:{"
               LIST_N(DOUBLE(NUM_AXES),
