@@ -922,11 +922,10 @@ volatile bool Temperature::raw_temps_ready = false;
         SERIAL_ECHOPGM(STR_MPC_AUTOTUNE);
         SERIAL_ECHOLNPGM(STR_MPC_AUTOTUNE_INTERRUPTED);
         TERN_(DWIN_LCD_PROUI, DWIN_MPCTuning(MPC_INTERRUPTED));
-        return false;
+        return true;
       }
 
-      wait_for_heatup = false;
-      return true;
+      return false;
     };
 
     struct OnExit {
@@ -979,7 +978,7 @@ volatile bool Temperature::raw_temps_ready = false;
 
     wait_for_heatup = true;
     for (;;) { // Can be interrupted with M108
-      if (!housekeeping(ms, current_temp, next_report_ms)) return;
+      if (housekeeping(ms, current_temp, next_report_ms)) return;
 
       if (ELAPSED(ms, next_test_ms)) {
         if (current_temp >= ambient_temp) {
@@ -990,6 +989,7 @@ volatile bool Temperature::raw_temps_ready = false;
         next_test_ms += 10000UL;
       }
     }
+    wait_for_heatup = false;
 
     #if HAS_FAN
       set_fan_speed(EITHER(MPC_FAN_0_ALL_HOTENDS, MPC_FAN_0_ACTIVE_HOTEND) ? 0 : active_extruder, 0);
@@ -1001,7 +1001,7 @@ volatile bool Temperature::raw_temps_ready = false;
     SERIAL_ECHOLNPGM(STR_MPC_HEATING_PAST_200);
     TERN(DWIN_LCD_PROUI, LCD_ALERTMESSAGE(MSG_MPC_HEATING_PAST_200), LCD_MESSAGE(MSG_HEATING));
     hotend.target = 200.0f;   // So M105 looks nice
-    hotend.soft_pwm_amount = MPC_MAX >> 1;
+    hotend.soft_pwm_amount = (MPC_MAX) >> 1;
     const millis_t heat_start_time = next_test_ms = ms;
     celsius_float_t temp_samples[16];
     uint8_t sample_count = 0;
@@ -1010,7 +1010,7 @@ volatile bool Temperature::raw_temps_ready = false;
 
     wait_for_heatup = true;
     for (;;) { // Can be interrupted with M108
-      if (!housekeeping(ms, current_temp, next_report_ms)) return;
+      if (housekeeping(ms, current_temp, next_report_ms)) return;
 
       if (ELAPSED(ms, next_test_ms)) {
         // Record samples between 100C and 200C
@@ -1032,6 +1032,8 @@ volatile bool Temperature::raw_temps_ready = false;
         next_test_ms += 1000UL * sample_distance;
       }
     }
+    wait_for_heatup = false;
+
     hotend.soft_pwm_amount = 0;
 
     // Calculate physical constants from three equally-spaced samples
@@ -1067,7 +1069,7 @@ volatile bool Temperature::raw_temps_ready = false;
 
     wait_for_heatup = true;
     for (;;) { // Can be interrupted with M108
-      if (!housekeeping(ms, current_temp, next_report_ms)) return;
+      if (housekeeping(ms, current_temp, next_report_ms)) return;
 
       if (ELAPSED(ms, next_test_ms)) {
         hotend.soft_pwm_amount = (int)get_pid_output_hotend(active_extruder) >> 1;
@@ -1097,6 +1099,7 @@ volatile bool Temperature::raw_temps_ready = false;
         break;
       }
     }
+    wait_for_heatup = false;
 
     const float power_fan0 = total_energy_fan0 * 1000 / test_duration;
     mpc.ambient_xfer_coeff_fan0 = power_fan0 / (hotend.target - ambient_temp);
