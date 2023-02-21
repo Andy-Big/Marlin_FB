@@ -158,7 +158,7 @@ namespace Language_ru {
   LSTR  MSG_MOVE_AXIS                       = _UxGT("Перемещение осей");
   LSTR  MSG_BED_LEVELING                    = _UxGT("Выставка стола");
   LSTR  MSG_LEVEL_BED                       = _UxGT("Сетка кривизны стола");
-  LSTR  MSG_BED_TRAMMING                    = _UxGT("Уровень стола");
+  LSTR  MSG_BED_TRAMMING                    = _UxGT("Выставить углы");
   LSTR  MSG_NEXT_CORNER                     = _UxGT("Следующий угол");
   #if LCD_WIDTH > 21 || HAS_DWIN_E3V2
     LSTR  MSG_BED_TRAMMING_RAISE            = _UxGT("Вверх до срабатыв. зонда");
@@ -254,9 +254,9 @@ namespace Language_ru {
   #endif
   LSTR  MSG_G26_HEATING_BED                 = _UxGT("G26 нагрев стола");
   LSTR  MSG_G26_HEATING_NOZZLE              = _UxGT("G26 нагрев сопла");
-  LSTR  MSG_G26_MANUAL_PRIME                = _UxGT("Ручная грунтовка");
-  LSTR  MSG_G26_FIXED_LENGTH                = _UxGT("Грунт фикс. длины");
-  LSTR  MSG_G26_PRIME_DONE                  = _UxGT("Грунтовка сделана");
+  LSTR  MSG_G26_MANUAL_PRIME                = _UxGT("Ручная прочистка");
+  LSTR  MSG_G26_FIXED_LENGTH                = _UxGT("Прочистка фикс. длины");
+  LSTR  MSG_G26_PRIME_DONE                  = _UxGT("Прочистка окончена");
   LSTR  MSG_G26_CANCELED                    = _UxGT("G26 завершена");
   LSTR  MSG_G26_LEAVING                     = _UxGT("Выйти из G26");
   LSTR  MSG_UBL_CONTINUE_MESH               = _UxGT("Продолжить сетку");
@@ -266,13 +266,13 @@ namespace Language_ru {
   #else
     LSTR  MSG_UBL_3POINT_MESH_LEVELING      = _UxGT("3-точечное выравн.");
   #endif
-  LSTR  MSG_UBL_GRID_MESH_LEVELING          = _UxGT("Калибровка растера");
-  LSTR  MSG_UBL_MESH_LEVEL                  = _UxGT("Выровнять сетку");
-  LSTR  MSG_UBL_SIDE_POINTS                 = _UxGT("Крайние точки");
-  LSTR  MSG_UBL_MAP_TYPE                    = _UxGT("Тип карты");
-  LSTR  MSG_UBL_OUTPUT_MAP                  = _UxGT("Вывести карту сетки");
-  LSTR  MSG_UBL_OUTPUT_MAP_HOST             = _UxGT("Вывести на хост");
-  LSTR  MSG_UBL_OUTPUT_MAP_CSV              = _UxGT("Вывести в CSV");
+  LSTR MSG_UBL_GRID_MESH_LEVELING           = _UxGT("Выравнивание сеткой");
+  LSTR MSG_UBL_MESH_LEVEL                   = _UxGT("Выровнять сетку");
+  LSTR MSG_UBL_SIDE_POINTS                  = _UxGT("Крайние точки");
+  LSTR MSG_UBL_MAP_TYPE                     = _UxGT("Тип карты");
+  LSTR MSG_UBL_OUTPUT_MAP                   = _UxGT("Вывести карту сетки");
+  LSTR MSG_UBL_OUTPUT_MAP_HOST              = _UxGT("Вывести на хост");
+  LSTR MSG_UBL_OUTPUT_MAP_CSV               = _UxGT("Вывести в CSV");
   #if LCD_WIDTH > 21 || HAS_DWIN_E3V2
     LSTR  MSG_UBL_OUTPUT_MAP_BACKUP         = _UxGT("Сохранить сетку снаружи");
     LSTR  MSG_UBL_INFO_UBL                  = _UxGT("Вывод информации UBL");
@@ -410,9 +410,9 @@ namespace Language_ru {
   LSTR MSG_VK_JERK                          = _UxGT("V") STR_K _UxGT("-рывок");
   LSTR  MSG_VE_JERK                         = _UxGT("Ve-рывок");
   #if LCD_WIDTH > 21 || HAS_DWIN_E3V2
-    LSTR  MSG_JUNCTION_DEVIATION            = _UxGT("Отклонение узла");
+    LSTR  MSG_JUNCTION_DEVIATION            = _UxGT("Отклонение угла");
   #else
-    LSTR  MSG_JUNCTION_DEVIATION            = _UxGT("Отклон. узла");
+    LSTR  MSG_JUNCTION_DEVIATION            = _UxGT("Отклон. угла");
   #endif
   
   LSTR  MSG_MAX_SPEED                       = _UxGT("Макс. скорость (мм/с)");
@@ -471,6 +471,7 @@ namespace Language_ru {
   LSTR  MSG_STORE_EEPROM                    = _UxGT("Сохранить настройки в EPROM");
   LSTR  MSG_STORE_CONFIG_FILE               = _UxGT("Сохранить настройки в файл");
   LSTR  MSG_LOAD_EEPROM                     = _UxGT("Загрузить настройки из EPROM");
+  LSTR  MSG_LOAD_CONFIG_FILE                = _UxGT("Загрузить настройки из файла");
   #if LCD_WIDTH > 21 || HAS_DWIN_E3V2
     LSTR  MSG_RESTORE_DEFAULTS              = _UxGT("Сброс на заводские");
     LSTR  MSG_INIT_EEPROM                   = _UxGT("Инициализация EEPROM");
@@ -831,9 +832,9 @@ namespace Language_ru {
   LSTR  MSG_PASSWORD_SET                    = _UxGT("Пароль это ");
   LSTR  MSG_START_OVER                      = _UxGT("Старт через");
   #if LCD_WIDTH > 21 || HAS_DWIN_E3V2
-    LSTR  MSG_REMINDER_SAVE_SETTINGS        = _UxGT("Запомни для сохранения!");
+    LSTR MSG_REMINDER_SAVE_SETTINGS         = _UxGT("Не забудь сохранить!");
   #else
-    LSTR  MSG_REMINDER_SAVE_SETTINGS        = _UxGT("Запомни, сохрани!");
+    LSTR MSG_REMINDER_SAVE_SETTINGS         = _UxGT("Не забудь сохранить");
   #endif
   LSTR  MSG_PASSWORD_REMOVED                = _UxGT("Пароль удален");
 
@@ -982,6 +983,7 @@ namespace Language_ru {
   LSTR MSG_PAUSE_FAST_LOAD_FEEDRATE       = _UxGT("Скорость быстр.загрузки, мм/с");
   LSTR MSG_PAUSE_FAST_LOAD_LENGTH         = _UxGT("Длина быстр.загрузки, мм");
 
+  LSTR MSG_DRIVER_BACKWARD                  = _UxGT(" драйвер наоборот");
 
 }
 
