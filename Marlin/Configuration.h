@@ -1706,7 +1706,7 @@
 
 // @section extruder
 
-#define DISABLE_E false             // Disable the extruder when not stepping
+//#define DISABLE_E                 // Disable the extruder when not stepping
 #define DISABLE_INACTIVE_EXTRUDER   // Keep only the active extruder enabled
 
 // @section motion
