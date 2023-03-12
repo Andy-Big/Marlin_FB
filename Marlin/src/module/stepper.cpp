@@ -230,6 +230,7 @@ uint32_t Stepper::advance_divisor = 0,
   int32_t     Stepper::la_delta_error = 0,
               Stepper::la_dividend = 0,
               Stepper::la_advance_steps = 0;
+  bool        Stepper::la_active = false;
 #endif
 
 #if HAS_SHAPING
@@ -1879,7 +1880,7 @@ void Stepper::pulse_phase_isr() {
         PULSE_PREP(E);
 
         #if ENABLED(LIN_ADVANCE)
-          if (step_needed.e && current_block->la_advance_rate) {
+          if (la_active && step_needed.e) {
             // don't actually step here, but do subtract movements steps
             // from the linear advance step count
             step_needed.e = false;
@@ -2181,7 +2182,7 @@ hal_timer_t Stepper::block_phase_isr() {
         acceleration_time += interval;
 
         #if ENABLED(LIN_ADVANCE)
-          if (current_block->la_advance_rate) {
+          if (la_active) {
             const uint32_t la_step_rate = la_advance_steps < current_block->max_adv_steps ? current_block->la_advance_rate : 0;
             la_interval = calc_timer_interval(acc_step_rate + la_step_rate) << current_block->la_scaling;
           }
@@ -2248,7 +2249,7 @@ hal_timer_t Stepper::block_phase_isr() {
         deceleration_time += interval;
 
         #if ENABLED(LIN_ADVANCE)
-          if (current_block->la_advance_rate) {
+          if (la_active) {
             const uint32_t la_step_rate = la_advance_steps > current_block->final_adv_steps ? current_block->la_advance_rate : 0;
             if (la_step_rate != step_rate) {
               bool reverse_e = la_step_rate > step_rate;
@@ -2309,7 +2310,7 @@ hal_timer_t Stepper::block_phase_isr() {
           ticks_nominal = calc_timer_interval(current_block->nominal_rate << oversampling_factor, steps_per_isr);
 
           #if ENABLED(LIN_ADVANCE)
-            if (current_block->la_advance_rate)
+            if (la_active)
               la_interval = calc_timer_interval(current_block->nominal_rate) << current_block->la_scaling;
           #endif
         }
@@ -2565,11 +2566,12 @@ hal_timer_t Stepper::block_phase_isr() {
 
       // Initialize the trapezoid generator from the current block.
       #if ENABLED(LIN_ADVANCE)
+        la_active = (current_block->la_advance_rate != 0);
         #if DISABLED(MIXING_EXTRUDER) && E_STEPPERS > 1
           // If the now active extruder wasn't in use during the last move, its pressure is most likely gone.
           if (stepper_extruder != last_moved_extruder) la_advance_steps = 0;
         #endif
-        if (current_block->la_advance_rate) {
+        if (la_active) {
           // Apply LA scaling and discount the effect of frequency scaling
           la_dividend = (advance_dividend.e << current_block->la_scaling) << oversampling_factor;
         }
@@ -2630,7 +2632,7 @@ hal_timer_t Stepper::block_phase_isr() {
       acceleration_time += interval;
 
       #if ENABLED(LIN_ADVANCE)
-        if (current_block->la_advance_rate) {
+        if (la_active) {
           const uint32_t la_step_rate = la_advance_steps < current_block->max_adv_steps ? current_block->la_advance_rate : 0;
           la_interval = calc_timer_interval(current_block->initial_rate + la_step_rate) << current_block->la_scaling;
         }
