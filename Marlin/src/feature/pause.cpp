@@ -239,6 +239,8 @@ bool load_filament(const_float_t slow_load_length/*=0*/, const_float_t fast_load
 
   TERN_(BELTPRINTER, do_blocking_move_to_xy(0.00, 50.00));
 
+  TERN_(MPCTEMP, MPC::e_paused = true);
+
   // Slow Load filament
   if (slow_load_length) unscaled_e_move(slow_load_length, moving_settings.filament_change.slow_load_feedrate);
 
@@ -302,6 +304,9 @@ bool load_filament(const_float_t slow_load_length/*=0*/, const_float_t fast_load
     } while (TERN0(M600_PURGE_MORE_RESUMABLE, pause_menu_response == PAUSE_RESPONSE_EXTRUDE_MORE));
 
   #endif
+
+  TERN_(MPCTEMP, MPC::e_paused = false);
+
   TERN_(HOST_PROMPT_SUPPORT, hostui.prompt_end());
 
   return true;
