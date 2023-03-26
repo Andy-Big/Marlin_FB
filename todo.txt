@@ -10,6 +10,7 @@
 
 
 
+Переделать настройки концевиков из inverting/noninverting в HIGH/LOW
 
 Не переведен статус Wait for heat up...
 
