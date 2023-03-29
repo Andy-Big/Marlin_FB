@@ -28,9 +28,7 @@ mczip.h
 *.gen
 *.sublime-workspace
 
-#
 # OS
-#
 applet/
 *.DS_Store
 
@@ -88,11 +86,7 @@ tags
 *.out
 *.app
 
-
-#
-# C
-#
-# Object files
+# Compiled C Object files
 *.o
 *.ko
 *.obj
@@ -156,13 +150,13 @@ vc-fileutils.settings
 .vscode/launch.json
 .vscode/*.db
 
-#Simulation
+# Simulation files
 imgui.ini
 eeprom.dat
 spi_flash.bin
 fs.img
 
-#cmake
+# CMake
 CMakeLists.txt
 src/CMakeLists.txt
 CMakeListsPrivate.txt
@@ -198,3 +192,15 @@ Releases/SV1.3/x16/Robin_nano35.bin
 Releases/V1.1/x16/Robin_nano35.bin
 Releases/V1.3/x32/Robin_nano35.bin
 Releases/V1.3/Robin_nano35.bin
+
+*~
+*.orig
+*.rej
+*.bak
+*.idea
+*.i
+*.ii
+*.swp
+tags
+*.logs
+*.bak
