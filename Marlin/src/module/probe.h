@@ -167,6 +167,7 @@ public:
     #endif // !IS_KINEMATIC
 
     static void move_z_after_probing() {
+      DEBUG_SECTION(mzah, "move_z_after_probing", DEBUGGING(LEVELING));
       #ifdef Z_AFTER_PROBING
         do_z_clearance(Z_AFTER_PROBING, true); // Move down still permitted
       #endif
@@ -189,6 +190,7 @@ public:
   static void use_probing_tool(const bool=true) IF_DISABLED(DO_TOOLCHANGE_FOR_PROBING, {});
 
   static void move_z_after_homing() {
+    DEBUG_SECTION(mzah, "move_z_after_homing", DEBUGGING(LEVELING));
     #if ALL(DWIN_LCD_PROUI, INDIVIDUAL_AXIS_HOMING_SUBMENU, MESH_BED_LEVELING) || defined(Z_AFTER_HOMING)
       do_z_clearance(Z_POST_CLEARANCE, true);
     #elif HAS_BED_PROBE
