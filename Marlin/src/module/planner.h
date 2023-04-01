@@ -525,6 +525,10 @@ class Planner {
       }
     #endif
 
+    #if ENABLED(FT_MOTION)
+      static bool fxdTiCtrl_busy;
+    #endif
+
   private:
 
     /**
