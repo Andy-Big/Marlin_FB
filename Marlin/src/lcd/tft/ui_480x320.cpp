@@ -397,10 +397,10 @@ void MarlinUI::draw_status_screen() {
           x += sw + ITEM_WIDTH1;
           break;
       #endif
-      #ifdef ITEM_E1
+      #if HAS_MULTI_HOTEND
         case ITEM_E1: draw_heater_status(x, y, H_E1); break;
       #endif
-      #ifdef ITEM_E2
+      #if HOTENDS > 2
         case ITEM_E2: draw_heater_status(x, y, H_E2); break;
       #endif
       #ifdef ITEM_BED
@@ -409,10 +409,10 @@ void MarlinUI::draw_status_screen() {
           x += sw + ITEM_WIDTH1;
           break;
       #endif
-      #ifdef ITEM_CHAMBER
+      #if HAS_TEMP_CHAMBER
         case ITEM_CHAMBER: draw_heater_status(x, y, H_CHAMBER); break;
       #endif
-      #ifdef ITEM_COOLER
+      #if HAS_TEMP_COOLER
         case ITEM_COOLER: draw_heater_status(x, y, H_COOLER); break;
       #endif
       #ifdef ITEM_FAN
