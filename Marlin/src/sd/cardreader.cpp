@@ -22,7 +22,7 @@
 
 #include "../inc/MarlinConfig.h"
 
-#if ENABLED(SDSUPPORT)
+#if HAS_MEDIA
 
 //#define DEBUG_CARDREADER
 
@@ -1131,4 +1131,4 @@ void CardReader::startOrResumeFilePrinting()
     }
 }
 
-#endif // SDSUPPORT
+#endif // HAS_MEDIA

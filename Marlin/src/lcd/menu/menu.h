@@ -205,7 +205,7 @@ class MenuEditItemBase : public MenuItemBase {
     static inline void draw_edit_screen(const char * const value) { draw_edit_screen(editLabel, value); }
 };
 
-#if ENABLED(SDSUPPORT)
+#if HAS_MEDIA
   class CardReader;
   class MenuItem_sdbase {
     public:
@@ -222,7 +222,7 @@ void menu_main();
 void menu_move();
 void menu_tune();
 
-#if ENABLED(SDSUPPORT)
+#if HAS_MEDIA
   void menu_media();
 #endif
 

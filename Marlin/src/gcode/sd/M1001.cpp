@@ -22,7 +22,7 @@
 
 #include "../../inc/MarlinConfig.h"
 
-#if ENABLED(SDSUPPORT)
+#if HAS_MEDIA
 
 #include "../gcode.h"
 #include "../../module/planner.h"
@@ -131,4 +131,4 @@ void GcodeSuite::M1001() {
 
 }
 
-#endif // SDSUPPORT
+#endif // HAS_MEDIA

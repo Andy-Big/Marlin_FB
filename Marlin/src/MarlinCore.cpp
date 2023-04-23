@@ -156,7 +156,7 @@
   #include "feature/spindle_laser.h"
 #endif
 
-#if ENABLED(SDSUPPORT)
+#if HAS_MEDIA
   CardReader card;
 #endif
 
@@ -359,7 +359,7 @@ void startOrResumeJob() {
   print_job_timer.start();
 }
 
-#if ENABLED(SDSUPPORT)
+#if HAS_MEDIA
 
   inline void abortSDPrinting() {
     IF_DISABLED(NO_SD_AUTOSTART, card.autofile_cancel());
@@ -394,7 +394,7 @@ void startOrResumeJob() {
     }
   }
 
-#endif // SDSUPPORT
+#endif // HAS_MEDIA
 
 /**
  * Minimal management of Marlin's core activities:
@@ -837,7 +837,7 @@ void idle(const bool no_stepper_sleep/*=false*/) {
   #endif
 
   // Handle SD Card insert / remove
-  TERN_(SDSUPPORT, card.manage_media());
+  TERN_(HAS_MEDIA, card.manage_media());
 
   // Handle USB Flash Drive insert / remove
   TERN_(USB_FLASH_DRIVE_SUPPORT, card.diskIODriver()->idle());
@@ -1364,7 +1364,22 @@ void setup() {
 
   f_mount(&FS_flash, DISK_FLASH, 1);
 
-  SETUP_RUN(settings.first_load()); // Load data from EEPROM if available (or use defaults)
+//  SETUP_RUN(ui.init());
+
+  #if PIN_EXISTS(SAFE_POWER)
+    #if HAS_DRIVER_SAFE_POWER_PROTECT
+      SETUP_RUN(stepper_driver_backward_check());
+    #else
+      SETUP_LOG("SAFE_POWER");
+      OUT_WRITE(SAFE_POWER_PIN, HIGH);
+    #endif
+  #endif
+
+  #if BOTH(HAS_MEDIA, SDCARD_EEPROM_EMULATION)
+    SETUP_RUN(card.mount());          // Mount media with settings before first_load
+  #endif
+
+  SETUP_RUN(settings.first_load());   // Load data from EEPROM if available (or use defaults)
                                       // This also updates variables in the planner, elsewhere
 
   #if ENABLED(PROBE_TARE)
@@ -1639,7 +1654,7 @@ void setup() {
   #endif
 
   #if HAS_TFT_LVGL_UI
-    #if ENABLED(SDSUPPORT)
+    #if HAS_MEDIA
       if (!card.isMounted()) SETUP_RUN(card.mount()); // Mount SD to load graphics and fonts
     #endif
     SETUP_RUN(tft_lvgl_init());
@@ -1705,7 +1720,7 @@ void loop() {
   do {
     idle();
 
-    #if ENABLED(SDSUPPORT)
+    #if HAS_MEDIA
       if (card.flag.abort_sd_printing) abortSDPrinting();
       if (marlin_state == MF_SD_COMPLETE) finishSDPrinting();
     #endif
