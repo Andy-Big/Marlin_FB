@@ -112,7 +112,7 @@ unsigned char read_byte(const unsigned char *byte) { return *byte; }
  * Add a string, applying substitutions for the following characters:
  *
  *   $ displays the string given by fstr or cstr
- *   = displays  '0'....'10' for indexes 0 - 10
+ *   { displays  '0'....'10' for indexes 0 - 10
  *   ~ displays  '1'....'11' for indexes 0 - 10
  *   * displays 'E1'...'E11' for indexes 0 - 10 (By default. Uses LCD_FIRST_TOOL)
  *   @ displays an axis name such as XYZUVW, or E for an extruder
@@ -132,9 +132,9 @@ void TFT_String::add(const char *tpl, const int8_t index, const char *cstr/*=nul
 
 
 
-    if (ch == '=' || ch == '~' || ch == '*') {
+    if (ch == '{' || ch == '~' || ch == '*') {
       if (index >= 0) {
-        int8_t inum = index + ((ch == '=') ? 0 : LCD_FIRST_TOOL);
+        int8_t inum = index + ((ch == '{') ? 0 : LCD_FIRST_TOOL);
         if (ch == '*') add_character('E');
         if (inum >= 10) { add_character('0' + (inum / 10)); inum %= 10; }
         add_character('0' + inum);

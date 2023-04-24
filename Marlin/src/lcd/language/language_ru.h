@@ -321,7 +321,7 @@ namespace Language_ru {
   LSTR  MSG_SET_LEDS_VIOLET                 = _UxGT("Фиолетовый");
   LSTR  MSG_SET_LEDS_WHITE                  = _UxGT("Белый");
   LSTR  MSG_SET_LEDS_DEFAULT                = _UxGT("Свет по умолчанию");
-  LSTR  MSG_LED_CHANNEL_N                   = _UxGT("Канал =");
+  LSTR  MSG_LED_CHANNEL_N                   = _UxGT("Канал {");
   LSTR  MSG_LEDS2                           = _UxGT("Свет #2");
   #if LCD_WIDTH > 21 || HAS_DWIN_E3V2
     LSTR  MSG_NEO2_PRESETS                  = _UxGT("Свет #2 предустановки");
