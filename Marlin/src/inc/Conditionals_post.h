@@ -1016,126 +1016,6 @@
 #endif // Z_MULTI_ENDSTOPS
 
 /**
- * Set ENDSTOPPULLUPS for active endstop switches
- */
-#if ENABLED(ENDSTOPPULLUPS)
-  #if ENABLED(USE_XMAX_PLUG)
-    #define ENDSTOPPULLUP_XMAX
-  #endif
-  #if ENABLED(USE_YMAX_PLUG)
-    #define ENDSTOPPULLUP_YMAX
-  #endif
-  #if ENABLED(USE_ZMAX_PLUG)
-    #define ENDSTOPPULLUP_ZMAX
-  #endif
-  #if ENABLED(USE_IMAX_PLUG)
-    #define ENDSTOPPULLUP_IMAX
-  #endif
-  #if ENABLED(USE_JMAX_PLUG)
-    #define ENDSTOPPULLUP_JMAX
-  #endif
-  #if ENABLED(USE_KMAX_PLUG)
-    #define ENDSTOPPULLUP_KMAX
-  #endif
-  #if ENABLED(USE_UMAX_PLUG)
-    #define ENDSTOPPULLUP_UMAX
-  #endif
-  #if ENABLED(USE_VMAX_PLUG)
-    #define ENDSTOPPULLUP_VMAX
-  #endif
-  #if ENABLED(USE_WMAX_PLUG)
-    #define ENDSTOPPULLUP_WMAX
-  #endif
-  #if ENABLED(USE_XMIN_PLUG)
-    #define ENDSTOPPULLUP_XMIN
-  #endif
-  #if ENABLED(USE_YMIN_PLUG)
-    #define ENDSTOPPULLUP_YMIN
-  #endif
-  #if ENABLED(USE_ZMIN_PLUG)
-    #define ENDSTOPPULLUP_ZMIN
-  #endif
-  #if ENABLED(USE_IMIN_PLUG)
-    #define ENDSTOPPULLUP_IMIN
-  #endif
-  #if ENABLED(USE_JMIN_PLUG)
-    #define ENDSTOPPULLUP_JMIN
-  #endif
-  #if ENABLED(USE_KMIN_PLUG)
-    #define ENDSTOPPULLUP_KMIN
-  #endif
-  #if ENABLED(USE_UMIN_PLUG)
-    #define ENDSTOPPULLUP_UMIN
-  #endif
-  #if ENABLED(USE_VMIN_PLUG)
-    #define ENDSTOPPULLUP_VMIN
-  #endif
-  #if ENABLED(USE_WMIN_PLUG)
-    #define ENDSTOPPULLUP_WMIN
-  #endif
-#endif
-
-/**
- * Set ENDSTOPPULLDOWNS for active endstop switches
- */
-#if ENABLED(ENDSTOPPULLDOWNS)
-  #if ENABLED(USE_XMAX_PLUG)
-    #define ENDSTOPPULLDOWN_XMAX
-  #endif
-  #if ENABLED(USE_YMAX_PLUG)
-    #define ENDSTOPPULLDOWN_YMAX
-  #endif
-  #if ENABLED(USE_ZMAX_PLUG)
-    #define ENDSTOPPULLDOWN_ZMAX
-  #endif
-  #if ENABLED(USE_IMAX_PLUG)
-    #define ENDSTOPPULLDOWN_IMAX
-  #endif
-  #if ENABLED(USE_JMAX_PLUG)
-    #define ENDSTOPPULLDOWN_JMAX
-  #endif
-  #if ENABLED(USE_KMAX_PLUG)
-    #define ENDSTOPPULLDOWN_KMAX
-  #endif
-  #if ENABLED(USE_UMAX_PLUG)
-    #define ENDSTOPPULLDOWN_UMAX
-  #endif
-  #if ENABLED(USE_VMAX_PLUG)
-    #define ENDSTOPPULLDOWN_VMAX
-  #endif
-  #if ENABLED(USE_WMAX_PLUG)
-    #define ENDSTOPPULLDOWN_WMAX
-  #endif
-  #if ENABLED(USE_XMIN_PLUG)
-    #define ENDSTOPPULLDOWN_XMIN
-  #endif
-  #if ENABLED(USE_YMIN_PLUG)
-    #define ENDSTOPPULLDOWN_YMIN
-  #endif
-  #if ENABLED(USE_ZMIN_PLUG)
-    #define ENDSTOPPULLDOWN_ZMIN
-  #endif
-  #if ENABLED(USE_IMIN_PLUG)
-    #define ENDSTOPPULLDOWN_IMIN
-  #endif
-  #if ENABLED(USE_JMIN_PLUG)
-    #define ENDSTOPPULLDOWN_JMIN
-  #endif
-  #if ENABLED(USE_KMIN_PLUG)
-    #define ENDSTOPPULLDOWN_KMIN
-  #endif
-  #if ENABLED(USE_UMIN_PLUG)
-    #define ENDSTOPPULLDOWN_UMIN
-  #endif
-  #if ENABLED(USE_VMIN_PLUG)
-    #define ENDSTOPPULLDOWN_VMIN
-  #endif
-  #if ENABLED(USE_WMIN_PLUG)
-    #define ENDSTOPPULLDOWN_WMIN
-  #endif
-#endif
-
-/**
  * Shorthand for pin tests, used wherever needed
  */
 
@@ -2211,6 +2091,112 @@
 #undef IS_Z2_ENDSTOP
 #undef IS_Z3_ENDSTOP
 #undef IS_Z4_ENDSTOP
+
+/**
+ * Set ENDSTOPPULLUPS for active endstop switches
+ */
+#if ENABLED(ENDSTOPPULLUPS)
+  #if HAS_X_MIN
+    #define ENDSTOPPULLUP_XMIN
+  #endif
+  #if HAS_X_MAX
+    #define ENDSTOPPULLUP_XMAX
+  #endif
+  #if HAS_Y_MIN
+    #define ENDSTOPPULLUP_YMIN
+  #elif HAS_Y_MAX
+    #define ENDSTOPPULLUP_YMAX
+  #endif
+  #if HAS_Z_MIN_PIN
+    #define ENDSTOPPULLUP_ZMIN
+  #endif
+  #if HAS_Z_MAX
+    #define ENDSTOPPULLUP_ZMAX
+  #endif
+  #if HAS_I_MIN
+    #define ENDSTOPPULLUP_IMIN
+  #elif HAS_I_MAX
+    #define ENDSTOPPULLUP_IMAX
+  #endif
+  #if HAS_J_MIN
+    #define ENDSTOPPULLUP_JMIN
+  #elif HAS_J_MAX
+    #define ENDSTOPPULLUP_JMAX
+  #endif
+  #if HAS_K_MIN
+    #define ENDSTOPPULLUP_KMIN
+  #elif HAS_K_MAX
+    #define ENDSTOPPULLUP_KMAX
+  #endif
+  #if HAS_U_MIN
+    #define ENDSTOPPULLUP_UMIN
+  #elif HAS_U_MAX
+    #define ENDSTOPPULLUP_UMAX
+  #endif
+  #if HAS_V_MIN
+    #define ENDSTOPPULLUP_VMIN
+  #elif HAS_V_MAX
+    #define ENDSTOPPULLUP_VMAX
+  #endif
+  #if HAS_W_MIN
+    #define ENDSTOPPULLUP_WMIN
+  #elif HAS_W_MAX
+    #define ENDSTOPPULLUP_WMAX
+  #endif
+#endif
+
+/**
+ * Set ENDSTOPPULLDOWNS for active endstop switches
+ */
+#if ENABLED(ENDSTOPPULLDOWNS)
+  #if HAS_X_MIN
+    #define ENDSTOPPULLDOWN_XMIN
+  #endif
+  #if HAS_X_MAX
+    #define ENDSTOPPULLDOWN_XMAX
+  #endif
+  #if HAS_Y_MIN
+    #define ENDSTOPPULLDOWN_YMIN
+  #elif HAS_Y_MAX
+    #define ENDSTOPPULLDOWN_YMAX
+  #endif
+  #if HAS_Z_MIN_PIN
+    #define ENDSTOPPULLDOWN_ZMIN
+  #endif
+  #if HAS_Z_MAX
+    #define ENDSTOPPULLDOWN_ZMAX
+  #endif
+  #if HAS_I_MIN
+    #define ENDSTOPPULLDOWN_IMIN
+  #elif HAS_I_MAX
+    #define ENDSTOPPULLDOWN_IMAX
+  #endif
+  #if HAS_J_MIN
+    #define ENDSTOPPULLDOWN_JMIN
+  #elif HAS_J_MAX
+    #define ENDSTOPPULLDOWN_JMAX
+  #endif
+  #if HAS_K_MIN
+    #define ENDSTOPPULLDOWN_KMIN
+  #elif HAS_K_MAX
+    #define ENDSTOPPULLDOWN_KMAX
+  #endif
+  #if HAS_U_MIN
+    #define ENDSTOPPULLDOWN_UMIN
+  #elif HAS_U_MAX
+    #define ENDSTOPPULLDOWN_UMAX
+  #endif
+  #if HAS_V_MIN
+    #define ENDSTOPPULLDOWN_VMIN
+  #elif HAS_V_MAX
+    #define ENDSTOPPULLDOWN_VMAX
+  #endif
+  #if HAS_W_MIN
+    #define ENDSTOPPULLDOWN_WMIN
+  #elif HAS_W_MAX
+    #define ENDSTOPPULLDOWN_WMAX
+  #endif
+#endif
 
 //
 // ADC Temp Sensors (Thermistor or Thermocouple with amplifier ADC interface)
