@@ -808,3 +808,17 @@
 #if MULTISTEPPING_LIMIT_WARNING
   #warning "MULTISTEPPING_LIMIT has been automatically set to 128. Use a lower value if the machine is slow to respond."
 #endif
+
+#if SDSORT_CACHE_VFATS_WARNING
+  #warning "SDSORT_CACHE_VFATS has been reduced to VFAT_ENTRIES_LIMIT."
+#endif
+#if SDSORT_CACHE_LPC1768_WARNING
+  #warning "SDCARD_SORT_ALPHA sub-options overridden for LPC1768 with DOGM LCD SCK overlap."
+#endif
+
+/**
+ * Ender-5 S1 bootloader
+ */
+#ifdef STM32F4_UPDATE_FOLDER
+  #warning "Place the firmware bin file in a folder named 'STM32F4_UPDATE' on the SD card. Install with 'M936 V2'."
+#endif
