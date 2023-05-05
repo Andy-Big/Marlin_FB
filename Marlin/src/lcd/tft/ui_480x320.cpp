@@ -51,9 +51,9 @@ void MarlinUI::tft_idle() {
   #if ENABLED(TOUCH_SCREEN)
     if (TERN0(HAS_TOUCH_SLEEP, lcd_sleep_task())) return;
     if (draw_menu_navigation) {
-      add_control(104, TFT_HEIGHT - 34, PAGE_UP, imgPageUp, encoderTopLine > 0);
-      add_control(344, TFT_HEIGHT - 34, PAGE_DOWN, imgPageDown, encoderTopLine + LCD_HEIGHT < screen_items);
-      add_control(224, TFT_HEIGHT - 34, BACK, imgBack);
+      add_control(TFT_WIDTH / 6 - 16, TFT_HEIGHT - 34, PAGE_UP, imgPageUp, encoderTopLine > 0);
+      add_control(TFT_WIDTH / 2 - 16, TFT_HEIGHT - 34, PAGE_DOWN, imgPageDown, encoderTopLine + LCD_HEIGHT < screen_items);
+      add_control(5 * TFT_WIDTH / 6 - 16, TFT_HEIGHT - 34, BACK, imgBack);
       draw_menu_navigation = false;
     }
   #endif
@@ -607,9 +607,9 @@ void MenuEditItemBase::draw_edit_screen(FSTR_P const fstr, const char * const va
 
 void TFT::draw_edit_screen_buttons() {
   #if ENABLED(TOUCH_SCREEN)
-    add_control(64, TFT_HEIGHT - 64, DECREASE, imgDecrease);
-    add_control(352, TFT_HEIGHT - 64, INCREASE, imgIncrease);
-    add_control(208, TFT_HEIGHT - 64, CLICK, imgConfirm);
+    add_control((TFT_WIDTH - 3 * 64) / 6, TFT_HEIGHT - 64, DECREASE, imgDecrease);
+    add_control((TFT_WIDTH - 64) / 2, TFT_HEIGHT - 64, INCREASE, imgIncrease);
+    add_control((TFT_WIDTH * 5 - 3 * 64) / 6, TFT_HEIGHT - 64, CLICK, imgConfirm);
   #endif
 }
 
@@ -1185,7 +1185,7 @@ void MarlinUI::move_axis_screen() {
   drawAxisValue(Z_AXIS);
 
   // ROW 4 -> step_size  disable steppers back
-  y = TFT_HEIGHT - Y_MARGIN - 32; //
+  y = TFT_HEIGHT - Y_MARGIN - 32;
   x = TFT_WIDTH / 2 - CUR_STEP_VALUE_WIDTH / 2;
   motionAxisState.stepValuePos.x = x;
   motionAxisState.stepValuePos.y = y;
