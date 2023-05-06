@@ -42,7 +42,7 @@
     PROBE_PT_RAISE      // Raise to "between" clearance after run_z_probe
   };
 
-#if USES_Z_MIN_PROBE_PIN
+#if USE_Z_MIN_PROBE
 //  #define PROBE_TRIGGERED() (READ(Z_MIN_PROBE_PIN) != Z_MIN_PROBE_ENDSTOP_INVERTING)
   #define PROBE_TRIGGERED() (READ(Z_MIN_PROBE_PIN) != endstop_settings.Z_MIN_PROBE_INVERTING)
 #else
