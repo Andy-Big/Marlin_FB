@@ -186,10 +186,10 @@
 #define _EN_ITEM(N) , E##N
 #define _EN1_ITEM(N) , E##N:1
 
-typedef struct { uint16_t MAIN_AXIS_NAMES, X2, Y2, Z2, Z3, Z4 REPEAT(E_STEPPERS, _EN_ITEM); } per_stepper_uint16_t;
-typedef struct { uint32_t MAIN_AXIS_NAMES, X2, Y2, Z2, Z3, Z4 REPEAT(E_STEPPERS, _EN_ITEM); } per_stepper_uint32_t;
-typedef struct {  int16_t MAIN_AXIS_NAMES, X2, Y2, Z2, Z3, Z4;                              } mot_stepper_int16_t;
-typedef struct {     bool NUM_AXIS_LIST(X:1, Y:1, Z:1, I:1, J:1, K:1, U:1, V:1, W:1), X2:1, Y2:1, Z2:1, Z3:1, Z4:1 REPEAT(E_STEPPERS, _EN1_ITEM); } per_stepper_bool_t;
+typedef struct { uint16_t MAIN_AXIS_NAMES_ X2, Y2, Z2, Z3, Z4 REPEAT(E_STEPPERS, _EN_ITEM); } per_stepper_uint16_t;
+typedef struct { uint32_t MAIN_AXIS_NAMES_ X2, Y2, Z2, Z3, Z4 REPEAT(E_STEPPERS, _EN_ITEM); } per_stepper_uint32_t;
+typedef struct {  int16_t MAIN_AXIS_NAMES_ X2, Y2, Z2, Z3, Z4;                              } mot_stepper_int16_t;
+typedef struct {     bool NUM_AXIS_LIST_(X:1, Y:1, Z:1, I:1, J:1, K:1, U:1, V:1, W:1) X2:1, Y2:1, Z2:1, Z3:1, Z4:1 REPEAT(E_STEPPERS, _EN1_ITEM); } per_stepper_bool_t;
 
 #undef _EN_ITEM
 
@@ -230,7 +230,9 @@ typedef struct SettingsDataStruct {
   //
   // Home Offset
   //
-  xyz_pos_t home_offset;                                // M206 XYZ / M665 TPZ
+  #if NUM_AXES
+    xyz_pos_t home_offset;                              // M206 XYZ / M665 TPZ
+  #endif
 
   //
   // Hotend Offset
@@ -269,8 +271,9 @@ typedef struct SettingsDataStruct {
   //
   // HAS_BED_PROBE
   //
-
-  xyz_pos_t probe_offset;                               // M851 X Y Z
+  #if NUM_AXES
+    xyz_pos_t probe_offset;                             // M851 X Y Z
+  #endif
 
   //
   // ABL_PLANAR
@@ -480,7 +483,9 @@ typedef struct SettingsDataStruct {
   //
   // CNC_COORDINATE_SYSTEMS
   //
-  xyz_pos_t coordinate_system[MAX_COORDINATE_SYSTEMS];  // G54-G59.3
+  #if NUM_AXES
+    xyz_pos_t coordinate_system[MAX_COORDINATE_SYSTEMS]; // G54-G59.3
+  #endif
 
   //
   // SKEW_CORRECTION
@@ -506,9 +511,11 @@ typedef struct SettingsDataStruct {
   //
   // BACKLASH_COMPENSATION
   //
-  xyz_float_t backlash_distance_mm;                     // M425 X Y Z
-  uint8_t backlash_correction;                          // M425 F
-  float backlash_smoothing_mm;                          // M425 S
+  #if NUM_AXES
+    xyz_float_t backlash_distance_mm;                   // M425 X Y Z
+    uint8_t backlash_correction;                        // M425 F
+    float backlash_smoothing_mm;                        // M425 S
+  #endif
 
   //
   // EXTENSIBLE_UI
@@ -830,6 +837,7 @@ void MarlinSettings::postprocess() {
     //
     // Home Offset
     //
+    #if NUM_AXES
     {
       _FIELD_TEST(home_offset);
 
@@ -842,6 +850,7 @@ void MarlinSettings::postprocess() {
         EEPROM_WRITE(home_offset);
       #endif
     }
+    #endif // NUM_AXES
 
     //
     // Hotend Offsets, if any
@@ -922,6 +931,7 @@ void MarlinSettings::postprocess() {
     //
     // Probe XYZ Offsets
     //
+    #if NUM_AXES
     {
       _FIELD_TEST(probe_offset);
       #if HAS_BED_PROBE
@@ -931,6 +941,7 @@ void MarlinSettings::postprocess() {
       #endif
       EEPROM_WRITE(zpo);
     }
+    #endif
 
     //
     // Planar Bed Leveling matrix
@@ -1381,7 +1392,7 @@ void MarlinSettings::postprocess() {
       #else
         #define _EN_ITEM(N) , .E##N =  30
         const per_stepper_uint32_t tmc_hybrid_threshold = {
-          NUM_AXIS_LIST(.X = 100, .Y = 100, .Z = 3, .I = 3, .J = 3, .K = 3, .U = 3, .V = 3, .W = 3),
+          NUM_AXIS_LIST_(.X = 100, .Y = 100, .Z = 3, .I = 3, .J = 3, .K = 3, .U = 3, .V = 3, .W = 3)
           .X2 = 100, .Y2 = 100, .Z2 = 3, .Z3 = 3, .Z4 = 3
           REPEAT(E_STEPPERS, _EN_ITEM)
         };
@@ -1479,13 +1490,13 @@ void MarlinSettings::postprocess() {
     //
     // CNC Coordinate Systems
     //
-
-    _FIELD_TEST(coordinate_system);
-
-    #if DISABLED(CNC_COORDINATE_SYSTEMS)
-      const xyz_pos_t coordinate_system[MAX_COORDINATE_SYSTEMS] = { { 0 } };
+    #if NUM_AXES
+      _FIELD_TEST(coordinate_system);
+      #if DISABLED(CNC_COORDINATE_SYSTEMS)
+        const xyz_pos_t coordinate_system[MAX_COORDINATE_SYSTEMS] = { { 0 } };
+      #endif
+      EEPROM_WRITE(TERN(CNC_COORDINATE_SYSTEMS, gcode.coordinate_system, coordinate_system));
     #endif
-    EEPROM_WRITE(TERN(CNC_COORDINATE_SYSTEMS, gcode.coordinate_system, coordinate_system));
 
     //
     // Skew correction factors
@@ -1520,6 +1531,7 @@ void MarlinSettings::postprocess() {
     //
     // Backlash Compensation
     //
+    #if NUM_AXES
     {
       #if ENABLED(BACKLASH_GCODE)
         xyz_float_t backlash_distance_mm;
@@ -1539,6 +1551,7 @@ void MarlinSettings::postprocess() {
       EEPROM_WRITE(backlash_correction);
       EEPROM_WRITE(backlash_smoothing_mm);
     }
+    #endif // NUM_AXES
 
     //
     // Extensible UI User Data
@@ -1816,6 +1829,7 @@ void MarlinSettings::postprocess() {
       //
       // Home Offset (M206 / M665)
       //
+      #if NUM_AXES
       {
         _FIELD_TEST(home_offset);
 
@@ -1828,6 +1842,7 @@ void MarlinSettings::postprocess() {
           EEPROM_READ(home_offset);
         #endif
       }
+      #endif // NUM_AXES
 
       //
       // Hotend Offsets, if any
@@ -1903,6 +1918,7 @@ void MarlinSettings::postprocess() {
       //
       // Probe Z Offset
       //
+      #if NUM_AXES
       {
         _FIELD_TEST(probe_offset);
         #if HAS_BED_PROBE
@@ -1912,6 +1928,7 @@ void MarlinSettings::postprocess() {
         #endif
         EEPROM_READ(zpo);
       }
+      #endif
 
       //
       // Planar Bed Leveling matrix
@@ -2482,6 +2499,7 @@ void MarlinSettings::postprocess() {
       //
       // CNC Coordinate System
       //
+      #if NUM_AXES
       {
         _FIELD_TEST(coordinate_system);
         #if ENABLED(CNC_COORDINATE_SYSTEMS)
@@ -2492,6 +2510,7 @@ void MarlinSettings::postprocess() {
           EEPROM_READ(coordinate_system);
         #endif
       }
+      #endif
 
       //
       // Skew correction factors
@@ -2537,6 +2556,7 @@ void MarlinSettings::postprocess() {
       //
       // Backlash Compensation
       //
+      #if NUM_AXES
       {
         xyz_float_t backlash_distance_mm;
         uint8_t backlash_correction;
@@ -2555,6 +2575,7 @@ void MarlinSettings::postprocess() {
           #endif
         #endif
       }
+      #endif // NUM_AXES
 
       //
       // Extensible UI User Data
@@ -3080,7 +3101,7 @@ void MarlinSettings::reset() {
   #endif
 
   #if HAS_CLASSIC_JERK
-    #ifndef DEFAULT_XJERK
+    #if HAS_X_AXIS && !defined(DEFAULT_XJERK)
       #define DEFAULT_XJERK 0
     #endif
     #if HAS_Y_AXIS && !defined(DEFAULT_YJERK)
