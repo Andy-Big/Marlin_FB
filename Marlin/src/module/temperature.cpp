@@ -483,7 +483,7 @@ constexpr thermistor_types_t    thermistor_types[THERMISTORS_TYPES_COUNT] PROGME
     #if NUM_REDUNDANT_FANS
       if (fan == 0) {
         for (uint8_t f = REDUNDANT_PART_COOLING_FAN; f < REDUNDANT_PART_COOLING_FAN + NUM_REDUNDANT_FANS; ++f)
-          thermalManager.set_fan_speed(f, 0);
+          thermalManager.set_fan_speed(f, speed);
       }
     #endif
 
