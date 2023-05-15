@@ -57,6 +57,10 @@
 #include "../feature/pause.h"
 #endif
 
+#if ENABLED(ONE_CLICK_PRINT)
+  #include "../../src/lcd/menu/menu.h"
+#endif
+
 #define DEBUG_OUT EITHER(DEBUG_CARDREADER, MARLIN_DEV_MODE)
 #include "../core/debug_out.h"
 #include "../libs/hex_print.h"

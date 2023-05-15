@@ -276,6 +276,10 @@ void _lcd_draw_homing();
 
 void poweroff_wait();
 
+#if ENABLED(ONE_CLICK_PRINT)
+  void one_click_print();
+#endif
+
 extern uint8_t screen_history_depth;
 inline void clear_menu_history() { screen_history_depth = 0; }
 
