@@ -57,6 +57,10 @@
 #include "../feature/pause.h"
 #endif
 
+#if ENABLED(ONE_CLICK_PRINT)
+  #include "../../src/lcd/menu/menu.h"
+#endif
+
 #define DEBUG_OUT EITHER(DEBUG_CARDREADER, MARLIN_DEV_MODE)
 #include "../core/debug_out.h"
 #include "../libs/hex_print.h"
@@ -1051,6 +1055,10 @@ void CardReader::manage_media()
                 DEBUG_ECHOLNPGM("First mount.");
 #if ENABLED(POWER_LOSS_RECOVERY)
                 recovery.check(); // Check for PLR file. (If not there then call autofile_begin)
+
+            // Find the newest file and prompt to print it.
+            TERN_(ONE_CLICK_PRINT, if (do_auto && one_click_check()) do_auto = false);
+
 #elif DISABLED(NO_SD_AUTOSTART)
                 autofile_begin(); // Look for auto0.g on the next loop
 #endif
