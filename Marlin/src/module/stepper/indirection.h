@@ -81,7 +81,7 @@
 void restore_stepper_drivers();  // Called by powerManager.power_on()
 void reset_stepper_drivers();    // Called by settings.load / settings.reset
 
-#define INVERT_DIR(AXIS, D) (TERN_(INVERT_## AXIS ##_DIR, !)(D))
+#define INVERT_DIR(AXIS, D) (planner.invert_axis.invert_axis[_AXIS(AXIS)]^D)
 
 // X Stepper
 #if HAS_X_AXIS
@@ -189,8 +189,10 @@ void reset_stepper_drivers();    // Called by settings.load / settings.reset
   #endif
   #ifndef Z2_DIR_INIT
     #define Z2_DIR_INIT() SET_OUTPUT(Z2_DIR_PIN)
-    #define Z2_DIR_WRITE(STATE) WRITE(Z2_DIR_PIN,INVERT_DIR(Z2, STATE))
-    #define Z2_DIR_READ() INVERT_DIR(Z2, bool(READ(Z2_DIR_PIN)))
+//    #define Z2_DIR_WRITE(STATE) WRITE(Z2_DIR_PIN,INVERT_DIR(Z2, STATE))
+//    #define Z2_DIR_READ() INVERT_DIR(Z2, bool(READ(Z2_DIR_PIN)))
+    #define Z2_DIR_WRITE(STATE) WRITE(Z2_DIR_PIN,INVERT_DIR(Z, STATE) ^ planner.invert_axis.z2_vs_z_dir)
+    #define Z2_DIR_READ() INVERT_DIR(Z, bool(READ(Z2_DIR_PIN)) ^ planner.invert_axis.z2_vs_z_dir)
   #endif
   #define Z2_STEP_INIT() SET_OUTPUT(Z2_STEP_PIN)
   #ifndef Z2_STEP_WRITE

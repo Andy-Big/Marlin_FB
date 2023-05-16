@@ -895,7 +895,7 @@
 // Multiple Z steppers
 #ifdef INVERT_Z_DIR
   #if NUM_Z_STEPPERS >= 2 && !defined(INVERT_Z2_DIR)
-    #define INVERT_Z2_DIR INVERT_Z_DIR
+    #define INVERT_Z2_DIR planner.invert_axis.invert_axis[Z_AXIS]
     #if NUM_Z_STEPPERS >= 3 && !defined(INVERT_Z3_DIR)
       #define INVERT_Z3_DIR INVERT_Z_DIR
       #if NUM_Z_STEPPERS >= 4 && !defined(INVERT_Z4_DIR)

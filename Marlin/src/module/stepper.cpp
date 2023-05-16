@@ -440,6 +440,7 @@ xyze_int8_t Stepper::count_direction{0};
   #endif
 #elif NUM_Z_STEPPERS == 2
   #define Z_APPLY_DIR(v,Q) do{ Z_DIR_WRITE(v); Z2_DIR_WRITE((v) ^ planner.invert_axis.z2_vs_z_dir); }while(0)
+//  #define Z_APPLY_DIR(v,Q) do{ WRITE(Z_DIR_PIN, planner.invert_axis.invert_axis[Z_AXIS]^v); WRITE(Z2_DIR_PIN, (planner.invert_axis.invert_axis[Z_AXIS]^v) ^ planner.invert_axis.z2_vs_z_dir); }while(0)
   #if ENABLED(Z_MULTI_ENDSTOPS)
     #define Z_APPLY_STEP(v,Q) DUAL_ENDSTOP_APPLY_STEP(Z,v)
   #elif ENABLED(Z_STEPPER_AUTO_ALIGN)
@@ -600,7 +601,7 @@ void Stepper::disable_all_steppers() {
 
   TERN_(EXTENSIBLE_UI, ExtUI::onSteppersDisabled());
 }
-/*
+
 // Set a single axis direction based on the last set flags.
 // A direction bit of "1" indicates reverse or negative motion.
 #define SET_STEP_DIR(A)             \
@@ -612,7 +613,7 @@ void Stepper::disable_all_steppers() {
     A##_APPLY_DIR(HIGH, false);     \
     count_direction[_AXIS(A)] = 1;  \
   }
-*/
+
 
 /**
  * Set the stepper direction of each axis
@@ -624,16 +625,6 @@ void Stepper::disable_all_steppers() {
 void Stepper::apply_directions() {
 
   DIR_WAIT_BEFORE();
-
-  #define SET_STEP_DIR(A)                       \
-  if (motor_direction(_AXIS(A))) {            \
-    A##_APPLY_DIR(planner.invert_axis.invert_axis[_AXIS(A)], false);   \
-    count_direction[_AXIS(A)] = -1;           \
-  }                                           \
-  else {                                      \
-    A##_APPLY_DIR(!planner.invert_axis.invert_axis[_AXIS(A)], false);  \
-    count_direction[_AXIS(A)] = 1;            \
-  }
 
   NUM_AXIS_CODE(
     SET_STEP_DIR(X), SET_STEP_DIR(Y), SET_STEP_DIR(Z), // ABC
