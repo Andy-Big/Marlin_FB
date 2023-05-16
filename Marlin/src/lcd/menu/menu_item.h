@@ -79,10 +79,10 @@ template<typename NAME>
 class TMenuEditItem : MenuEditItemBase {
   private:
     typedef typename NAME::type_t type_t;
-    static float scale(const_float_t value)    { return NAME::scale(value);            }
-    static float unscale(const_float_t value)  { return NAME::unscale(value);          }
-    static const char* to_string(const int32_t value) { return NAME::strfunc(unscale(value)); }
-    static void load(void *ptr, const int32_t value)  { *((type_t*)ptr) = unscale(value);     }
+    static int32_t scaleToEncoder(const type_t &value) { return NAME::scaleToEncoder(value); }
+    static type_t unscaleEncoder(const int32_t value)  { return NAME::unscaleEncoder(value); }
+    static const char* to_string(const int32_t value)  { return NAME::strfunc(unscaleEncoder(value)); }
+    static void load(void *ptr, const int32_t value) { *((type_t*)ptr) = unscaleEncoder(value); }
   public:
     FORCE_INLINE static void draw(const bool sel, const uint8_t row, FSTR_P const fstr, type_t * const data, ...) {
       MenuEditItemBase::draw(sel, row, fstr, NAME::strfunc(*(data)));
@@ -101,9 +101,9 @@ class TMenuEditItem : MenuEditItemBase {
       const bool live=false                 // Callback during editing
     ) {
       // Make sure minv and maxv fit within int32_t
-      const int32_t minv = _MAX(scale(minValue), INT32_MIN),
-                    maxv = _MIN(scale(maxValue), INT32_MAX);
-      goto_edit_screen(fstr, ptr, minv, maxv - minv, scale(*ptr) - minv,
+      const int32_t minv = _MAX(scaleToEncoder(minValue), INT32_MIN),
+                    maxv = _MIN(scaleToEncoder(maxValue), INT32_MAX);
+      goto_edit_screen(fstr, ptr, minv, maxv - minv, scaleToEncoder(*ptr) - minv,
         edit_screen, callback, live);
     }
 };
@@ -119,9 +119,9 @@ class TMenuEditItem : MenuEditItemBase {
  *
  *   struct MenuEditItemInfo_percent {
  *     typedef uint8_t type_t;
- *     static float scale(const_float_t value)   { return value * (100.f/255.f) +0.5f; }
- *     static float unscale(const_float_t value) { return value / (100.f/255.f) +0.5f; }
- *     static const char* strfunc(const_float_t value) { return ui8tostr4pctrj(_DOFIX(uint8_t,value)); }
+ *     static int32_t scaleToEncoder(const type_t &value) { return value * (100.f/255.f) +0.5f; }
+ *     static type_t unscaleEncoder(const int32_t value) { return type_t(value) / (100.f/255.f) +0.5f; }
+ *     static const char* strfunc(const type_t &value) { return ui8tostr4pctrj(_DOFIX(uint8_t,value)); }
  *   };
  *   typedef TMenuEditItem<MenuEditItemInfo_percent> MenuItem_percent
  */
@@ -130,9 +130,10 @@ class TMenuEditItem : MenuEditItemBase {
 #define DEFINE_MENU_EDIT_ITEM_TYPE(NAME, TYPE, STRFUNC, SCALE, ETC...) \
   struct MenuEditItemInfo_##NAME { \
     typedef TYPE type_t; \
-    static float scale(const_float_t value)   { return value * (SCALE) ETC; } \
-    static float unscale(const_float_t value) { return value / (SCALE) ETC; } \
-    static const char* strfunc(const_float_t value) { return STRFUNC(_DOFIX(TYPE,value)); } \
+    /* scale the given value to the encoder */ \
+    static int32_t scaleToEncoder(const type_t &value) { return value * (SCALE) ETC; } \
+    static type_t unscaleEncoder(const int32_t value) { return type_t(value) / (SCALE) ETC; } \
+    static const char* strfunc(const type_t &value) { return STRFUNC(_DOFIX(TYPE,value)); } \
   }; \
   typedef TMenuEditItem<MenuEditItemInfo_##NAME> MenuItem_##NAME
 
@@ -146,7 +147,7 @@ DEFINE_MENU_EDIT_ITEM_TYPE(uint8       ,uint8_t  ,ui8tostr3rj     ,   1     );  
 DEFINE_MENU_EDIT_ITEM_TYPE(uint16_3    ,uint16_t ,ui16tostr3rj    ,   1     );   // 123        right-justified
 DEFINE_MENU_EDIT_ITEM_TYPE(uint16_4    ,uint16_t ,ui16tostr4rj    ,   0.1f  );   // 1234       right-justified
 DEFINE_MENU_EDIT_ITEM_TYPE(uint16_5    ,uint16_t ,ui16tostr5rj    ,   0.01f );   // 12345      right-justified
-DEFINE_MENU_EDIT_ITEM_TYPE(float3      ,float    ,ftostr3         ,   1     );   // 123        right-justified
+DEFINE_MENU_EDIT_ITEM_TYPE(float3    ,float      ,ftostr3rj       ,   1     );   // 123        right-justified
 DEFINE_MENU_EDIT_ITEM_TYPE(float42_52  ,float    ,ftostr42_52     , 100     );   // _2.34, 12.34, -2.34 or 123.45, -23.45
 DEFINE_MENU_EDIT_ITEM_TYPE(float43     ,float    ,ftostr43sign    ,1000     );   // -1.234, _1.234, +1.234
 DEFINE_MENU_EDIT_ITEM_TYPE(float4      ,float    ,ftostr4sign     ,   1     );   // 1234       right-justified
