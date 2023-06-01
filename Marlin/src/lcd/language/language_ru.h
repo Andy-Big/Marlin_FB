@@ -49,8 +49,6 @@ namespace Language_ru {
   #else
     LSTR  MSG_SD_INIT_FAIL                  = _UxGT("Сбой инициализ. SD");
   #endif
-  LSTR MSG_TOOLBAR_SETUP                    = _UxGT("Настр. инструменты");
-  LSTR MSG_OPTION_DISABLED                  = _UxGT("Опция отключена");
   LSTR  MSG_MEDIA_READ_ERROR                = _UxGT("Ошибка считывания");
   LSTR  MSG_MEDIA_USB_REMOVED               = _UxGT("USB диск удален");
   LSTR  MSG_MEDIA_USB_FAILED                = _UxGT("Ошибка USB диска");
