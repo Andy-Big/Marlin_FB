@@ -40,7 +40,7 @@ extern MarlinUI ui;
   #include "../queue.h"
 #endif
 
-#if EITHER(SET_PROGRESS_MANUALLY, SD_REPRINT_LAST_SELECTED_FILE)
+#if ANY(SET_PROGRESS_MANUALLY, SD_REPRINT_LAST_SELECTED_FILE)
   #include "../../lcd/marlinui.h"
 #endif
 
