@@ -27,30 +27,30 @@
 #include "canvas.h"
 //#include "../fontutils.h"
 
-uint16_t CANVAS::width, CANVAS::height;
-uint16_t CANVAS::startLine, CANVAS::endLine;
-uint16_t *CANVAS::buffer = TFT::buffer;
+uint16_t Canvas::width, Canvas::height;
+uint16_t Canvas::startLine, Canvas::endLine;
+uint16_t *Canvas::buffer = TFT::buffer;
 
-void CANVAS::New(uint16_t x, uint16_t y, uint16_t width, uint16_t height) {
-  CANVAS::width = width;
-  CANVAS::height = height;
+void Canvas::instantiate(uint16_t x, uint16_t y, uint16_t width, uint16_t height) {
+  Canvas::width = width;
+  Canvas::height = height;
   startLine = 0;
   endLine = 0;
 
   tft.set_window(x, y, x + width - 1, y + height - 1);
 }
 
-void CANVAS::Continue() {
+void Canvas::next() {
   startLine = endLine;
   endLine = TFT_BUFFER_SIZE < width * (height - startLine) ? startLine + TFT_BUFFER_SIZE / width : height;
 }
 
-bool CANVAS::ToScreen() {
+bool Canvas::toScreen() {
   tft.write_sequence(buffer, width * (endLine - startLine));
   return endLine == height;
 }
 
-void CANVAS::SetBackground(uint16_t color) {
+void Canvas::setBackground(uint16_t color) {
   /* TODO: test and optimize performance */
   /*
   uint32_t count = (endLine - startLine) * width;
@@ -66,8 +66,8 @@ void CANVAS::SetBackground(uint16_t color) {
 
 uint8_t canvas_read_byte(const uint8_t *byte) { return *byte; }
 
-void CANVAS::AddText(uint16_t x, uint16_t y, uint16_t color, uint8_t *string, uint16_t maxWidth, font_t *font) {
-  if (endLine < y || startLine > y + GetFontHeight()) return;
+void Canvas::addText(uint16_t x, uint16_t y, uint16_t color, uint8_t *string, uint16_t maxWidth, font_t *font) {
+  if (endLine < y || startLine > y + getFontHeight()) return;
 
   if (maxWidth == 0) maxWidth = width - x;
 
@@ -75,9 +75,9 @@ void CANVAS::AddText(uint16_t x, uint16_t y, uint16_t color, uint8_t *string, ui
 
   
 /*   for (uint16_t i = 0 ; *(string + i) ; i++) {
-    glyph_t *glyph = Glyph(string + i);
+    glyph_t *glyph = glyph(string + i);
     if (stringWidth + glyph->BBXWidth > maxWidth) break;
-    AddImage(x + stringWidth + glyph->BBXOffsetX, y + Font()->FontAscent - glyph->BBXHeight - glyph->BBXOffsetY, glyph->BBXWidth, glyph->BBXHeight, GREYSCALE1, ((uint8_t *)glyph) + sizeof(glyph_t), &color);
+    addImage(x + stringWidth + glyph->BBXOffsetX, y + Font()->FontAscent - glyph->BBXHeight - glyph->BBXOffsetY, glyph->BBXWidth, glyph->BBXHeight, GREYSCALE1, ((uint8_t *)glyph) + sizeof(glyph_t), &color);
     stringWidth += glyph->DWidth;
   }
  */
@@ -90,17 +90,17 @@ void CANVAS::AddText(uint16_t x, uint16_t y, uint16_t color, uint8_t *string, ui
         wchar |= 0x0080;
       uint8_t ch = uint8_t(wchar & 0x00FF);
       // uint8_t ch = 33;
-      glyph_t *glyph = FontGlyph(font, &ch);
+      glyph_t *glyph = fontGlyph(font, &ch);
       if (stringWidth + glyph->BBXWidth > maxWidth)
         break;
-      AddImage(x + stringWidth + glyph->BBXOffsetX, y + Font()->FontAscent - glyph->BBXHeight - glyph->BBXOffsetY, glyph->BBXWidth, glyph->BBXHeight, GREYSCALE1, ((uint8_t *)glyph) + sizeof(glyph_t), &color);
+      addImage(x + stringWidth + glyph->BBXOffsetX, y + getFont()->FontAscent - glyph->BBXHeight - glyph->BBXOffsetY, glyph->BBXWidth, glyph->BBXHeight, GREYSCALE1, ((uint8_t *)glyph) + sizeof(glyph_t), &color);
       stringWidth += glyph->DWidth;
     }
 
 
 }
 
-void CANVAS::AddImage(int16_t x, int16_t y, MarlinImage image, uint16_t *colors) {
+void Canvas::addImage(int16_t x, int16_t y, MarlinImage image, uint16_t *colors) {
   uint16_t *data = (uint16_t *)Images[image].data;
   if (!data) return;
 
@@ -109,7 +109,7 @@ void CANVAS::AddImage(int16_t x, int16_t y, MarlinImage image, uint16_t *colors)
   colorMode_t color_mode = Images[image].colorMode;
 
   if (color_mode != HIGHCOLOR)
-    return AddImage(x, y, image_width, image_height, color_mode, (uint8_t *)data, colors);
+    return addImage(x, y, image_width, image_height, color_mode, (uint8_t *)data, colors);
 
   // HIGHCOLOR - 16 bits per pixel
 
@@ -128,7 +128,7 @@ void CANVAS::AddImage(int16_t x, int16_t y, MarlinImage image, uint16_t *colors)
   }
 }
 
-void CANVAS::AddImage(int16_t x, int16_t y, uint8_t image_width, uint8_t image_height, colorMode_t color_mode, uint8_t *data, uint16_t *colors) {
+void Canvas::addImage(int16_t x, int16_t y, uint8_t image_width, uint8_t image_height, colorMode_t color_mode, uint8_t *data, uint16_t *colors) {
   uint8_t bitsPerPixel;
   switch (color_mode) {
     case GREYSCALE1: bitsPerPixel = 1; break;
@@ -166,7 +166,7 @@ void CANVAS::AddImage(int16_t x, int16_t y, uint8_t image_width, uint8_t image_h
   }
 }
 
-void CANVAS::AddRectangle(uint16_t x, uint16_t y, uint16_t rectangleWidth, uint16_t rectangleHeight, uint16_t color) {
+void Canvas::addRect(uint16_t x, uint16_t y, uint16_t rectangleWidth, uint16_t rectangleHeight, uint16_t color) {
   if (endLine < y || startLine > y + rectangleHeight) return;
 
   for (uint16_t i = 0; i < rectangleHeight; i++) {
@@ -185,7 +185,7 @@ void CANVAS::AddRectangle(uint16_t x, uint16_t y, uint16_t rectangleWidth, uint1
   }
 }
 
-void CANVAS::AddBar(uint16_t x, uint16_t y, uint16_t barWidth, uint16_t barHeight, uint16_t color) {
+void Canvas::addBar(uint16_t x, uint16_t y, uint16_t barWidth, uint16_t barHeight, uint16_t color) {
   if (endLine < y || startLine > y + barHeight) return;
 
   for (uint16_t i = 0; i < barHeight; i++) {
@@ -197,6 +197,6 @@ void CANVAS::AddBar(uint16_t x, uint16_t y, uint16_t barWidth, uint16_t barHeigh
   }
 }
 
-CANVAS Canvas;
+Canvas tftCanvas;
 
 #endif // HAS_GRAPHICAL_TFT

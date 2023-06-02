@@ -28,32 +28,32 @@
 
 #include "../../inc/MarlinConfig.h"
 
-class CANVAS {
+class Canvas {
   private:
     static uint16_t width, height;
     static uint16_t startLine, endLine;
     static uint16_t *buffer;
 
-    inline static font_t *Font() { return TFT_String::font(); }
-    inline static glyph_t *Glyph(uint8_t *character) { return TFT_String::glyph(character); }
-    inline static glyph_t *FontGlyph(font_t *font, uint8_t *character) { return TFT_String::get_font_glyph(font, *character); }
-    static glyph_t *Glyph(uint8_t *character, font_t *font);
-    inline static uint16_t GetFontHeight() { return TFT_String::font_height(); }
+    inline static font_t *gont() { return TFT_String::font(); }
+    inline static glyph_t *glyph(uint8_t *character) { return TFT_String::glyph(character); }
+    inline static glyph_t *gontGlyph(font_t *font, uint8_t *character) { return TFT_String::get_font_glyph(font, *character); }
+    static glyph_t *glyph(uint8_t *character, font_t *font);
+    inline static uint16_t getFontHeight() { return TFT_String::font_height(); }
 
-    static void AddImage(int16_t x, int16_t y, uint8_t image_width, uint8_t image_height, colorMode_t color_mode, uint8_t *data, uint16_t *colors);
-    static void AddImage(uint16_t x, uint16_t y, uint16_t imageWidth, uint16_t imageHeight, uint16_t color, uint16_t bgColor, uint8_t *image);
+    static void addImage(int16_t x, int16_t y, uint8_t image_width, uint8_t image_height, colorMode_t color_mode, uint8_t *data, uint16_t *colors);
+    static void addImage(uint16_t x, uint16_t y, uint16_t imageWidth, uint16_t imageHeight, uint16_t color, uint16_t bgColor, uint8_t *image);
 
   public:
-    static void New(uint16_t x, uint16_t y, uint16_t width, uint16_t height);
-    static void Continue();
-    static bool ToScreen();
+    static void instantiate(uint16_t x, uint16_t y, uint16_t width, uint16_t height);
+    static void next();
+    static bool toScreen();
 
-    static void SetBackground(uint16_t color);
-    static void AddText(uint16_t x, uint16_t y, uint16_t color, uint8_t *string, uint16_t maxWidth, font_t *font);
-    static void AddImage(int16_t x, int16_t y, MarlinImage image, uint16_t *colors);
+    static void setBackground(uint16_t color);
+    static void addText(uint16_t x, uint16_t y, uint16_t color, uint8_t *string, uint16_t maxWidth, font_t *font);
+    static void addImage(int16_t x, int16_t y, MarlinImage image, uint16_t *colors);
 
-    static void AddRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint16_t color);
-    static void AddBar(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint16_t color);
+    static void addRect(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint16_t color);
+    static void addBar(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint16_t color);
 };
 
-extern CANVAS Canvas;
+extern Canvas tftCanvas;
