@@ -116,7 +116,7 @@ void reset_bed_level() {
   TERN_(ABL_PLANAR, planner.bed_level_matrix.set_to_identity());
 }
 
-#if EITHER(AUTO_BED_LEVELING_BILINEAR, MESH_BED_LEVELING)
+#if ANY(AUTO_BED_LEVELING_BILINEAR, MESH_BED_LEVELING)
 
   /**
    * Enable to produce output in JSON format suitable
