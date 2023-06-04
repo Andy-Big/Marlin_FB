@@ -230,7 +230,7 @@ void GCodeParser::parse(char *p) {
         }
       #endif
 
-      } break;
+    } break;
 
     #if ENABLED(GCODE_MOTION_MODES)
 
