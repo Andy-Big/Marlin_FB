@@ -63,4 +63,9 @@ if pioutil.is_pio_build():
 #			import shutil
 #			shutil.copy(target[0].path, firmware)
 
+        # def rename_target(source, target, env):
+        #     from pathlib import Path
+        #     from datetime import datetime
+        #     Path(target[0].path).replace(Path(target[0].dir.path, datetime.now().strftime(new_name.replace('{date}', '%Y%m%d').replace('{time}', '%H%M%S'))))
+
 		marlin.add_post_action(rename_target)
