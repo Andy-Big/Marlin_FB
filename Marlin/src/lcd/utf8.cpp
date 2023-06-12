@@ -192,13 +192,8 @@ static inline uint8_t utf8_strlen_cb(const char *pstart, read_byte_cb_t cb_read_
   return cnt;
 }
 
-uint8_t utf8_strlen(const char *pstart) {
-  return utf8_strlen_cb(pstart, read_byte_ram);
-}
-
-uint8_t utf8_strlen_P(PGM_P pstart) {
-  return utf8_strlen_cb(pstart, read_byte_rom);
-}
+uint8_t utf8_strlen(const char *pstart) { return utf8_strlen_cb(pstart, read_byte_ram); }
+uint8_t utf8_strlen_P(PGM_P pstart) { return utf8_strlen_cb(pstart, read_byte_rom); }
 
 char *utf8_strncpy(char *dst, const char* src, size_t maxlen) {
 	char *cdst = dst;
