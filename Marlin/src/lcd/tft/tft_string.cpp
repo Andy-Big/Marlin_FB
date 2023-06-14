@@ -50,14 +50,14 @@ void TFT_String::set_font(const uint8_t *font) {
   DEBUG_ECHOLNPGM("BBXHeight: ",         font_header->BBXHeight);
   DEBUG_ECHOLNPGM("BBXOffsetX: ",        font_header->BBXOffsetX);
   DEBUG_ECHOLNPGM("BBXOffsetY: ",        font_header->BBXOffsetY);
-  DEBUG_ECHOLNPGM("CapitalAHeight: ",    font_header->CapitalAHeight);
+  DEBUG_ECHOLNPGM("capitalAHeight: ",    font_header->capitalAHeight);
   DEBUG_ECHOLNPGM("Encoding65Pos: ",     font_header->Encoding65Pos);
   DEBUG_ECHOLNPGM("Encoding97Pos: ",     font_header->Encoding97Pos);
-  DEBUG_ECHOLNPGM("FontStartEncoding: ", font_header->FontStartEncoding);
-  DEBUG_ECHOLNPGM("FontEndEncoding: ",   font_header->FontEndEncoding);
+  DEBUG_ECHOLNPGM("fontStartEncoding: ", font_header->fontStartEncoding);
+  DEBUG_ECHOLNPGM("fontEndEncoding: ",   font_header->fontEndEncoding);
   DEBUG_ECHOLNPGM("LowerGDescent: ",     font_header->LowerGDescent);
-  DEBUG_ECHOLNPGM("FontAscent: ",        font_header->FontAscent);
-  DEBUG_ECHOLNPGM("FontDescent: ",       font_header->FontDescent);
+  DEBUG_ECHOLNPGM("fontAscent: ",        font_header->fontAscent);
+  DEBUG_ECHOLNPGM("fontDescent: ",       font_header->fontDescent);
   DEBUG_ECHOLNPGM("FontXAscent: ",       font_header->FontXAscent);
   DEBUG_ECHOLNPGM("FontXDescent: ",      font_header->FontXDescent);
 
@@ -68,10 +68,10 @@ void TFT_String::add_glyphs(const uint8_t *font) {
   uint32_t glyph;
   uint8_t *pointer = (uint8_t *)font + sizeof(font_t);
 
-  for (glyph = ((font_t *)font)->FontStartEncoding; glyph <= ((font_t *)font)->FontEndEncoding; glyph++) {
+  for (glyph = ((font_t *)font)->fontStartEncoding; glyph <= ((font_t *)font)->fontEndEncoding; glyph++) {
     if (*pointer != NO_GLYPH) {
       glyphs[glyph] = (glyph_t *)pointer;
-      pointer += sizeof(glyph_t) + ((glyph_t *)pointer)->DataSize;
+      pointer += sizeof(glyph_t) + ((glyph_t *)pointer)->dataSize;
     }
     else
       pointer++;
@@ -86,12 +86,12 @@ glyph_t *TFT_String::get_font_glyph(font_t *gfont, uint8_t character)
   uint32_t glyph;
   uint8_t *pointer = (uint8_t *)gfont + sizeof(font_t);
 
-  for (glyph = ((font_t *)gfont)->FontStartEncoding; glyph <= ((font_t *)gfont)->FontEndEncoding; glyph++) {
+  for (glyph = ((font_t *)gfont)->fontStartEncoding; glyph <= ((font_t *)gfont)->fontEndEncoding; glyph++) {
     if (*pointer != NO_GLYPH)
     {
       if (glyph == character)
         return (glyph_t *)pointer;
-      pointer += sizeof(glyph_t) + ((glyph_t *)pointer)->DataSize;
+      pointer += sizeof(glyph_t) + ((glyph_t *)pointer)->dataSize;
     }
     else
       pointer++;
@@ -186,7 +186,7 @@ void TFT_String::add_character(const char character) {
   if (length < MAX_STRING_LENGTH) {
     data[length] = character;
     length++;
-    span += glyph(character)->DWidth;
+    span += glyph(character)->dWidth;
   }
 }
 
@@ -194,7 +194,7 @@ void TFT_String::rtrim(const char character) {
   while (length) {
     if (data[length - 1] == 0x20 || data[length - 1] == character) {
       length--;
-      span -= glyph(data[length])->DWidth;
+      span -= glyph(data[length])->dWidth;
       eol();
     }
     else {
@@ -206,7 +206,7 @@ void TFT_String::rtrim(const char character) {
 void TFT_String::ltrim(const char character) {
   uint16_t i, j;
   for (i = 0; (i < length) && (data[i] == 0x20 || data[i] == character); i++) {
-    span -= glyph(data[i])->DWidth;
+    span -= glyph(data[i])->dWidth;
   }
   if (i == 0) return;
   for (j = 0; i < length; data[j++] = data[i++]);

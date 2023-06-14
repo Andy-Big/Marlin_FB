@@ -120,9 +120,8 @@ void MarlinUI::draw_kill_screen() {
   tft.queue.sync();
 }
 
-void draw_heater_status(uint16_t x, uint16_t y, const int8_t Heater) {
+void draw_heater_status(uint16_t x, uint16_t y, const int8_t heater) {
   MarlinImage image = imgHotEnd;
-  uint16_t Color;
   celsius_t currentTemperature, targetTemperature;
 
   if (Heater >= 0) { // HotEnd
@@ -130,13 +129,13 @@ void draw_heater_status(uint16_t x, uint16_t y, const int8_t Heater) {
     targetTemperature = thermalManager.degTargetHotend(Heater);
   }
   #if HAS_HEATED_BED
-    else if (Heater == H_BED) {
+    else if (heater == H_BED) {
       currentTemperature = thermalManager.wholeDegBed();
       targetTemperature = thermalManager.degTargetBed();
     }
   #endif
   #if HAS_TEMP_CHAMBER
-    else if (Heater == H_CHAMBER) {
+    else if (heater == H_CHAMBER) {
       currentTemperature = thermalManager.wholeDegChamber();
       #if HAS_HEATED_CHAMBER
         targetTemperature = thermalManager.degTargetChamber();
@@ -146,43 +145,43 @@ void draw_heater_status(uint16_t x, uint16_t y, const int8_t Heater) {
     }
   #endif
   #if HAS_TEMP_COOLER
-    else if (Heater == H_COOLER) {
+    else if (heater == H_COOLER) {
       currentTemperature = thermalManager.wholeDegCooler();
       targetTemperature = TERN(HAS_COOLER, thermalManager.degTargetCooler(), ABSOLUTE_ZERO);
     }
   #endif
   else return;
 
-  TERN_(TOUCH_SCREEN, if (targetTemperature >= 0) touch.add_control(HEATER, x, y, 64, 100, Heater));
+  TERN_(TOUCH_SCREEN, if (targetTemperature >= 0) touch.add_control(HEATER, x, y, 64, 100, heater));
   tft.canvas(x, y, 64, 100);
   tft.set_background(COLOR_BACKGROUND);
 
-  Color = currentTemperature < 0 ? COLOR_INACTIVE : COLOR_COLD;
+  uint16_t color = currentTemperature < 0 ? COLOR_INACTIVE : COLOR_COLD;
 
-  if (Heater >= 0) { // HotEnd
-    if (currentTemperature >= 50) Color = COLOR_HOTEND;
+  if (heater >= 0) { // HotEnd
+    if (currentTemperature >= 50) color = COLOR_HOTEND;
   }
   #if HAS_HEATED_BED
-    else if (Heater == H_BED) {
-      if (currentTemperature >= 50) Color = COLOR_HEATED_BED;
+    else if (heater == H_BED) {
+      if (currentTemperature >= 50) color = COLOR_HEATED_BED;
       image = targetTemperature > 0 ? imgBedHeated : imgBed;
     }
   #endif
   #if HAS_TEMP_CHAMBER
-    else if (Heater == H_CHAMBER) {
-      if (currentTemperature >= 50) Color = COLOR_CHAMBER;
+    else if (heater == H_CHAMBER) {
+      if (currentTemperature >= 50) color = COLOR_CHAMBER;
       image = targetTemperature > 0 ? imgChamberHeated : imgChamber;
     }
   #endif
   #if HAS_TEMP_COOLER
-    else if (Heater == H_COOLER) {
-      if (currentTemperature <= 26) Color = COLOR_COLD;
-      if (currentTemperature > 26) Color = COLOR_RED;
+    else if (heater == H_COOLER) {
+      if (currentTemperature <= 26) color = COLOR_COLD;
+      if (currentTemperature > 26) color = COLOR_RED;
       image = targetTemperature > 26 ? imgCoolerHot : imgCooler;
     }
   #endif
 
-  tft.add_image(0, 18, image, Color);
+  tft.add_image(0, 18, image, color);
 
   tft_string.set(i16tostr3rj(currentTemperature));
   tft_string.add(LCD_STR_DEGREE);
