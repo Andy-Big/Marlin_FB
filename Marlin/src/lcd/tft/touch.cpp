@@ -60,7 +60,7 @@ TouchControlType Touch::touch_control_type = NONE;
 void Touch::init() {
   TERN_(TOUCH_SCREEN_CALIBRATION, touch_calibration.calibration_reset());
   reset();
-  io.Init();
+  io.init();
   TERN_(HAS_TOUCH_SLEEP, wakeUp());
   enable();
 }

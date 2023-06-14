@@ -33,12 +33,12 @@
 uint16_t TFT::buffer[];
 
 void TFT::init() {
-  io.Init();
-  io.InitTFT();
+  io.init();
+  io.initTFT();
 
   // immediate clear screen to black
   io.set_window(0, 0, TFT_WIDTH-1, TFT_HEIGHT-1);
-  io.WriteMultiple((uint16_t)0, (uint32_t)(TFT_WIDTH*TFT_HEIGHT));
+  io.writeMultiple((uint16_t)0, (uint32_t)(TFT_WIDTH*TFT_HEIGHT));
 }
 
 TFT tft;
