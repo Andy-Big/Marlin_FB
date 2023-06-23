@@ -66,6 +66,8 @@ extern const uint8_t left_32x32x4[];
 extern const uint8_t right_32x32x4[];
 extern const uint8_t refresh_32x32x4[];
 extern const uint8_t leveling_32x32x4[];
+extern const uint8_t time_elapsed_32x32x4[];
+extern const uint8_t time_remaining_32x32x4[];
 
 extern const uint8_t slider_8x16x4[];
 
@@ -184,6 +186,8 @@ extern const tImage Left_32x32x4;
 extern const tImage Right_32x32x4;
 extern const tImage Refresh_32x32x4;
 extern const tImage Leveling_32x32x4;
+extern const tImage Time_Elapsed_32x32x4;
+extern const tImage Time_Remaining_32x32x4;
 
 extern const tImage Slider8x16x4;
 
