@@ -77,6 +77,8 @@ const tImage Left_32x32x4           = { (void *)left_32x32x4, 32, 32, GREYSCALE4
 const tImage Right_32x32x4          = { (void *)right_32x32x4, 32, 32, GREYSCALE4 };
 const tImage Refresh_32x32x4        = { (void *)refresh_32x32x4, 32, 32, GREYSCALE4 };
 const tImage Leveling_32x32x4       = { (void *)leveling_32x32x4, 32, 32, GREYSCALE4 };
+const tImage Time_Elapsed_32x32x4   = { (void *)time_elapsed_32x32x4, 32, 32, GREYSCALE4 };
+const tImage Time_Remaining_32x32x4 = { (void *)time_remaining_32x32x4, 32, 32, GREYSCALE4 };
 
 const tImage Slider8x16x4           = { (void *)slider_8x16x4, 8, 16, GREYSCALE4 };
 

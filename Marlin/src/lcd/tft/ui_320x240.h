@@ -35,6 +35,7 @@
 
 #define MENU_ITEM_HEIGHT      32
 #define MENU_LINE_HEIGHT      (MENU_ITEM_HEIGHT + 2)
+#define FONT_LINE_HEIGHT      24
 
 #define MENU_FONT_NAME        Helvetica14
 #define SYMBOLS_FONT_NAME     Helvetica14_symbols

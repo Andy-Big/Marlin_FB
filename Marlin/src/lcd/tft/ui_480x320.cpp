@@ -1123,9 +1123,8 @@ static void drawBtn(const int x, const int y, const char *label, intptr_t data, 
     tft_string.trim();
     tft.add_text(tft_string.center(width), height / 2 - tft_string.font_height() / 2, bgColor, tft_string);
   }
-  else {
+  else
     tft.add_image(0, 0, img, bgColor, COLOR_BACKGROUND, COLOR_DARKGREY);
-  }
 
   TERN_(TOUCH_SCREEN, if (enabled) touch.add_control(BUTTON, x, y, width, height, data));
 }
