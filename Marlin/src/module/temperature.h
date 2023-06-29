@@ -76,6 +76,8 @@ typedef struct
 } thermistors_data_t;
 extern thermistors_data_t thermistors_data;
 
+typedef int_fast8_t heater_id_t;
+
 #define THERMISTORS_TYPES_COUNT 6
   
 
