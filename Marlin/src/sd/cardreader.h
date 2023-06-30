@@ -48,6 +48,8 @@ typedef struct {
     ;
 } card_flags_t;
 
+enum ListingFlags : uint8_t { LS_LONG_FILENAME, LS_ONLY_BIN, LS_TIMESTAMP };
+
 typedef struct
 {
   uint8_t   items[MAX_DIR_DEPTH];
