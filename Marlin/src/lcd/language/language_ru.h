@@ -30,7 +30,7 @@
 #define DISPLAY_CHARSET_ISO10646_5
 #define DISPLAY_CHARSET_RUS
 
-namespace Language_ru {
+namespace LanguageNarrow_ru {
   using namespace Language_en; // Inherit undefined strings from English
 
   constexpr uint8_t    CHARSIZE                            = 2;
@@ -831,20 +831,16 @@ namespace Language_ru {
     LSTR  MSG_BAD_PAGE_SPEED                = _UxGT("Плохая скор.стран.");
   #endif
 
-  LSTR MSG_EDIT_PASSWORD                  = _UxGT("Редактировать пароль");
-  LSTR MSG_LOGIN_REQUIRED                 = _UxGT("Нужен логин");
-  LSTR MSG_PASSWORD_SETTINGS              = _UxGT("Настройки пароля");
-  LSTR MSG_ENTER_DIGIT                    = _UxGT("Введите цифру");
-  LSTR MSG_CHANGE_PASSWORD                = _UxGT("Смените пароль");
-  LSTR MSG_REMOVE_PASSWORD                = _UxGT("Удалить пароль");
-  LSTR MSG_PASSWORD_SET                   = _UxGT("Пароль это ");
-  LSTR MSG_START_OVER                     = _UxGT("Старт через");
-  #if LCD_WIDTH > 21 || HAS_DWIN_E3V2
-    LSTR MSG_REMINDER_SAVE_SETTINGS       = _UxGT("Не забудь сохранить!");
-  #else
-    LSTR MSG_REMINDER_SAVE_SETTINGS       = _UxGT("Не забудь сохранить");
-  #endif
-  LSTR MSG_PASSWORD_REMOVED               = _UxGT("Пароль удалён");
+  LSTR MSG_EDIT_PASSWORD                    = _UxGT("Редактировать пароль");
+  LSTR MSG_LOGIN_REQUIRED                   = _UxGT("Нужен логин");
+  LSTR MSG_PASSWORD_SETTINGS                = _UxGT("Настройки пароля");
+  LSTR MSG_ENTER_DIGIT                      = _UxGT("Введите цифру");
+  LSTR MSG_CHANGE_PASSWORD                  = _UxGT("Смените пароль");
+  LSTR MSG_REMOVE_PASSWORD                  = _UxGT("Удалить пароль");
+  LSTR MSG_PASSWORD_SET                     = _UxGT("Пароль это ");
+  LSTR MSG_START_OVER                       = _UxGT("Старт через");
+  LSTR MSG_REMINDER_SAVE_SETTINGS           = _UxGT("Не забудь сохранить");
+  LSTR MSG_PASSWORD_REMOVED                 = _UxGT("Пароль удалён");
 
   //
   // Filament Change screens show up to 3 lines on a 4-line display
