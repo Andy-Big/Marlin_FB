@@ -25,11 +25,12 @@
  * Release version. Leave the Marlin version or apply a custom scheme.
  */
 #ifndef SHORT_BUILD_VERSION
-  #define SHORT_BUILD_VERSION "2.1_rb_2.1.1"
+  #define SHORT_BUILD_VERSION "2.2_rb_2.1.2"
 #endif
 
+
 #ifndef SHORT_REBORN_VERSION
-  #define SHORT_REBORN_VERSION "2.1.1"
+  #define SHORT_REBORN_VERSION "2.2"
 #endif
 
 /**
@@ -46,7 +47,7 @@
  * version was tagged.
  */
 #ifndef STRING_DISTRIBUTION_DATE
-  #define STRING_DISTRIBUTION_DATE "05 Aug 2022"
+  #define STRING_DISTRIBUTION_DATE "02 Jul 2023"
 #endif
 
 /**

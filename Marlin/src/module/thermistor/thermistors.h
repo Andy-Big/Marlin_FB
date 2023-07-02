@@ -196,7 +196,7 @@ typedef struct { raw_adc_t value; celsius_t celsius; } temp_entry_t;
 #if ANY_THERMISTOR_IS(1022) // Pt1000 with 2k2 pullup
   #include "thermistor_1022.h"
 #endif
-#if ANY_THERMISTOR_IS(1047) // Pt1000 with 4k7 pullup
+//#if ANY_THERMISTOR_IS(1047) // Pt1000 with 4k7 pullup
   #include "thermistor_1047.h"
 //#endif
 #if ANY_THERMISTOR_IS(2000) // "Ultimachine Rambo TDK NTCG104LH104KT1 NTC100K motherboard Thermistor" https://product.tdk.com/en/search/sensor/ntc/chip-ntc-thermistor/info?part_no=NTCG104LH104KT1
