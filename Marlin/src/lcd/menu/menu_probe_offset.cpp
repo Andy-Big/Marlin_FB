@@ -53,7 +53,7 @@ void cancel_probe_offset_wizard_and_go_back()
 {
   probe.offset.z = z_offset_backup;
   SET_SOFT_ENDSTOP_LOOSE(false);
-  TERN_(HAS_LEVELING, set_bed_leveling_enabled(leveling_was_active));
+  TERN_(HAS_LEVELING, set_bed_leveling_enabled(menu_leveling_was_active));
   ui.goto_previous_screen_no_defer();
 }
 

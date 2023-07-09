@@ -225,7 +225,6 @@ Nozzle nozzle;
 
 #if ENABLED(NOZZLE_PARK_FEATURE)
 
-  #if HAS_Z_AXIS
     float Nozzle::park_mode_0_height(const_float_t park_z) {
       // Apply a minimum raise, if specified. Use park.z as a minimum height instead.
       return _MAX(park_z,                       // Minimum height over 0 based on input
@@ -237,7 +236,6 @@ Nozzle nozzle;
         )
       );
     }
-  #endif // HAS_Z_AXIS
 
   void Nozzle::park(const uint8_t z_action, const xyz_pos_t &park/*=NOZZLE_PARK_POINT*/) {
     feedRate_t fr_xy = moving_settings.pause.park_move_feedrate, fr_z = NOZZLE_PARK_Z_FEEDRATE;
@@ -255,12 +253,10 @@ Nozzle nozzle;
           do_blocking_move_to_z(park_mode_0_height(park.z), fr_z);
           break;
       }
-    #endif // HAS_Z_AXIS
 
     #ifndef NOZZLE_PARK_MOVE
       #define NOZZLE_PARK_MOVE 0
     #endif
-    constexpr feedRate_t fr_xy = NOZZLE_PARK_XY_FEEDRATE;
     switch (NOZZLE_PARK_MOVE) {
       case 0: do_blocking_move_to_xy(park, fr_xy); break;
       case 1: do_blocking_move_to_x(park.x, fr_xy); break;

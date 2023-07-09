@@ -983,12 +983,4 @@ namespace Language_ru {
   LSTR MSG_PAUSE_FAST_LOAD_FEEDRATE       = _UxGT("Скорость быстр.загрузки, мм/с");
   LSTR MSG_PAUSE_FAST_LOAD_LENGTH         = _UxGT("Длина быстр.загрузки, мм");
 
-  LSTR MSG_DRIVER_BACKWARD                  = _UxGT(" драйвер наоборот");
-
-  LSTR MSG_SD_CARD                          = _UxGT("SD Карта");
-  LSTR MSG_USB_DISK                         = _UxGT("USB Диск");
-
-  LSTR MSG_SHORT_DAY                        = _UxGT("д"); // One character only
-  LSTR MSG_SHORT_HOUR                       = _UxGT("ч"); // One character only
-  LSTR MSG_SHORT_MINUTE                     = _UxGT("м"); // One character only
 }

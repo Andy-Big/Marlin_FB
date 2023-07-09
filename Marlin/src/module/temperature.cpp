@@ -329,7 +329,7 @@ constexpr thermistor_types_t    thermistor_types[THERMISTORS_TYPES_COUNT] PROGME
 
 #if HAS_HOTEND
   hotend_info_t Temperature::temp_hotend[HOTENDS];
-  constexpr celsius_t Temperature::hotend_maxtemp[HOTENDS];
+  celsius_t Temperature::hotend_maxtemp[HOTENDS] = ARRAY_BY_HOTENDS(HEATER_0_MAXTEMP, HEATER_1_MAXTEMP, HEATER_2_MAXTEMP, HEATER_3_MAXTEMP, HEATER_4_MAXTEMP, HEATER_5_MAXTEMP, HEATER_6_MAXTEMP, HEATER_7_MAXTEMP);
 
   #if ENABLED(MPCTEMP)
     bool MPC::e_paused; // = false
