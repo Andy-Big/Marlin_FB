@@ -1496,11 +1496,9 @@ void prepare_line_to_destination() {
       need[n] = '\0';
 
       char msg[30];
-      sprintf_P(msg, GET_EN_TEXT(MSG_HOME_FIRST), need);
+      sprintf_P(msg, GET_TEXT(MSG_HOME_FIRST), need);
       SERIAL_ECHO_START();
       SERIAL_ECHOLN(msg);
-
-      sprintf_P(msg, GET_TEXT(MSG_HOME_FIRST), need);
       ui.set_status(msg);
       return true;
     }
