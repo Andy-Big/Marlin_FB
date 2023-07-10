@@ -438,6 +438,11 @@ namespace Language_ru {
   LSTR  MSG_AMAX_EN                         = _UxGT("Максимальное ускорение *");
   LSTR  MSG_A_RETRACT                       = _UxGT("Ускорение отката");
   LSTR  MSG_A_TRAVEL                        = _UxGT("Ускорение перемещений");
+  LSTR MSG_INPUT_SHAPING                    = _UxGT("Антизвон");
+  LSTR MSG_SHAPING_ENABLE                   = _UxGT("Включить антизвон @");
+  LSTR MSG_SHAPING_DISABLE                  = _UxGT("Отключить антизвон @");
+  LSTR MSG_SHAPING_FREQ                     = _UxGT("@ частота");
+  LSTR MSG_SHAPING_ZETA                     = _UxGT("@ затухание");
   LSTR  MSG_XY_FREQUENCY_LIMIT              = _UxGT("Максимальная частота.");
   LSTR  MSG_XY_FREQUENCY_FEEDRATE           = _UxGT("Минимальная подача");
   LSTR  MSG_STEPS_PER_MM                    = _UxGT("Шагов/мм");

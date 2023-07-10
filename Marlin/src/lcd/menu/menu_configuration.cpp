@@ -559,9 +559,10 @@ void menu_configuration() {
   #endif
 
   #if ENABLED(EEPROM_SETTINGS)
-    ACTION_ITEM(MSG_STORE_EEPROM, ui.store_settings);
+    if (!busy) ACTION_ITEM(MSG_STORE_EEPROM, ui.store_settings);
     if (!busy) ACTION_ITEM(MSG_LOAD_EEPROM, ui.load_settings);
-    if (!busy) ACTION_ITEM(MSG_STORE_CONFIG_FILE, []{ queue.enqueue_now_P("M5000"); });
+    if (!busy) ACTION_ITEM(MSG_STORE_CONFIG_FILE, []{ queue.enqueue_now_P("M5000"); ui.goto_screen(ui.status_screen); });
+    if (!busy) ACTION_ITEM(MSG_LOAD_CONFIG_FILE, []{ queue.enqueue_now_P("M5001"); ui.goto_screen(ui.status_screen); });
   #endif
 
   if (!busy) ACTION_ITEM(MSG_RESTORE_DEFAULTS, ui.reset_settings);

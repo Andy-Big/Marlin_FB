@@ -453,6 +453,7 @@ namespace Language_en {
   LSTR MSG_STORE_EEPROM                   = _UxGT("Store Settings to EPROM");
   LSTR MSG_STORE_CONFIG_FILE              = _UxGT("Save Settings to file");
   LSTR MSG_LOAD_EEPROM                    = _UxGT("Load Settings from EPROM");
+  LSTR MSG_LOAD_CONFIG_FILE               = _UxGT("Load Settings from file");
   LSTR MSG_RESTORE_DEFAULTS               = _UxGT("Restore Defaults");
   LSTR MSG_INIT_EEPROM                    = _UxGT("Initialize EEPROM");
   LSTR MSG_ERR_EEPROM_CRC                 = _UxGT("EEPROM CRC Error");
