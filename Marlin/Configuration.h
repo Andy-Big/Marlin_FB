@@ -1186,25 +1186,25 @@
  * Endstop "Hit" State
  * Set to the state (HIGH or LOW) that applies to each endstop.
  */
-// #define X_MIN_ENDSTOP_INVERTING true // Set to true to invert the logic of the endstop.
-// #define Y_MIN_ENDSTOP_INVERTING true // Set to true to invert the logic of the endstop.
-// #define Z_MIN_ENDSTOP_INVERTING true // Set to true to invert the logic of the endstop.
-// #define I_MIN_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
-// #define J_MIN_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
-// #define K_MIN_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
-// #define U_MIN_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
-// #define V_MIN_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
-// #define W_MIN_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
-// #define X_MAX_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
-// #define Y_MAX_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
-// #define Z_MAX_ENDSTOP_INVERTING true // Set to true to invert the logic of the endstop.
-// #define I_MAX_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
-// #define J_MAX_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
-// #define K_MAX_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
-// #define U_MAX_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
-// #define V_MAX_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
-// #define W_MAX_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
-// #define Z_MIN_PROBE_ENDSTOP_INVERTING false // Set to true to invert the logic of the probe.
+#define X_MIN_ENDSTOP_INVERTING true // Set to true to invert the logic of the endstop.
+#define Y_MIN_ENDSTOP_INVERTING true // Set to true to invert the logic of the endstop.
+#define Z_MIN_ENDSTOP_INVERTING true // Set to true to invert the logic of the endstop.
+#define I_MIN_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
+#define J_MIN_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
+#define K_MIN_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
+#define U_MIN_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
+#define V_MIN_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
+#define W_MIN_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
+#define X_MAX_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
+#define Y_MAX_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
+#define Z_MAX_ENDSTOP_INVERTING true // Set to true to invert the logic of the endstop.
+#define I_MAX_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
+#define J_MAX_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
+#define K_MAX_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
+#define U_MAX_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
+#define V_MAX_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
+#define W_MAX_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
+#define Z_MIN_PROBE_ENDSTOP_INVERTING false // Set to true to invert the logic of the probe.
 
 #define X_MIN_ENDSTOP_HIT_STATE LOW
 #define X_MAX_ENDSTOP_HIT_STATE HIGH

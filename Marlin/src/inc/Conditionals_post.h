@@ -1079,6 +1079,9 @@
   #ifndef Z2_MIN_ENDSTOP_HIT_STATE
     #define Z2_MIN_ENDSTOP_HIT_STATE HIGH
   #endif
+  #ifndef Z2_MIN_ENDSTOP_INVERTING
+    #define Z2_MIN_ENDSTOP_INVERTING false
+  #endif
 
   #if NUM_Z_STEPPERS >= 3
     #if Z_HOME_TO_MAX
