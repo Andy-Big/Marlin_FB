@@ -1258,6 +1258,7 @@ int16_t Temperature::getHeaterPower(const heater_id_t heater_id) {
     HOTEND_LOOP() {
       if (temp_hotend[e].celsius >= thermistors_data.fan_auto_temp[e]) {
         SBI(fanState, pgm_read_byte(&fanBit[e]));
+      }
     }
 
     #if HAS_AUTO_CHAMBER_FAN

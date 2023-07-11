@@ -29,6 +29,7 @@
 
 #include "motion.h"
 #include "endstops.h"
+#include "../core/debug_out.h"
 
   enum ProbePtRaise : uint8_t {
     PROBE_PT_NONE,      // No raise or stow after run_z_probe
