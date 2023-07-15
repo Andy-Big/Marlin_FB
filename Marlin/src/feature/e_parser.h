@@ -26,7 +26,7 @@
  */
 
 #include "../inc/MarlinConfigPre.h"
-#include "../../libs/stopwatch.h"
+#include "../libs/stopwatch.h"
 
 class EmergencyParser {
 
