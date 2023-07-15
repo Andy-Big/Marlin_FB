@@ -971,31 +971,31 @@ void menu_advanced_settings() {
     START_MENU();
     // BACK_ITEM(MSG_ADVANCED_SETTINGS);
 
-    #if HAS_X_MIN
+    #if USE_X_MIN
       EDIT_ITEM(bool, MSG_X_MIN_INVERTING, &endstop_settings.X_MIN_INVERTING);
     #endif
-    #if HAS_X_MAX
+    #if USE_X_MAX
       EDIT_ITEM(bool, MSG_X_MAX_INVERTING, &endstop_settings.X_MAX_INVERTING);
     #endif
-    #if HAS_Y_MIN
+    #if USE_Y_MIN
       EDIT_ITEM(bool, MSG_Y_MIN_INVERTING, &endstop_settings.Y_MIN_INVERTING);
     #endif
-    #if HAS_Y_MAX
+    #if USE_Y_MAX
       EDIT_ITEM(bool, MSG_Y_MAX_INVERTING, &endstop_settings.Y_MAX_INVERTING);
     #endif
-    #if HAS_Z_MIN
+    #if USE_Z_MIN
       EDIT_ITEM(bool, MSG_Z_MIN_INVERTING, &endstop_settings.Z_MIN_INVERTING);
     #endif
-    #if HAS_Z_MAX
+    #if USE_Z_MAX
       EDIT_ITEM(bool, MSG_Z_MAX_INVERTING, &endstop_settings.Z_MAX_INVERTING);
     #endif
-    #if HAS_Z2_MIN
+    #if USE_Z2_MIN
       EDIT_ITEM(bool, MSG_Z2_MIN_INVERTING, &endstop_settings.Z2_MIN_INVERTING);
     #endif
-    #if HAS_Z2_MAX
+    #if USE_Z2_MAX
       EDIT_ITEM(bool, MSG_Z2_MAX_INVERTING, &endstop_settings.Z2_MAX_INVERTING);
     #endif
-    #if HAS_Z_MIN_PROBE_PIN
+    #if USE_Z_MIN_PROBE
       EDIT_ITEM(bool, MSG_Z_MIN_PROBE_INVERTING, &endstop_settings.Z_MIN_PROBE_INVERTING);
     #endif
 

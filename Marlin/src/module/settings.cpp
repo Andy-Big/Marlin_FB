@@ -3018,31 +3018,31 @@ void MarlinSettings::reset() {
     psu_settings.psu_enabled = false;
 
     // Endstop settings
-    #if HAS_X_MIN
+    #if USE_X_MIN
       endstop_settings.X_MIN_INVERTING = X_MIN_ENDSTOP_INVERTING;
     #endif
-    #if HAS_X_MAX
+    #if USE_X_MAX
       endstop_settings.X_MAX_INVERTING = X_MAX_ENDSTOP_INVERTING;
     #endif
-    #if HAS_Y_MIN
+    #if USE_Y_MIN
       endstop_settings.Y_MIN_INVERTING = Y_MIN_ENDSTOP_INVERTING;
     #endif
-    #if HAS_Y_MAX
+    #if USE_Y_MAX
       endstop_settings.Y_MAX_INVERTING = Y_MAX_ENDSTOP_INVERTING;
     #endif
-    #if HAS_Z_MIN
+    #if USE_Z_MIN
       endstop_settings.Z_MIN_INVERTING = Z_MIN_ENDSTOP_INVERTING;
     #endif
-    #if HAS_Z_MAX
+    #if USE_Z_MAX
       endstop_settings.Z_MAX_INVERTING = Z_MAX_ENDSTOP_INVERTING;
     #endif
-    #if HAS_Z2_MIN
+    #if USE_Z2_MIN
       endstop_settings.Z2_MIN_INVERTING = Z2_MIN_ENDSTOP_INVERTING;
     #endif
-    #if HAS_Z2_MAX
+    #if USE_Z2_MAX
       endstop_settings.Z2_MAX_INVERTING = Z2_MAX_ENDSTOP_INVERTING;
     #endif
-    #if HAS_Z_MIN_PROBE_PIN
+    #if USE_Z_MIN_PROBE
       endstop_settings.Z_MIN_PROBE_INVERTING = Z_MIN_PROBE_ENDSTOP_INVERTING;
     #endif
 

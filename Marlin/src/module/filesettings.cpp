@@ -467,7 +467,7 @@ bool FileSettings::SaveSettings(char *fname /*= NULL*/)
     if (card.write(curline, len) != len)
       break;
     lines++;
-    #if HAS_Z2_MIN
+    #if USE_Z2_MIN
       sprintf(curline, "%s = %s %s\r\n", FSS_ENDSTOP_INVERT_Z2, (endstop_settings.Z2_MIN_INVERTING ? "Yes" : "No"), FSSC_ENDSTOP_INVERT_Z2);
       len = strlen(curline);
       if (card.write(curline, len) != len)
@@ -1122,7 +1122,7 @@ bool FileSettings::LoadSettings(char *fname /*= NULL*/)
           params++;
           break;
         }
-        #if HAS_Z2_MIN
+        #if USE_Z2_MIN
           if (strcmp(lexem, FSS_ENDSTOP_INVERT_Z2) == 0)
           {
             if (pval.type != PARAMVAL_BOOL)
