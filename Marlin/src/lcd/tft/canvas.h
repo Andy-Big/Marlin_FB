@@ -34,9 +34,9 @@ class Canvas {
     static uint16_t startLine, endLine;
     static uint16_t *buffer;
 
-    inline static font_t *gont() { return TFT_String::font(); }
+    inline static font_t *getFont() { return TFT_String::font(); }
     inline static glyph_t *glyph(uint8_t *character) { return TFT_String::glyph(character); }
-    inline static glyph_t *gontGlyph(font_t *font, uint8_t *character) { return TFT_String::get_font_glyph(font, *character); }
+    inline static glyph_t *fontGlyph(font_t *font, uint8_t *character) { return TFT_String::get_font_glyph(font, *character); }
     static glyph_t *glyph(uint8_t *character, font_t *font);
     inline static uint16_t getFontHeight() { return TFT_String::font_height(); }
 
