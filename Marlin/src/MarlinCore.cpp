@@ -1171,12 +1171,12 @@ void setup() {
     #endif
   #endif
 
-  #if BOTH(SDSUPPORT, SDCARD_EEPROM_EMULATION)
+  #if ALL(SDSUPPORT, SDCARD_EEPROM_EMULATION)
     SETUP_RUN(card.mount());          // Mount media with settings before first_load
   #endif
 
   delay(100);   // delay while display filled by black
-  #if BOTH(HAS_WIRED_LCD, SHOW_BOOTSCREEN)
+  #if ALL(HAS_WIRED_LCD, SHOW_BOOTSCREEN)
     SETUP_RUN(ui.show_bootscreen());
     const millis_t bootscreen_ms = millis();
   #endif
