@@ -25,7 +25,7 @@
 #if HAS_GRAPHICAL_TFT
 
 #include "canvas.h"
-#include "../fontutils.h"
+//#include "../fontutils.h"
 
 uint16_t CANVAS::width, CANVAS::height;
 uint16_t CANVAS::startLine, CANVAS::endLine;
