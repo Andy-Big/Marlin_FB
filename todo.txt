@@ -61,4 +61,4 @@ Alextango, [11.07.2023 2:02]
 Перестает собираться после применения коммита 9a7d9e6995f4f66c4b48147ec7876d49d4b3ae77 от 27 апреля 2023 г. (оптимизация platformio.ini)
 
 
-Commits applyed up to 91401d7e5f36f1b2d27bfbeef96ae54953c3d3ae on 19.06.2023
+Commits applyed up to 574dd34c49fde76e1e736b8a7e1ea579d724ff22 on 27.06.2023
