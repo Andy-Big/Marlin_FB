@@ -36,6 +36,30 @@ extern const uint8_t Helvetica14[], Helvetica14ru[], Tahoma14[], Helvetica14_sym
 extern const uint8_t Helvetica18[], Helvetica18ru[], Tahoma18[], Helvetica18_symbols[];
 extern const uint8_t Tahoma36bold_num[];
 
+/**
+ * Marlin fonts with optional antialiasing. Fonts use unifont_t font header and glyph_t glyphs headers.
+ * Number of glyphs (fontEndEncoding - fontStartEncoding) can not exceed 256 (TBD).
+ * Some glyphs may be left undefined with NO_GLYPH
+ */
+#define FONT_MARLIN_GLYPHS      0x80
+#define FONT_MARLIN_GLYPHS_1BPP 0x81
+#define FONT_MARLIN_GLYPHS_2BPP 0x82
+#define FONT_MARLIN_GLYPHS_4BPP 0x84
+
+/**
+ * TFT fonts with optional antialiasing. Fonts use unifont_t font header and uniglyph_t glyphs headers.
+ * Each glyph is prepended with its unicode.
+ * Designed to be used for Japanese, Korean, Simplified Chinese and Traditional Chinese glyphs.
+ *
+ * IMPORTANT NOTES:
+ *   - glyphs fast search method REQUIRES glyphs to be ordered by unicode
+ *   - last glyph's code MUST be fontEndEncoding
+ */
+#define FONT_MARLIN_HIEROGLYPHS      0xA0
+#define FONT_MARLIN_HIEROGLYPHS_1BPP 0xA1
+#define FONT_MARLIN_HIEROGLYPHS_2BPP 0xA2
+#define FONT_MARLIN_HIEROGLYPHS_4BPP 0xA4
+
 #define NO_GLYPH          0xFF
 
 typedef struct __attribute__((__packed__)) {
