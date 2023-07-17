@@ -68,7 +68,9 @@
   #define EEPROM_NUM_SERVOS NUM_SERVO_PLUGS
 #endif
 
-#include "../feature/fwretract.h"
+#if ENABLED(FWRETRACT)
+  #include "../feature/fwretract.h"
+#endif
 
 #if ENABLED(POWER_LOSS_RECOVERY)
   #include "../feature/powerloss.h"
@@ -607,51 +609,53 @@ bool FileSettings::SaveSettings(char *fname /*= NULL*/)
     lines++;
 
     /******** FW RETRACT ***********/
-    sprintf(curline, "%s", (char*)"\r\n# ====== FW RETRACT ======\r\n");
-    len = strlen(curline);
-    if (card.write(curline, len) != len)
-      break;
-    lines += 2;
-    sprintf(curline, "%s = %0.2f %s\r\n", FSS_FWRETRACT_LENGTH, fwretract.settings.retract_length, FSSC_FWRETRACT_LENGTH);
-    len = strlen(curline);
-    if (card.write(curline, len) != len)
-      break;
-    lines++;
-    sprintf(curline, "%s = %0.2f %s\r\n", FSS_FWRETRACT_SPEED, fwretract.settings.retract_feedrate_mm_s, FSSC_FWRETRACT_SPEED);
-    len = strlen(curline);
-    if (card.write(curline, len) != len)
-      break;
-    lines++;
-    sprintf(curline, "%s = %0.2f %s\r\n", FSS_FWRETRACT_Z_HOP, fwretract.settings.retract_zraise, FSSC_FWRETRACT_Z_HOP);
-    len = strlen(curline);
-    if (card.write(curline, len) != len)
-      break;
-    lines++;
-    sprintf(curline, "%s = %0.2f %s\r\n", FSS_FWRETRACT_RECOVER_LENGTH, fwretract.settings.retract_recover_extra, FSSC_FWRETRACT_RECOVER_LENGTH);
-    len = strlen(curline);
-    if (card.write(curline, len) != len)
-      break;
-    lines++;
-    sprintf(curline, "%s = %0.2f %s\r\n", FSS_FWRETRACT_RECOVER_SPEED, fwretract.settings.retract_recover_feedrate_mm_s, FSSC_FWRETRACT_RECOVER_SPEED);
-    len = strlen(curline);
-    if (card.write(curline, len) != len)
-      break;
-    lines++;
-    sprintf(curline, "%s = %0.2f %s\r\n", FSS_FWRETRACT_SWP_LENGTH, fwretract.settings.swap_retract_length, FSSC_FWRETRACT_SWP_LENGTH);
-    len = strlen(curline);
-    if (card.write(curline, len) != len)
-      break;
-    lines++;
-    sprintf(curline, "%s = %0.2f %s\r\n", FSS_FWRETRACT_RECOVER_SWP_LENGTH, fwretract.settings.swap_retract_recover_extra, FSSC_FWRETRACT_RECOVER_SWP_LENGTH);
-    len = strlen(curline);
-    if (card.write(curline, len) != len)
-      break;
-    lines++;
-    sprintf(curline, "%s = %0.2f %s\r\n", FSS_FWRETRACT_RECOVER_SWP_SPEED, fwretract.settings.swap_retract_recover_feedrate_mm_s, FSSC_FWRETRACT_RECOVER_SWP_SPEED);
-    len = strlen(curline);
-    if (card.write(curline, len) != len)
-      break;
-    lines++;
+    #if ENABLED(FWRETRACT)
+      sprintf(curline, "%s", (char*)"\r\n# ====== FW RETRACT ======\r\n");
+      len = strlen(curline);
+      if (card.write(curline, len) != len)
+        break;
+      lines += 2;
+      sprintf(curline, "%s = %0.2f %s\r\n", FSS_FWRETRACT_LENGTH, fwretract.settings.retract_length, FSSC_FWRETRACT_LENGTH);
+      len = strlen(curline);
+      if (card.write(curline, len) != len)
+        break;
+      lines++;
+      sprintf(curline, "%s = %0.2f %s\r\n", FSS_FWRETRACT_SPEED, fwretract.settings.retract_feedrate_mm_s, FSSC_FWRETRACT_SPEED);
+      len = strlen(curline);
+      if (card.write(curline, len) != len)
+        break;
+      lines++;
+      sprintf(curline, "%s = %0.2f %s\r\n", FSS_FWRETRACT_Z_HOP, fwretract.settings.retract_zraise, FSSC_FWRETRACT_Z_HOP);
+      len = strlen(curline);
+      if (card.write(curline, len) != len)
+        break;
+      lines++;
+      sprintf(curline, "%s = %0.2f %s\r\n", FSS_FWRETRACT_RECOVER_LENGTH, fwretract.settings.retract_recover_extra, FSSC_FWRETRACT_RECOVER_LENGTH);
+      len = strlen(curline);
+      if (card.write(curline, len) != len)
+        break;
+      lines++;
+      sprintf(curline, "%s = %0.2f %s\r\n", FSS_FWRETRACT_RECOVER_SPEED, fwretract.settings.retract_recover_feedrate_mm_s, FSSC_FWRETRACT_RECOVER_SPEED);
+      len = strlen(curline);
+      if (card.write(curline, len) != len)
+        break;
+      lines++;
+      sprintf(curline, "%s = %0.2f %s\r\n", FSS_FWRETRACT_SWP_LENGTH, fwretract.settings.swap_retract_length, FSSC_FWRETRACT_SWP_LENGTH);
+      len = strlen(curline);
+      if (card.write(curline, len) != len)
+        break;
+      lines++;
+      sprintf(curline, "%s = %0.2f %s\r\n", FSS_FWRETRACT_RECOVER_SWP_LENGTH, fwretract.settings.swap_retract_recover_extra, FSSC_FWRETRACT_RECOVER_SWP_LENGTH);
+      len = strlen(curline);
+      if (card.write(curline, len) != len)
+        break;
+      lines++;
+      sprintf(curline, "%s = %0.2f %s\r\n", FSS_FWRETRACT_RECOVER_SWP_SPEED, fwretract.settings.swap_retract_recover_feedrate_mm_s, FSSC_FWRETRACT_RECOVER_SWP_SPEED);
+      len = strlen(curline);
+      if (card.write(curline, len) != len)
+        break;
+      lines++;
+    #endif
     
     /******** LINEAR ADVANCE ***********/
     sprintf(curline, "%s", (char*)"\r\n# ====== LINEAR ADVANCE ======\r\n");
@@ -1175,6 +1179,7 @@ bool FileSettings::LoadSettings(char *fname /*= NULL*/)
           params++;
           break;
         }
+#if ENABLED(FWRETRACT)
         if (strcmp(lexem, FSS_FWRETRACT_LENGTH) == 0)
         {
           if (pval.type != PARAMVAL_NUMERIC)
@@ -1287,6 +1292,7 @@ bool FileSettings::LoadSettings(char *fname /*= NULL*/)
           params++;
           break;
         }
+#endif
         if (strcmp(lexem, FSS_FAST_LOAD_SPEED) == 0)
         {
           if (pval.type != PARAMVAL_NUMERIC)
@@ -2065,8 +2071,10 @@ bool FileSettings::LoadSettings(char *fname /*= NULL*/)
 
   card.closefile();
 
+#if ENABLED(FWRETRACT)
   if (fwretr_update)
     fwretract.refresh_autoretract();
+#endif
 
   if (bedlevel_update)
   {

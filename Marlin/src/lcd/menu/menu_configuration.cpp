@@ -287,7 +287,7 @@ void menu_advanced_settings();
   void menu_hotend_idle() {
     hotend_idle_settings_t &c = hotend_idle.cfg;
     START_MENU();
-    BACK_ITEM(MSG_BACK);
+    // BACK_ITEM(MSG_BACK);
 
     if (c.timeout) GCODES_ITEM(MSG_HOTEND_IDLE_DISABLE, F("M87"));
     EDIT_ITEM(int3, MSG_TIMEOUT, &c.timeout, 0, 999);

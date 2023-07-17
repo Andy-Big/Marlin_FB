@@ -781,7 +781,7 @@
 #elif MB(OPULO_LUMEN_REV3)
   #include "stm32f4/pins_OPULO_LUMEN_REV3.h"        // STM32F4                              env:Opulo_Lumen_REV3
 #elif MB(MKS_ROBIN_NANO_V1_3_F4)
-  #include "stm32f4/pins_MKS_ROBIN_NANO_V1_3_F4.h"  // STM32F4                              env:mks_robin_nano_v1_3_f4 env:mks_robin_nano_v1_3_f4 env:mks_robin_nano_v1_3_f4_MY env:mks_robin_nano_v1_3_f4_usbmod
+  #include "stm32f4/pins_MKS_ROBIN_NANO_V1_3_F4.h"  // STM32F4                              env:mks_robin_nano_v1_3_f4 env:mks_robin_nano_v1_3_f4 env:mks_robin_nano_v1_3_f4_MY env:mks_robin_nano_v1_3_f4_MY_DEBUG env:mks_robin_nano_v1_3_f4_usbmod
 #elif MB(MKS_ROBIN_NANO_SV1_3_F4)
   #include "stm32f4/pins_MKS_ROBIN_NANO_V1_3_F4.h" // STM32F4                               env:mks_robin_nano_Sv1_3_f4 env:mks_robin_nano_SMv1_3_f4
 #elif MB(MKS_EAGLE)

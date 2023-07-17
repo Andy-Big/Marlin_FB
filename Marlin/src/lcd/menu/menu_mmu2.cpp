@@ -61,7 +61,7 @@ void menu_mmu2_load_filament() {
 
 void menu_mmu2_load_to_nozzle() {
   START_MENU();
-  BACK_ITEM(MSG_MMU2_MENU);
+  // BACK_ITEM(MSG_MMU2_MENU);
   EXTRUDER_LOOP() ACTION_ITEM_N(e, MSG_MMU2_FILAMENT_N, []{ action_mmu2_load_to_nozzle(MenuItemBase::itemIndex); });
   END_MENU();
 }

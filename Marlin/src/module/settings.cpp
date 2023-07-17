@@ -3227,6 +3227,7 @@ void MarlinSettings::reset() {
     bedlevel_settings.bedlevel_points.y = 4;
 
     // Moving settings
+#if ENABLED(ADVANCED_PAUSE_FEATURE)
     xyz_pos_t park_point NOZZLE_PARK_POINT;
     moving_settings.pause.heater_timeout = PAUSE_PARK_NOZZLE_TIMEOUT;
     moving_settings.pause.park_move_feedrate = NOZZLE_PARK_XY_FEEDRATE;
@@ -3241,6 +3242,7 @@ void MarlinSettings::reset() {
     moving_settings.filament_change.slow_load_length = FILAMENT_CHANGE_SLOW_LOAD_LENGTH;
     moving_settings.filament_change.unload_feedrate = FILAMENT_CHANGE_UNLOAD_FEEDRATE;
     moving_settings.filament_change.unload_length = FILAMENT_CHANGE_UNLOAD_LENGTH;
+#endif
   }
 
   planner.settings.min_segment_time_us = DEFAULT_MINSEGMENTTIME;
