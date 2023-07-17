@@ -64,10 +64,10 @@ extern const uint8_t Tahoma36bold_num[];
 
 typedef struct __attribute__((__packed__)) {
   uint8_t format;
-  uint8_t BBXWidth;
-  uint8_t BBXHeight;
-   int8_t BBXOffsetX;
-   int8_t BBXOffsetY;
+  uint8_t bbxWidth;
+  uint8_t bbxHeight;
+   int8_t bbxOffsetX;
+   int8_t bbxOffsetY;
   uint8_t capitalAHeight;
  uint16_t Encoding65Pos;
  uint16_t Encoding97Pos;

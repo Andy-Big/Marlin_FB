@@ -76,9 +76,9 @@ void Canvas::addText(uint16_t x, uint16_t y, uint16_t color, uint8_t *string, ui
   
 /*   for (uint16_t i = 0 ; *(string + i) ; i++) {
     glyph_t *glyph = glyph(string + i);
-    if (stringWidth + glyph->BBXWidth > maxWidth) break;
-    addImage(x + stringWidth + glyph->BBXOffsetX, y + Font()->FontAscent - glyph->BBXHeight - glyph->BBXOffsetY, glyph->BBXWidth, glyph->BBXHeight, GREYSCALE1, ((uint8_t *)glyph) + sizeof(glyph_t), &color);
-    stringWidth += glyph->DWidth;
+    if (stringWidth + glyph->bbxWidth > maxWidth) break;
+    addImage(x + stringWidth + glyph->bbxOffsetX, y + Font()->FontAscent - glyph->bbxHeight - glyph->bbxOffsetY, glyph->bbxWidth, glyph->bbxHeight, GREYSCALE1, ((uint8_t *)glyph) + sizeof(glyph_t), &color);
+    stringWidth += glyph->dWidth;
   }
  */
 
@@ -91,10 +91,10 @@ void Canvas::addText(uint16_t x, uint16_t y, uint16_t color, uint8_t *string, ui
       uint8_t ch = uint8_t(wchar & 0x00FF);
       // uint8_t ch = 33;
       glyph_t *glyph = fontGlyph(font, &ch);
-      if (stringWidth + glyph->BBXWidth > maxWidth)
+      if (stringWidth + glyph->bbxWidth > maxWidth)
         break;
-      addImage(x + stringWidth + glyph->BBXOffsetX, y + getFont()->FontAscent - glyph->BBXHeight - glyph->BBXOffsetY, glyph->BBXWidth, glyph->BBXHeight, GREYSCALE1, ((uint8_t *)glyph) + sizeof(glyph_t), &color);
-      stringWidth += glyph->DWidth;
+      addImage(x + stringWidth + glyph->bbxOffsetX, y + getFont()->fontAscent - glyph->bbxHeight - glyph->bbxOffsetY, glyph->bbxWidth, glyph->bbxHeight, GREYSCALE1, ((uint8_t *)glyph) + sizeof(glyph_t), &color);
+      stringWidth += glyph->dWidth;
     }
 
 

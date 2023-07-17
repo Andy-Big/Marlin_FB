@@ -156,7 +156,7 @@ void draw_heater_status(uint16_t x, uint16_t y, const int8_t Heater) {
     coldExtrusionTemp = thermalManager.extrude_min_temp;
   }
   #if HAS_HEATED_BED
-    else if (heater == H_BED) {
+    else if (Heater == H_BED) {
       currentTemperature = thermalManager.wholeDegBed();
       targetTemperature = thermalManager.degTargetBed();
     }
