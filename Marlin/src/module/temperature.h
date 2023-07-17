@@ -80,7 +80,7 @@ typedef int_fast8_t heater_id_t;
 
 #define THERMISTORS_TYPES_COUNT 6
   
-
+/*
 // Element identifiers. Positive values are hotends. Negative values are other heaters or coolers.
 typedef enum : int_fast8_t {
   H_REDUNDANT = HID_REDUNDANT,
@@ -93,6 +93,8 @@ typedef enum : int_fast8_t {
   H_E0 = HID_E0, H_E1, H_E2, H_E3, H_E4, H_E5, H_E6, H_E7,
   H_NONE = -128
 } heater_id_t;
+*/
+
 
 /**
  * States for ADC reading in the ISR
