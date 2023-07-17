@@ -82,7 +82,7 @@ const tImage Time_Remaining_32x32x4 = { (void *)time_remaining_32x32x4, 32, 32, 
 
 const tImage Slider8x16x4           = { (void *)slider_8x16x4, 8, 16, GREYSCALE4 };
 
-const tImage Images[imgCount] = {
+const tImage images[imgCount] = {
   #if ENABLED(BOOT_MARLIN_RB_LOGO)
     MarlinRBLogo220x190x16,
   #else

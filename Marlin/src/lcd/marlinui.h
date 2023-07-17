@@ -297,16 +297,6 @@ public:
     }
   #endif
 
-  #if HAS_PRINT_PROGRESS_PERMYRIAD
-    typedef uint16_t progress_t;
-    #define PROGRESS_SCALE 100U
-    #define PROGRESS_MASK 0x7FFF
-  #else
-    typedef uint8_t progress_t;
-    #define PROGRESS_SCALE 1U
-    #define PROGRESS_MASK 0x7F
-  #endif
-
   #if HAS_PRINT_PROGRESS
     #if HAS_PRINT_PROGRESS_PERMYRIAD
       typedef uint16_t progress_t;

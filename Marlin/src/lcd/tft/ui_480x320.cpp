@@ -146,7 +146,6 @@ void MarlinUI::draw_kill_screen() {
 void draw_heater_status(uint16_t x, uint16_t y, const int8_t Heater) {
   MarlinImage image = imgHotEnd;
   // MarlinImage image = imgMove;
-  uint16_t Color;
   celsius_t currentTemperature, targetTemperature;
   celsius_t coldExtrusionTemp;
 
@@ -178,12 +177,11 @@ void draw_heater_status(uint16_t x, uint16_t y, const int8_t Heater) {
     }
   #endif
   else return;
+  uint16_t Color = currentTemperature < 0 ? COLOR_INACTIVE : COLOR_COLD;;
 
   TERN_(TOUCH_SCREEN, if (targetTemperature >= 0) touch.add_control(HEATER, x, y, ITEM_WIDTH1, 96, Heater));
   tft.canvas(x, y, ITEM_WIDTH1, 96);
   tft.set_background(COLOR_BACKGROUND);
-
-  uint16_t color = currentTemperature < 0 ? COLOR_INACTIVE : COLOR_COLD;
 
   if (Heater >= 0) { // HotEnd
     if (currentTemperature >= coldExtrusionTemp) Color = COLOR_HOTEND;
@@ -1141,7 +1139,7 @@ void MarlinUI::move_axis_screen() {
   TERN_(HAS_X_AXIS, drawBtn(x, y, "X-", (intptr_t)x_minus, imgLeft, X_BTN_COLOR, !busy));
 
   x += BTN_WIDTH + spacing; //imgHome is 64x64
-  TERN_(HAS_TFT_XPT2046, add_control(TFT_WIDTH / 2 - Images[imgHome].width / 2, y - (Images[imgHome].width - BTN_HEIGHT) / 2, BUTTON, (intptr_t)do_home, imgHome, !busy));
+  TERN_(HAS_TFT_XPT2046, add_control(TFT_WIDTH / 2 - images[imgHome].width / 2, y - (images[imgHome].width - BTN_HEIGHT) / 2, BUTTON, (intptr_t)do_home, imgHome, !busy));
 
   x += BTN_WIDTH + spacing;
   uint16_t xplus_x = x;
