@@ -148,7 +148,7 @@
 
 FileSettings fileSettings;
 
-#define DEBUG_OUT EITHER(EEPROM_CHITCHAT, DEBUG_LEVELING_FEATURE)
+#define DEBUG_OUT ANY(EEPROM_CHITCHAT, DEBUG_LEVELING_FEATURE)
 #include "../core/debug_out.h"
 
 
