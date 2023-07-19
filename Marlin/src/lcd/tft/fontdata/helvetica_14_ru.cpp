@@ -41,12 +41,12 @@
 
 /*
 typedef struct __attribute__((__packed__)) {
-  uint8_t BBXWidth;
-  uint8_t BBXHeight;
+  uint8_t bbxWidth;
+  uint8_t bbxHeight;
   uint8_t DataSize;
-   int8_t DWidth;
-   int8_t BBXOffsetX;
-   int8_t BBXOffsetY;
+   int8_t dWidth;
+   int8_t bbxOffsetX;
+   int8_t bbxOffsetY;
 } tGlyph;
 */
 

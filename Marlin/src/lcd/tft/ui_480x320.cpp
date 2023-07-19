@@ -183,7 +183,7 @@ void draw_heater_status(uint16_t x, uint16_t y, const int8_t heater) {
   tft.canvas(x, y, ITEM_WIDTH1, 96);
   tft.set_background(COLOR_BACKGROUND);
 
-  uint16_t color = currentTemperature < 0 ? COLOR_INACTIVE : COLOR_COLD;
+  color = currentTemperature < 0 ? COLOR_INACTIVE : COLOR_COLD;
 
   if (heater >= 0) { // HotEnd
     if (currentTemperature >= coldExtrusionTemp) color = COLOR_HOTEND;

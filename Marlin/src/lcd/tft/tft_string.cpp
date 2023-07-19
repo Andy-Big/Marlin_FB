@@ -46,18 +46,18 @@ void TFT_String::set_font(const uint8_t *font) {
   for (glyph = 0; glyph < 256; glyph++) glyphs[glyph] = nullptr;
 
   DEBUG_ECHOLNPGM("Format: ",            font_header->Format);
-  DEBUG_ECHOLNPGM("BBXWidth: ",          font_header->BBXWidth);
-  DEBUG_ECHOLNPGM("BBXHeight: ",         font_header->BBXHeight);
-  DEBUG_ECHOLNPGM("BBXOffsetX: ",        font_header->BBXOffsetX);
-  DEBUG_ECHOLNPGM("BBXOffsetY: ",        font_header->BBXOffsetY);
+  DEBUG_ECHOLNPGM("bbxWidth: ",          font_header->bbxWidth);
+  DEBUG_ECHOLNPGM("bbxHeight: ",         font_header->bbxHeight);
+  DEBUG_ECHOLNPGM("bbxOffsetX: ",        font_header->bbxOffsetX);
+  DEBUG_ECHOLNPGM("bbxOffsetY: ",        font_header->bbxOffsetY);
   DEBUG_ECHOLNPGM("CapitalAHeight: ",    font_header->capitalAHeight);
   DEBUG_ECHOLNPGM("Encoding65Pos: ",     font_header->encoding65Pos);
   DEBUG_ECHOLNPGM("Encoding97Pos: ",     font_header->encoding97Pos);
   DEBUG_ECHOLNPGM("FontStartEncoding: ", font_header->fontStartEncoding);
   DEBUG_ECHOLNPGM("FontEndEncoding: ",   font_header->fontEndEncoding);
   DEBUG_ECHOLNPGM("LowerGDescent: ",     font_header->lowerGDescent);
-  DEBUG_ECHOLNPGM("FontAscent: ",        font_header->fontAscent);
-  DEBUG_ECHOLNPGM("FontDescent: ",       font_header->fontDescent);
+  DEBUG_ECHOLNPGM("fontAscent: ",        font_header->fontAscent);
+  DEBUG_ECHOLNPGM("fontDescent: ",       font_header->fontDescent);
   DEBUG_ECHOLNPGM("FontXAscent: ",       font_header->fontXAscent);
   DEBUG_ECHOLNPGM("FontXDescent: ",      font_header->fontXDescent);
 
@@ -71,7 +71,7 @@ void TFT_String::add_glyphs(const uint8_t *font) {
   for (glyph = ((font_t *)font)->fontStartEncoding; glyph <= ((font_t *)font)->fontEndEncoding; glyph++) {
     if (*pointer != NO_GLYPH) {
       glyphs[glyph] = (glyph_t *)pointer;
-      pointer += sizeof(glyph_t) + ((glyph_t *)pointer)->gataSize;
+      pointer += sizeof(glyph_t) + ((glyph_t *)pointer)->dataSize;
     }
     else
       pointer++;
@@ -175,7 +175,7 @@ void TFT_String::add(const char *cstr, uint8_t max_len/*=MAX_STRING_LENGTH*/) {
     if (wc > 255)
       wc |= 0x0080;
     uint8_t ch = uint8_t(wc & 0x00FF);
-    span += glyph(ch)->DWidth;
+    span += glyph(ch)->dWidth;
 
     string1 = string2;
   }
