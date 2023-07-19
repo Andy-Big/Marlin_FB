@@ -147,7 +147,7 @@ void announceOpen(const uint8_t doing, const char *const path)
         PORT_REDIRECT(SerialMask::All);
         SERIAL_ECHO_START();
         SERIAL_ECHOPGM("Now ");
-        SERIAL_ECHOF(doing == 1 ? F("doing") : F("fresh"));
+        SERIAL_ECHO(doing == 1 ? F("doing") : F("fresh"));
         SERIAL_ECHOLNPGM(" file: ", path);
     }
 }
@@ -967,7 +967,7 @@ void CardReader::removeJobRecoveryFile()
         removeFile(recovery.filename);
 #if ENABLED(DEBUG_POWER_LOSS_RECOVERY)
         SERIAL_ECHOPGM("Power-loss file delete");
-        SERIAL_ECHOF(jobRecoverFileExists() ? F(" failed.\n") : F("d.\n"));
+        SERIAL_ECHO(jobRecoverFileExists() ? F(" failed.\n") : F("d.\n"));
 #endif
     }
 }
