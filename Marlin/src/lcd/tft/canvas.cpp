@@ -29,7 +29,7 @@
 
 uint16_t Canvas::width, Canvas::height;
 uint16_t Canvas::startLine, Canvas::endLine;
-uint16_t Canvas::background_color;
+//uint16_t Canvas::background_color;
 uint16_t *Canvas::buffer = TFT::buffer;
 
 void Canvas::instantiate(uint16_t x, uint16_t y, uint16_t width, uint16_t height) {
@@ -67,7 +67,7 @@ void Canvas::setBackground(uint16_t color) {
 
 uint8_t canvas_read_byte(const uint8_t *byte) { return *byte; }
 
-void Canvas::addText(uint16_t x, uint16_t y, uint16_t color, uint8_t *string, uint16_t maxWidth, font_t *font) {
+void Canvas::addText(uint16_t x, uint16_t y, uint16_t color, uint8_t *string, uint16_t maxWidth, font_t *pFont) {
   if (endLine < y || startLine > y + getFontHeight()) return;
 
   if (maxWidth == 0) maxWidth = width - x;
@@ -103,11 +103,11 @@ void Canvas::addText(uint16_t x, uint16_t y, uint16_t color, uint8_t *string, ui
         wchar |= 0x0080;
       uint8_t ch = uint8_t(wchar & 0x00FF);
       // uint8_t ch = 33;
-      glyph_t *glyph = FontGlyph(font, &ch);
-      if (stringWidth + glyph->BBXWidth > maxWidth)
+      glyph_t *pGlyph = fontGlyph(pFont, &ch);
+      if (stringWidth + pGlyph->BBXWidth > maxWidth)
         break;
-      AddImage(x + stringWidth + glyph->BBXOffsetX, y + Font()->FontAscent - glyph->BBXHeight - glyph->BBXOffsetY, glyph->BBXWidth, glyph->BBXHeight, GREYSCALE1, ((uint8_t *)glyph) + sizeof(glyph_t), &color);
-      stringWidth += glyph->DWidth;
+      addImage(x + stringWidth + pGlyph->BBXOffsetX, y + font()->FontAscent - pGlyph->BBXHeight - pGlyph->BBXOffsetY, pGlyph->BBXWidth, pGlyph->BBXHeight, GREYSCALE1, ((uint8_t *)pGlyph) + sizeof(glyph_t), &color);
+      stringWidth += pGlyph->DWidth;
     }
 
 

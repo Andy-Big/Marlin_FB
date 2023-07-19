@@ -117,7 +117,7 @@ void TFT_Queue::canvas(queueTask_t *task) {
         tftCanvas.setBackground(((parametersCanvasBackground_t *)item)->color);
         break;
       case CANVAS_ADD_TEXT:
-        Canvas.addText(((parametersCanvasText_t *)item)->x, ((parametersCanvasText_t *)item)->y, ((parametersCanvasText_t *)item)->color, item + sizeof(parametersCanvasText_t), ((parametersCanvasText_t *)item)->maxWidth, ((parametersCanvasText_t *)item)->font);
+        tftCanvas.addText(((parametersCanvasText_t *)item)->x, ((parametersCanvasText_t *)item)->y, ((parametersCanvasText_t *)item)->color, item + sizeof(parametersCanvasText_t), ((parametersCanvasText_t *)item)->maxWidth, ((parametersCanvasText_t *)item)->font);
         break;
 
       case CANVAS_ADD_IMAGE:
