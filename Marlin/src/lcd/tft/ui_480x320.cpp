@@ -749,7 +749,7 @@ void MenuItem_confirm::draw_select_screen(FSTR_P const yes, FSTR_P const no, con
     #if ENABLED(TOUCH_SCREEN)
       touch.clear();
       draw_menu_navigation = false;
-      touch.add_control(RESUME_CONTINUE , 0, 0, TFT_WIDTH, TFT_HEIGHT);
+      touch.add_control(RESUME_CONTINUE, 0, 0, TFT_WIDTH, TFT_HEIGHT);
     #endif
 
     menu_line(row);
@@ -905,7 +905,9 @@ static void drawCurStepValue() {
     tft.canvas(motionAxisState.zTypePos.x, motionAxisState.zTypePos.y, tft_string.width(), 34);
     tft.set_background(COLOR_BACKGROUND);
     tft.add_text(0, 0, Z_BTN_COLOR, tft_string);
+
     tft.queue.sync();
+
     tft_string.set(F("Offset"));
     tft.canvas(motionAxisState.zTypePos.x, motionAxisState.zTypePos.y + Y_OFFSET, tft_string.width(), Y_OFFSET TERN_(HAS_UI_480x272, - 10));
     tft.set_background(COLOR_BACKGROUND);
@@ -1107,8 +1109,8 @@ static void disable_steppers() {
 }
 
 static void drawBtn(int x, int y, const char *label, intptr_t data, MarlinImage img, uint16_t bgColor, bool enabled = true) {
-  uint16_t width = Images[imgBtn52Rounded].width,
-           height = Images[imgBtn52Rounded].height;
+  const uint16_t width = Images[imgBtn52Rounded].width,
+                height = Images[imgBtn52Rounded].height;
 
   if (!enabled) bgColor = COLOR_CONTROL_DISABLED;
 
